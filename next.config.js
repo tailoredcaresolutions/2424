@@ -3,6 +3,27 @@ const nextConfig = {
   // Vercel deployment - standalone output for optimal performance
   output: 'standalone',
 
+  // CRITICAL: Exclude backend-only files from Vercel deployment
+  // ALL AI RUNS LOCALLY (Ollama, Whisper, SQLite on Mac - NOT on Vercel)
+  // Context7 official pattern from Next.js docs
+  outputFileTracingExcludes: {
+    '*': [
+      './backend/**/*',
+      './lib/monitoring/**/*',
+      './lib/database/**/*',
+      './lib/search/**/*',
+      './lib/cache/**/*',
+      './app/api/ai/**/*',
+      './app/api/monitoring/**/*',
+      './app/api/health/**/*',
+      './app/api/performance/**/*',
+      './app/api/backup/**/*',
+      './app/api/search/**/*',
+      './node_modules/better-sqlite3/**/*',
+      './node_modules/better-sqlite3-multiple-ciphers/**/*',
+    ],
+  },
+
   // Turbopack is now STABLE in Next.js 16 (released Oct 21, 2025)
   // Use --turbopack flag in dev script for explicit control
   // Next.js 16 features: Cache Components, Build Adapters API, React Compiler stable
