@@ -15,7 +15,15 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const { userId, reportId, accuracyRating, helpfulnessRating, comments, issueReported, issueType } = body;
+    const {
+      userId,
+      reportId,
+      accuracyRating,
+      helpfulnessRating,
+      comments,
+      issueReported,
+      issueType,
+    } = body;
 
     // Validation
     if (!userId || !reportId) {
@@ -101,7 +109,8 @@ export async function GET(request: NextRequest) {
 
     const monitor = getAIMonitor();
 
-    const period = startDate && endDate ? { start: startDate, end: endDate } : undefined;
+    const period =
+      startDate && endDate ? { start: startDate, end: endDate } : undefined;
     const satisfaction = monitor.getSatisfactionScores(period);
 
     return NextResponse.json({

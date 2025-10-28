@@ -36,7 +36,11 @@ export async function POST(request: NextRequest) {
 
     if (result.success) {
       logger.info(
-        { type: 'api_mfa_backup_code_success', userId, remainingCodes: result.remainingCodes },
+        {
+          type: 'api_mfa_backup_code_success',
+          userId,
+          remainingCodes: result.remainingCodes,
+        },
         `Backup code verified for user ${userId}`
       );
 
@@ -44,9 +48,10 @@ export async function POST(request: NextRequest) {
         success: true,
         message: result.message,
         remainingCodes: result.remainingCodes,
-        warning: result.remainingCodes && result.remainingCodes <= 2
-          ? 'You have 2 or fewer backup codes remaining. Please generate new codes.'
-          : undefined,
+        warning:
+          result.remainingCodes && result.remainingCodes <= 2
+            ? 'You have 2 or fewer backup codes remaining. Please generate new codes.'
+            : undefined,
       });
     } else {
       logger.warn(

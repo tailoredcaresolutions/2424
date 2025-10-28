@@ -11,6 +11,7 @@
 The AI Quarterly Review System provides comprehensive monitoring, feedback collection, and audit capabilities to maintain the highest quality standards for AI-generated PSW documentation.
 
 ### Key Features
+
 - **Real-time Performance Monitoring** - Track response times, error rates, token usage
 - **PSW Feedback Collection** - Gather accuracy and helpfulness ratings
 - **Manual Quality Audits** - Random sampling for accuracy verification
@@ -30,6 +31,7 @@ The AI Quarterly Review System provides comprehensive monitoring, feedback colle
 **Purpose**: Understand if PSWs find the AI helpful and accurate
 
 **Metrics Collected**:
+
 - Accuracy Rating (1-5 scale)
 - Helpfulness Rating (1-5 scale)
 - Overall Satisfaction Score
@@ -37,12 +39,14 @@ The AI Quarterly Review System provides comprehensive monitoring, feedback colle
 - Comments and Suggestions
 
 **Usage**:
+
 ```bash
 # Get satisfaction scores for last quarter
 curl "http://localhost:3000/api/ai/feedback?startDate=2025-07-01&endDate=2025-10-01"
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -59,6 +63,7 @@ curl "http://localhost:3000/api/ai/feedback?startDate=2025-07-01&endDate=2025-10
 ```
 
 **Target Benchmarks**:
+
 - Overall Satisfaction: ≥ 4.0 (Excellent)
 - Accuracy Rating: ≥ 4.5 (High accuracy)
 - Helpfulness Rating: ≥ 4.0 (Very helpful)
@@ -69,6 +74,7 @@ curl "http://localhost:3000/api/ai/feedback?startDate=2025-07-01&endDate=2025-10
 ### 2. AI Accuracy Audits ✅
 
 **API Endpoints**:
+
 - `GET /api/ai/audit/sample` - Get random sample for manual review
 - `POST /api/ai/audit` - Submit audit results
 
@@ -77,13 +83,15 @@ curl "http://localhost:3000/api/ai/feedback?startDate=2025-07-01&endDate=2025-10
 **Audit Process**:
 
 1. **Select Random Sample**
+
 ```bash
 # Get 20 random reports from last quarter
 curl "http://localhost:3000/api/ai/audit/sample?sampleSize=20&startDate=2025-07-01&endDate=2025-10-01"
 ```
 
 2. **Manual Review**
-For each selected report, review:
+   For each selected report, review:
+
 - Personal care details (bathing, dressing, toileting)
 - Meals and fluid intake accuracy
 - Mobility support documentation
@@ -92,6 +100,7 @@ For each selected report, review:
 - Any concerns or escalations
 
 3. **Submit Audit Scores**
+
 ```bash
 curl -X POST http://localhost:3000/api/ai/audit \
   -H "Content-Type: application/json" \
@@ -107,11 +116,13 @@ curl -X POST http://localhost:3000/api/ai/audit \
 ```
 
 **Audit Scoring**:
+
 - **Manual Review Score**: 1-5 (overall quality)
 - **Accuracy Score**: 0-100% (correctness of information)
 - **Completeness Score**: 0-100% (all key details captured)
 
 **Target Benchmarks**:
+
 - Manual Review Score: ≥ 4.0
 - Accuracy Score: ≥ 90%
 - Completeness Score: ≥ 85%
@@ -126,6 +137,7 @@ curl -X POST http://localhost:3000/api/ai/audit \
 **Purpose**: Measure average response time during peak usage hours
 
 **Metrics Tracked**:
+
 - Average response time (milliseconds)
 - P95 response time
 - P99 response time
@@ -134,21 +146,24 @@ curl -X POST http://localhost:3000/api/ai/audit \
 
 **Automatic Monitoring**:
 The system automatically records every AI request:
+
 ```typescript
 // Automatically recorded in process-conversation-ai route
 monitor.recordResult(duration, success, {
   model: 'llama-3.3-70b',
   tokenCount: tokens,
   userId: pswId,
-  sessionId: sessionId
+  sessionId: sessionId,
 });
 ```
 
 **Real-time Alerts**:
+
 - Warning if average response time > 5s (last 20 requests)
 - Critical if response time consistently > 10s
 
 **Target Benchmarks**:
+
 - Average Response Time: < 3 seconds
 - P95 Response Time: < 5 seconds
 - P99 Response Time: < 8 seconds
@@ -169,6 +184,7 @@ monitor.recordResult(duration, success, {
    - GPT-5 or GPT-4.6 releases
 
 2. **Trial Testing Framework**
+
 ```bash
 # Run comparative test
 node scripts/model-benchmark.js \
@@ -209,6 +225,7 @@ node scripts/model-benchmark.js \
    - Include multilingual examples (if applicable)
 
 2. **Run Comparison**
+
 ```bash
 # Compare against Claude and GPT
 node scripts/benchmark-comparison.js \
@@ -224,6 +241,7 @@ node scripts/benchmark-comparison.js \
    - Cost: Per-request cost (for cloud models)
 
 **Benchmark Results Format**:
+
 ```json
 {
   "llama-3.3-70b": {
@@ -261,6 +279,7 @@ node scripts/benchmark-comparison.js \
 **Purpose**: Review misinterpretations requiring staff corrections
 
 **Incident Types**:
+
 - Missed key information
 - Incorrect detail extraction
 - Misunderstood context
@@ -271,6 +290,7 @@ node scripts/benchmark-comparison.js \
 **Review Process**:
 
 1. **Retrieve Incident Report**
+
 ```bash
 curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate=2025-10-01"
 ```
@@ -294,6 +314,7 @@ curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate
    - Provide user guidance
 
 **Target Benchmarks**:
+
 - Incident Rate: < 5% of total reports
 - Critical Errors: < 1% of total reports
 - Repeat Issues: < 10% of incidents
@@ -308,6 +329,7 @@ curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate
 **Purpose**: Monitor if PSWs are having longer conversations (increasing context needs)
 
 **Metrics Tracked**:
+
 - Average tokens per request
 - Maximum tokens used
 - Long conversations (> 50K tokens)
@@ -315,6 +337,7 @@ curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate
 - Multi-turn conversations
 
 **Analysis**:
+
 ```json
 {
   "contextUsageTrend": {
@@ -328,12 +351,14 @@ curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate
 ```
 
 **Interpretation**:
+
 - **Increasing Average**: PSWs providing more detail (good!)
 - **More Long Conversations**: Complex cases or multi-shift reviews
 - **High Max Usage**: May need larger context window
 - **Low Utilization**: Current 128K context is sufficient
 
 **Action Triggers**:
+
 - If avg > 40K tokens: Consider Llama 4 Scout (10M context)
 - If long conversations > 10%: Review if splitting conversations helps
 - If utilization > 80%: Upgrade context window capacity
@@ -345,6 +370,7 @@ curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate
 ### 8. Cost vs. Benefit Analysis ✅
 
 **Current Costs**:
+
 ```
 Local Deployment (Llama 3.3 70B):
 - Hardware: $0 (existing infrastructure)
@@ -357,6 +383,7 @@ Per-Request Cost: $0.00
 ```
 
 **Cloud Alternative Costs** (for comparison):
+
 ```
 Claude 3.7 Sonnet:
 - $3 per million input tokens
@@ -371,11 +398,13 @@ GPT-4.5:
 ```
 
 **ROI Analysis**:
+
 - **Current System**: $600/year
 - **Cloud Alternative**: $4,800-7,200/year
 - **Annual Savings**: $4,200-6,600
 
 **Quality Comparison**:
+
 - Local (Llama 3.3): 92% accuracy, 2.7s response
 - Cloud (Claude): 95% accuracy, 1.2s response
 - **Difference**: 3% accuracy gap, 1.5s faster
@@ -387,7 +416,9 @@ GPT-4.5:
 ## 🔄 Quarterly Review Workflow
 
 ### Preparation (Week 1)
+
 1. Generate quarterly report:
+
    ```bash
    curl "http://localhost:3000/api/ai/quarterly-review?startDate=2025-07-01&endDate=2025-10-01"
    ```
@@ -397,6 +428,7 @@ GPT-4.5:
 3. Notify reviewers and assign audit tasks
 
 ### Execution (Week 2-3)
+
 1. Review satisfaction scores and feedback comments
 2. Complete manual audits of selected reports
 3. Analyze incident reports and error patterns
@@ -405,6 +437,7 @@ GPT-4.5:
 6. Run competitive benchmarks (if needed)
 
 ### Analysis (Week 3-4)
+
 1. Compile all metrics into review document
 2. Identify trends and patterns
 3. Generate recommendations
@@ -412,6 +445,7 @@ GPT-4.5:
 5. Decide on action items
 
 ### Action (Post-Review)
+
 1. Implement approved improvements
 2. Update training materials if needed
 3. Schedule follow-up reviews
@@ -475,27 +509,29 @@ GPT-4.5:
 
 ## 🎯 Target Benchmarks Summary
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| Satisfaction Score | ≥ 4.0 | 4.5 | ✅ Excellent |
-| Accuracy Rating | ≥ 4.5 | 4.6 | ✅ Excellent |
-| Audit Accuracy | ≥ 90% | 93% | ✅ Excellent |
-| Response Time | < 3s | 2.65s | ✅ Good |
-| Error Rate | < 5% | 2.8% | ✅ Excellent |
-| Incident Rate | < 5% | 2.8% | ✅ Excellent |
-| Context Utilization | 20-60% | 27.3% | ✅ Optimal |
-| Cost Efficiency | Maximize | $0/req | ✅ Perfect |
+| Metric              | Target   | Current | Status       |
+| ------------------- | -------- | ------- | ------------ |
+| Satisfaction Score  | ≥ 4.0    | 4.5     | ✅ Excellent |
+| Accuracy Rating     | ≥ 4.5    | 4.6     | ✅ Excellent |
+| Audit Accuracy      | ≥ 90%    | 93%     | ✅ Excellent |
+| Response Time       | < 3s     | 2.65s   | ✅ Good      |
+| Error Rate          | < 5%     | 2.8%    | ✅ Excellent |
+| Incident Rate       | < 5%     | 2.8%    | ✅ Excellent |
+| Context Utilization | 20-60%   | 27.3%   | ✅ Optimal   |
+| Cost Efficiency     | Maximize | $0/req  | ✅ Perfect   |
 
 ---
 
 ## 🚀 API Reference
 
 ### Quarterly Review
+
 ```bash
 GET /api/ai/quarterly-review?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
 ```
 
 ### Feedback Collection
+
 ```bash
 # Submit feedback
 POST /api/ai/feedback
@@ -513,6 +549,7 @@ GET /api/ai/feedback?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
 ```
 
 ### Audit System
+
 ```bash
 # Get random sample
 GET /api/ai/audit/sample?sampleSize=20&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
@@ -535,6 +572,7 @@ POST /api/ai/audit
 ## 📞 Support
 
 For questions about the quarterly review system:
+
 - Review this guide: [AI_QUARTERLY_REVIEW_GUIDE.md](AI_QUARTERLY_REVIEW_GUIDE.md)
 - Check API documentation in code comments
 - Contact system administrator for access

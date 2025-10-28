@@ -2,7 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, CardContent, Button, Table, Badge, Modal, ModalFooter, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Button,
+  Table,
+  Badge,
+  Modal,
+  ModalFooter,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface Backup {
   id: number;
@@ -45,7 +55,7 @@ export default function BackupsPage() {
           type: i % 4 === 0 ? 'manual' : 'automatic',
           status: Math.random() > 0.95 ? 'failed' : 'completed',
           duration: 2000 + Math.random() * 3000,
-          records: 1200 + Math.floor(Math.random() * 100)
+          records: 1200 + Math.floor(Math.random() * 100),
         };
       });
 
@@ -62,7 +72,7 @@ export default function BackupsPage() {
     try {
       const response = await fetch('/api/backup/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
       const data = await response.json();
@@ -99,7 +109,7 @@ export default function BackupsPage() {
 
       // Simulate restore process
       for (let i = 0; i <= 100; i += 10) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         setRestoreProgress(i);
       }
 
@@ -152,14 +162,18 @@ export default function BackupsPage() {
     const variants: Record<string, 'success' | 'warning' | 'danger'> = {
       completed: 'success',
       in_progress: 'warning',
-      failed: 'danger'
+      failed: 'danger',
     };
     const icons: Record<string, string> = {
       completed: '✅',
       in_progress: '⏳',
-      failed: '❌'
+      failed: '❌',
     };
-    return <Badge variant={variants[status]}>{icons[status]} {status}</Badge>;
+    return (
+      <Badge variant={variants[status]}>
+        {icons[status]} {status}
+      </Badge>
+    );
   };
 
   const columns = [
@@ -168,45 +182,45 @@ export default function BackupsPage() {
       header: 'Filename',
       render: (value: string) => (
         <span className="font-mono text-sm">{value}</span>
-      )
+      ),
     },
     {
       key: 'size',
       header: 'Size',
       width: '100px',
-      render: (value: number) => formatBytes(value)
+      render: (value: number) => formatBytes(value),
     },
     {
       key: 'records',
       header: 'Records',
       width: '100px',
-      render: (value: number) => value.toLocaleString()
+      render: (value: number) => value.toLocaleString(),
     },
     {
       key: 'type',
       header: 'Type',
       width: '120px',
       align: 'center' as const,
-      render: (value: string) => getTypeBadge(value)
+      render: (value: string) => getTypeBadge(value),
     },
     {
       key: 'status',
       header: 'Status',
       width: '140px',
       align: 'center' as const,
-      render: (value: string) => getStatusBadge(value)
+      render: (value: string) => getStatusBadge(value),
     },
     {
       key: 'duration',
       header: 'Duration',
       width: '100px',
-      render: (value: number) => formatDuration(value)
+      render: (value: number) => formatDuration(value),
     },
     {
       key: 'createdAt',
       header: 'Created',
       width: '180px',
-      render: (value: string) => new Date(value).toLocaleString()
+      render: (value: string) => new Date(value).toLocaleString(),
     },
     {
       key: 'id',
@@ -245,27 +259,37 @@ export default function BackupsPage() {
             🗑️
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   const stats = {
     total: backups.length,
-    completed: backups.filter(b => b.status === 'completed').length,
-    failed: backups.filter(b => b.status === 'failed').length,
-    totalSize: backups.reduce((sum, b) => sum + b.size, 0)
+    completed: backups.filter((b) => b.status === 'completed').length,
+    failed: backups.filter((b) => b.status === 'failed').length,
+    totalSize: backups.reduce((sum, b) => sum + b.size, 0),
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Backup Management</h1>
-            <p className="text-gray-600 mt-2">Create, restore, and manage database backups</p>
+            <h1 className="text-gray-900 text-4xl font-bold">
+              Backup Management
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Create, restore, and manage database backups
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <Button size="sm" variant="ghost" onClick={fetchBackups}>
@@ -283,29 +307,37 @@ export default function BackupsPage() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-4">
           <Card padding="sm">
-            <div className="text-center p-4">
-              <p className="text-4xl font-bold text-[#1B365D] mb-2">{stats.total}</p>
-              <p className="text-sm text-gray-600">Total Backups</p>
+            <div className="p-4 text-center">
+              <p className="mb-2 text-4xl font-bold text-[#1B365D]">
+                {stats.total}
+              </p>
+              <p className="text-gray-600 text-sm">Total Backups</p>
             </div>
           </Card>
           <Card padding="sm">
-            <div className="text-center p-4">
-              <p className="text-4xl font-bold text-green-600 mb-2">{stats.completed}</p>
-              <p className="text-sm text-gray-600">Completed</p>
+            <div className="p-4 text-center">
+              <p className="text-green-600 mb-2 text-4xl font-bold">
+                {stats.completed}
+              </p>
+              <p className="text-gray-600 text-sm">Completed</p>
             </div>
           </Card>
           <Card padding="sm">
-            <div className="text-center p-4">
-              <p className="text-4xl font-bold text-red-600 mb-2">{stats.failed}</p>
-              <p className="text-sm text-gray-600">Failed</p>
+            <div className="p-4 text-center">
+              <p className="text-red-600 mb-2 text-4xl font-bold">
+                {stats.failed}
+              </p>
+              <p className="text-gray-600 text-sm">Failed</p>
             </div>
           </Card>
           <Card padding="sm">
-            <div className="text-center p-4">
-              <p className="text-4xl font-bold text-purple-600 mb-2">{formatBytes(stats.totalSize)}</p>
-              <p className="text-sm text-gray-600">Total Size</p>
+            <div className="p-4 text-center">
+              <p className="text-purple-600 mb-2 text-4xl font-bold">
+                {formatBytes(stats.totalSize)}
+              </p>
+              <p className="text-gray-600 text-sm">Total Size</p>
             </div>
           </Card>
         </div>
@@ -314,21 +346,21 @@ export default function BackupsPage() {
         <Card className="mb-6">
           <CardHeader title="Backup Configuration" icon="⚙️" />
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Schedule</p>
-                <p className="text-lg font-bold text-gray-900">Every 6 hours</p>
+                <p className="text-gray-600 mb-1 text-sm">Schedule</p>
+                <p className="text-gray-900 text-lg font-bold">Every 6 hours</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Retention</p>
-                <p className="text-lg font-bold text-gray-900">30 days</p>
+                <p className="text-gray-600 mb-1 text-sm">Retention</p>
+                <p className="text-gray-900 text-lg font-bold">30 days</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Location</p>
-                <p className="text-lg font-bold text-gray-900">/backups</p>
+                <p className="text-gray-600 mb-1 text-sm">Location</p>
+                <p className="text-gray-900 text-lg font-bold">/backups</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 mb-1">Encryption</p>
+                <p className="text-gray-600 mb-1 text-sm">Encryption</p>
                 <Badge variant="success">🔒 AES-256</Badge>
               </div>
             </div>
@@ -344,8 +376,11 @@ export default function BackupsPage() {
               title={`Backups (${backups.length})`}
               icon="💾"
               action={
-                <p className="text-sm text-gray-600">
-                  Last backup: {backups[0] ? new Date(backups[0].createdAt).toLocaleString() : 'Never'}
+                <p className="text-gray-600 text-sm">
+                  Last backup:{' '}
+                  {backups[0]
+                    ? new Date(backups[0].createdAt).toLocaleString()
+                    : 'Never'}
                 </p>
               }
             />
@@ -376,51 +411,59 @@ export default function BackupsPage() {
           <div className="space-y-4">
             {restoreProgress === 0 ? (
               <>
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-amber-900 font-medium mb-2">⚠️ Warning</p>
-                  <p className="text-sm text-amber-800">
-                    Restoring this backup will replace all current data with the backup data.
-                    This action cannot be undone.
+                <div className="bg-amber-50 border-amber-200 rounded-lg border p-4">
+                  <p className="text-amber-900 mb-2 font-medium">⚠️ Warning</p>
+                  <p className="text-amber-800 text-sm">
+                    Restoring this backup will replace all current data with the
+                    backup data. This action cannot be undone.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Backup File:</span>
-                    <span className="font-mono text-sm font-medium">{selectedBackup.filename}</span>
+                    <span className="text-gray-600 text-sm">Backup File:</span>
+                    <span className="font-mono text-sm font-medium">
+                      {selectedBackup.filename}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Size:</span>
-                    <span className="font-medium">{formatBytes(selectedBackup.size)}</span>
+                    <span className="text-gray-600 text-sm">Size:</span>
+                    <span className="font-medium">
+                      {formatBytes(selectedBackup.size)}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Records:</span>
-                    <span className="font-medium">{selectedBackup.records.toLocaleString()}</span>
+                    <span className="text-gray-600 text-sm">Records:</span>
+                    <span className="font-medium">
+                      {selectedBackup.records.toLocaleString()}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">Created:</span>
-                    <span className="font-medium">{new Date(selectedBackup.createdAt).toLocaleString()}</span>
+                    <span className="text-gray-600 text-sm">Created:</span>
+                    <span className="font-medium">
+                      {new Date(selectedBackup.createdAt).toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm text-blue-800">
+                <div className="bg-blue-50 border-blue-200 rounded-lg border p-4">
+                  <p className="text-blue-800 text-sm">
                     💡 Tip: Create a backup of current data before restoring.
                   </p>
                 </div>
               </>
             ) : (
               <div className="space-y-4">
-                <p className="text-center text-lg font-medium text-gray-900">
+                <p className="text-gray-900 text-center text-lg font-medium">
                   Restoring backup... {restoreProgress}%
                 </p>
-                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div className="bg-gray-200 rounded-full h-4 w-full overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-[#1B365D] to-[#D4A574] h-full rounded-full transition-all"
+                    className="rounded-full h-full bg-gradient-to-r from-[#1B365D] to-[#D4A574] transition-all"
                     style={{ width: `${restoreProgress}%` }}
                   />
                 </div>
-                <p className="text-center text-sm text-gray-600">
+                <p className="text-gray-600 text-center text-sm">
                   Please wait... Do not close this window.
                 </p>
               </div>
@@ -429,7 +472,10 @@ export default function BackupsPage() {
 
           {restoreProgress === 0 && (
             <ModalFooter>
-              <Button variant="ghost" onClick={() => setShowRestoreModal(false)}>
+              <Button
+                variant="ghost"
+                onClick={() => setShowRestoreModal(false)}
+              >
                 Cancel
               </Button>
               <Button variant="warning" onClick={restoreBackup}>
@@ -451,10 +497,14 @@ export default function BackupsPage() {
           <div className="space-y-4">
             <p className="text-gray-700">
               Are you sure you want to delete backup{' '}
-              <span className="font-mono font-bold">{selectedBackup.filename}</span>?
+              <span className="font-mono font-bold">
+                {selectedBackup.filename}
+              </span>
+              ?
             </p>
-            <p className="text-sm text-gray-600">
-              This action cannot be undone. The backup file will be permanently removed.
+            <p className="text-gray-600 text-sm">
+              This action cannot be undone. The backup file will be permanently
+              removed.
             </p>
           </div>
 

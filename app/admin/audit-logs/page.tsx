@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, Button, Table, Pagination, Badge, Modal, ModalFooter, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  Button,
+  Table,
+  Pagination,
+  Badge,
+  Modal,
+  ModalFooter,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface AuditLog {
   id: number;
@@ -32,7 +42,7 @@ export default function AuditLogsPage() {
     action: '',
     startDate: '',
     endDate: '',
-    success: 'all'
+    success: 'all',
   });
 
   const pageSize = 20;
@@ -42,12 +52,36 @@ export default function AuditLogsPage() {
     try {
       // Mock data - replace with actual API call
       const mockLogs: AuditLog[] = Array.from({ length: 100 }, (_, i) => {
-        const categories: AuditLog['category'][] = ['auth', 'user', 'report', 'system', 'security'];
-        const actions = ['login', 'logout', 'create', 'update', 'delete', 'view', 'export', 'backup'];
-        const users = ['admin', 'sarah.johnson', 'michael.chen', 'emma.wilson', 'system'];
+        const categories: AuditLog['category'][] = [
+          'auth',
+          'user',
+          'report',
+          'system',
+          'security',
+        ];
+        const actions = [
+          'login',
+          'logout',
+          'create',
+          'update',
+          'delete',
+          'view',
+          'export',
+          'backup',
+        ];
+        const users = [
+          'admin',
+          'sarah.johnson',
+          'michael.chen',
+          'emma.wilson',
+          'system',
+        ];
 
-        const timestamp = new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000);
-        const category = categories[Math.floor(Math.random() * categories.length)];
+        const timestamp = new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+        );
+        const category =
+          categories[Math.floor(Math.random() * categories.length)];
         const action = actions[Math.floor(Math.random() * actions.length)];
         const username = users[Math.floor(Math.random() * users.length)];
         const success = Math.random() > 0.1;
@@ -62,7 +96,7 @@ export default function AuditLogsPage() {
           details: `User ${action} ${category} at ${timestamp.toLocaleString()}`,
           ipAddress: `192.168.1.${Math.floor(Math.random() * 255)}`,
           userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-          success
+          success,
         };
       });
 
@@ -70,23 +104,32 @@ export default function AuditLogsPage() {
       let filtered = mockLogs;
 
       if (filters.category !== 'all') {
-        filtered = filtered.filter(log => log.category === filters.category);
+        filtered = filtered.filter((log) => log.category === filters.category);
       }
 
       if (filters.userId) {
-        filtered = filtered.filter(log => log.userId.toString() === filters.userId);
+        filtered = filtered.filter(
+          (log) => log.userId.toString() === filters.userId
+        );
       }
 
       if (filters.action) {
-        filtered = filtered.filter(log => log.action.toLowerCase().includes(filters.action.toLowerCase()));
+        filtered = filtered.filter((log) =>
+          log.action.toLowerCase().includes(filters.action.toLowerCase())
+        );
       }
 
       if (filters.success !== 'all') {
-        filtered = filtered.filter(log => log.success.toString() === filters.success);
+        filtered = filtered.filter(
+          (log) => log.success.toString() === filters.success
+        );
       }
 
       // Sort by timestamp descending
-      filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      filtered.sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      );
 
       // Paginate
       const start = (currentPage - 1) * pageSize;
@@ -115,8 +158,17 @@ export default function AuditLogsPage() {
     try {
       if (format === 'csv') {
         const csv = [
-          ['ID', 'Timestamp', 'User', 'Action', 'Category', 'Success', 'IP Address', 'Details'].join(','),
-          ...logs.map(log =>
+          [
+            'ID',
+            'Timestamp',
+            'User',
+            'Action',
+            'Category',
+            'Success',
+            'IP Address',
+            'Details',
+          ].join(','),
+          ...logs.map((log) =>
             [
               log.id,
               log.timestamp,
@@ -125,9 +177,9 @@ export default function AuditLogsPage() {
               log.category,
               log.success,
               log.ipAddress,
-              `"${log.details}"`
+              `"${log.details}"`,
             ].join(',')
-          )
+          ),
         ].join('\n');
 
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -163,19 +215,20 @@ export default function AuditLogsPage() {
       action: '',
       startDate: '',
       endDate: '',
-      success: 'all'
+      success: 'all',
     });
     setCurrentPage(1);
   };
 
   const getCategoryBadge = (category: string) => {
-    const variants: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
-      auth: 'info',
-      user: 'success',
-      report: 'info',
-      system: 'warning',
-      security: 'danger'
-    };
+    const variants: Record<string, 'success' | 'warning' | 'danger' | 'info'> =
+      {
+        auth: 'info',
+        user: 'success',
+        report: 'info',
+        system: 'warning',
+        security: 'danger',
+      };
     return <Badge variant={variants[category] || 'info'}>{category}</Badge>;
   };
 
@@ -192,41 +245,41 @@ export default function AuditLogsPage() {
       key: 'timestamp',
       header: 'Timestamp',
       width: '180px',
-      render: (value: string) => new Date(value).toLocaleString()
+      render: (value: string) => new Date(value).toLocaleString(),
     },
     {
       key: 'username',
       header: 'User',
-      width: '150px'
+      width: '150px',
     },
     {
       key: 'action',
       header: 'Action',
       width: '120px',
       render: (value: string) => (
-        <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+        <span className="bg-gray-100 rounded px-2 py-1 font-mono text-sm">
           {value}
         </span>
-      )
+      ),
     },
     {
       key: 'category',
       header: 'Category',
       width: '120px',
       align: 'center' as const,
-      render: (value: string) => getCategoryBadge(value)
+      render: (value: string) => getCategoryBadge(value),
     },
     {
       key: 'success',
       header: 'Status',
       width: '120px',
       align: 'center' as const,
-      render: (value: boolean) => getSuccessBadge(value)
+      render: (value: boolean) => getSuccessBadge(value),
     },
     {
       key: 'ipAddress',
       header: 'IP Address',
-      width: '140px'
+      width: '140px',
     },
     {
       key: 'id',
@@ -234,29 +287,49 @@ export default function AuditLogsPage() {
       width: '100px',
       align: 'center' as const,
       render: (_: any, row: AuditLog) => (
-        <Button size="sm" variant="ghost" onClick={() => handleViewDetails(row)}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => handleViewDetails(row)}
+        >
           View
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Audit Logs</h1>
-            <p className="text-gray-600 mt-2">Track all system activity and user actions</p>
+            <h1 className="text-gray-900 text-4xl font-bold">Audit Logs</h1>
+            <p className="text-gray-600 mt-2">
+              Track all system activity and user actions
+            </p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button size="sm" variant="ghost" onClick={() => exportLogs('json')}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => exportLogs('json')}
+            >
               📄 Export JSON
             </Button>
-            <Button size="sm" variant="success" onClick={() => exportLogs('csv')}>
+            <Button
+              size="sm"
+              variant="success"
+              onClick={() => exportLogs('csv')}
+            >
               📥 Export CSV
             </Button>
             <Button size="sm" variant="primary" onClick={fetchLogs}>
@@ -269,15 +342,17 @@ export default function AuditLogsPage() {
         <Card className="mb-6">
           <CardHeader title="Filters" icon="🔍" />
           <div className="px-6 pb-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   Category
                 </label>
                 <select
                   value={filters.category}
-                  onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  onChange={(e) =>
+                    setFilters({ ...filters, category: e.target.value })
+                  }
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 >
                   <option value="all">All</option>
                   <option value="auth">Auth</option>
@@ -289,63 +364,73 @@ export default function AuditLogsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   User ID
                 </label>
                 <input
                   type="text"
                   value={filters.userId}
-                  onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, userId: e.target.value })
+                  }
                   placeholder="Filter by user"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   Action
                 </label>
                 <input
                   type="text"
                   value={filters.action}
-                  onChange={(e) => setFilters({ ...filters, action: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, action: e.target.value })
+                  }
                   placeholder="Filter by action"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={filters.startDate}
-                  onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  onChange={(e) =>
+                    setFilters({ ...filters, startDate: e.target.value })
+                  }
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   End Date
                 </label>
                 <input
                   type="date"
                   value={filters.endDate}
-                  onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  onChange={(e) =>
+                    setFilters({ ...filters, endDate: e.target.value })
+                  }
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="text-gray-700 mb-1 block text-sm font-medium">
                   Status
                 </label>
                 <select
                   value={filters.success}
-                  onChange={(e) => setFilters({ ...filters, success: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent text-sm"
+                  onChange={(e) =>
+                    setFilters({ ...filters, success: e.target.value })
+                  }
+                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
                 >
                   <option value="all">All</option>
                   <option value="true">Success</option>
@@ -355,8 +440,9 @@ export default function AuditLogsPage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">
-                Showing <span className="font-bold">{totalLogs}</span> total logs
+              <p className="text-gray-600 text-sm">
+                Showing <span className="font-bold">{totalLogs}</span> total
+                logs
               </p>
               <Button size="sm" variant="ghost" onClick={clearFilters}>
                 Clear Filters
@@ -404,47 +490,57 @@ export default function AuditLogsPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-gray-600">Timestamp</p>
-                <p className="text-base text-gray-900">{new Date(selectedLog.timestamp).toLocaleString()}</p>
+                <p className="text-gray-600 text-sm font-medium">Timestamp</p>
+                <p className="text-gray-900 text-base">
+                  {new Date(selectedLog.timestamp).toLocaleString()}
+                </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">User</p>
-                <p className="text-base text-gray-900">
+                <p className="text-gray-600 text-sm font-medium">User</p>
+                <p className="text-gray-900 text-base">
                   {selectedLog.username} (ID: {selectedLog.userId})
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Action</p>
-                <p className="text-base text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded inline-block">
+                <p className="text-gray-600 text-sm font-medium">Action</p>
+                <p className="text-gray-900 bg-gray-100 rounded inline-block px-2 py-1 font-mono text-base">
                   {selectedLog.action}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Category</p>
-                <div className="mt-1">{getCategoryBadge(selectedLog.category)}</div>
+                <p className="text-gray-600 text-sm font-medium">Category</p>
+                <div className="mt-1">
+                  {getCategoryBadge(selectedLog.category)}
+                </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">Status</p>
-                <div className="mt-1">{getSuccessBadge(selectedLog.success)}</div>
+                <p className="text-gray-600 text-sm font-medium">Status</p>
+                <div className="mt-1">
+                  {getSuccessBadge(selectedLog.success)}
+                </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-600">IP Address</p>
-                <p className="text-base text-gray-900 font-mono">{selectedLog.ipAddress}</p>
+                <p className="text-gray-600 text-sm font-medium">IP Address</p>
+                <p className="text-gray-900 font-mono text-base">
+                  {selectedLog.ipAddress}
+                </p>
               </div>
             </div>
 
             <hr />
 
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">Details</p>
-              <p className="text-base text-gray-900 bg-gray-50 p-3 rounded-lg">
+              <p className="text-gray-600 mb-2 text-sm font-medium">Details</p>
+              <p className="text-gray-900 bg-gray-50 rounded-lg p-3 text-base">
                 {selectedLog.details}
               </p>
             </div>
 
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-2">User Agent</p>
-              <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg font-mono break-all">
+              <p className="text-gray-600 mb-2 text-sm font-medium">
+                User Agent
+              </p>
+              <p className="text-gray-700 bg-gray-50 break-all rounded-lg p-3 font-mono text-sm">
                 {selectedLog.userAgent}
               </p>
             </div>
@@ -454,7 +550,10 @@ export default function AuditLogsPage() {
             <Button variant="ghost" onClick={() => setShowDetailsModal(false)}>
               Close
             </Button>
-            <Button variant="primary" onClick={() => console.log('View related logs')}>
+            <Button
+              variant="primary"
+              onClick={() => console.log('View related logs')}
+            >
               View Related Logs
             </Button>
           </ModalFooter>

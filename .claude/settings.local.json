@@ -88,7 +88,8 @@
       "Bash(head:*)",
       "Bash(timeout 5 curl:*)",
       "Bash(timeout 10 curl:*)",
-      "Bash(./setup-dar-demo.sh:*)"
+      "Bash(./setup-dar-demo.sh:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

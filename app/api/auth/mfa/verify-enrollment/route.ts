@@ -32,7 +32,11 @@ export async function POST(request: NextRequest) {
 
     // Complete enrollment
     const mfaService = getMFAService();
-    const result = await mfaService.completeEnrollment(userId, enrollmentToken, totpCode);
+    const result = await mfaService.completeEnrollment(
+      userId,
+      enrollmentToken,
+      totpCode
+    );
 
     if (result.success) {
       logger.info(

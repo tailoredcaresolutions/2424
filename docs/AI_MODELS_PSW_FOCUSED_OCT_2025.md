@@ -1,4 +1,5 @@
 # 🎯 AI MODELS FOR PSW DOCUMENTATION - OCTOBER 2025
+
 ## Conversational AI Focus for Activities of Daily Living (ADL)
 
 **Research Date**: October 23, 2025
@@ -30,14 +31,12 @@ Documentation Style:
   - Routine care completion tracking
   - Behavioral and emotional observations
 
-Example PSW Notes:
-  "Client ate well at breakfast - finished eggs and toast.
-   Was in good spirits, talked about visiting family this weekend.
-   Assisted with shower, no issues. Walked to dining room
-   independently with walker."
+Example PSW Notes: 'Client ate well at breakfast - finished eggs and toast.
+  Was in good spirits, talked about visiting family this weekend.
+  Assisted with shower, no issues. Walked to dining room
+  independently with walker.'
 
-Key Difference from Medical:
-  ✗ NOT writing prescriptions
+Key Difference from Medical: ✗ NOT writing prescriptions
   ✗ NOT diagnosing conditions
   ✗ NOT clinical assessments
   ✓ Daily living observations
@@ -48,8 +47,7 @@ Key Difference from Medical:
 ### AI Requirements for PSW Use Case
 
 ```yaml
-Priority Skills:
-  1. Natural conversation understanding
+Priority Skills: 1. Natural conversation understanding
   2. Extracting structured data from casual speech
   3. Context retention across shift
   4. Empathetic tone detection
@@ -57,8 +55,7 @@ Priority Skills:
   6. Fast response times (<2.5s)
   7. Offline capability (local models)
 
-NOT Required:
-  ✗ Medical terminology expertise
+NOT Required: ✗ Medical terminology expertise
   ✗ Diagnostic capabilities
   ✗ Clinical decision support
   ✗ Drug interaction checking
@@ -80,8 +77,7 @@ Context: 128K tokens
 Release: December 6, 2024
 Provider: Meta AI
 
-Strengths for PSW:
-  ✓ Optimized for dialogue use cases
+Strengths for PSW: ✓ Optimized for dialogue use cases
   ✓ Multilingual support (client interactions)
   ✓ Excellent at casual conversation understanding
   ✓ Strong context retention
@@ -195,8 +191,7 @@ Availability: API only (Pro plan)
 Release: Late 2025
 Pricing: Higher than GPT-4 Turbo
 
-Strengths for PSW:
-  ✓ Enhanced conversational quality
+Strengths for PSW: ✓ Enhanced conversational quality
   ✓ More direct, less verbose responses
   ✓ Improved emotional intelligence
   ✓ Empathetic interactions
@@ -204,13 +199,12 @@ Strengths for PSW:
   ✓ Latest training data (2025)
 
 Conversational Quality:
-  - "More direct, less verbose"
+  - 'More direct, less verbose'
   - Specialized emotional context
   - Nuanced understanding
   - Best for complex emotional states
 
-Trade-offs:
-  ✗ Requires internet (no offline)
+Trade-offs: ✗ Requires internet (no offline)
   ✗ Higher API costs
   ✗ Data leaves premises (privacy concern)
   ✗ Dependent on OpenAI service
@@ -230,14 +224,12 @@ Context: 1M tokens
 Release: April 2025
 Provider: Meta AI
 
-Strengths:
-  ✓ Best multimodal model in class
+Strengths: ✓ Best multimodal model in class
   ✓ Outperforms GPT-4o on benchmarks
   ✓ Excellent reasoning and coding
   ✓ Best performance-to-cost ratio
 
-Trade-offs:
-  ⚠️ Overkill for PSW documentation
+Trade-offs: ⚠️ Overkill for PSW documentation
   ⚠️ 400B total parameters (huge)
   ⚠️ Resource intensive
   ⚠️ Not necessary for ADL notes
@@ -283,6 +275,7 @@ Current Benchmarks:
 ### Upgrade Paths (If Needed)
 
 **Scenario 1: Context Window Too Small**
+
 ```yaml
 Problem: 128K tokens not enough for full shift history
 Solution: Upgrade to Llama 4 Scout (10M tokens)
@@ -290,6 +283,7 @@ Trigger: PSWs report missing historical context
 ```
 
 **Scenario 2: Quality Issues**
+
 ```yaml
 Problem: Llama 3.3 struggles with complex conversations
 Solution: Add Claude 3.7 Sonnet API as fallback
@@ -298,6 +292,7 @@ Cost: ~$200-300/month for 50 PSWs
 ```
 
 **Scenario 3: Speed Bottleneck**
+
 ```yaml
 Problem: 13.7 tok/s too slow for peak usage
 Solution: Upgrade to Llama 4 Scout (MoE = faster)
@@ -334,24 +329,25 @@ Reason: PSWs don't write clinical notes!
 ```yaml
 Test 1: Morning Routine
 Input: "Sarah had a good morning, ate all her oatmeal and fruit,
-        took her pills without issue. She was chatty today, asked
-        about her daughter's visit this afternoon. Helped her with
-        shower, no problems. She walked to the bathroom herself
-        with her walker."
+  took her pills without issue. She was chatty today, asked
+  about her daughter's visit this afternoon. Helped her with
+  shower, no problems. She walked to the bathroom herself
+  with her walker."
 
 Expected Output:
   {
-    "client": "Sarah",
-    "meal": {
-      "type": "breakfast",
-      "intake": "complete",
-      "items": ["oatmeal", "fruit"]
-    },
-    "medication": "taken without issue",
-    "mood": "good, chatty",
-    "social": "anticipating daughter's visit",
-    "personal_care": "shower completed, assisted",
-    "mobility": "independent with walker"
+    'client': 'Sarah',
+    'meal':
+      {
+        'type': 'breakfast',
+        'intake': 'complete',
+        'items': ['oatmeal', 'fruit'],
+      },
+    'medication': 'taken without issue',
+    'mood': 'good, chatty',
+    'social': "anticipating daughter's visit",
+    'personal_care': 'shower completed, assisted',
+    'mobility': 'independent with walker',
   }
 
 Llama 3.3 70B Result: ✅ PASS (100% accurate)
@@ -360,23 +356,20 @@ Llama 3.3 70B Result: ✅ PASS (100% accurate)
 ```yaml
 Test 2: Emotional State
 Input: "John seemed a bit down today, didn't want to get out of bed
-        at first. Eventually I helped him up and he ate a little bit
-        of breakfast but left most of it. He said he misses his wife.
-        We sat and talked for a while, looked at old photos. He felt
-        a bit better after that."
+  at first. Eventually I helped him up and he ate a little bit
+  of breakfast but left most of it. He said he misses his wife.
+  We sat and talked for a while, looked at old photos. He felt
+  a bit better after that."
 
 Expected Output:
   {
-    "client": "John",
-    "mood": "down, sad",
-    "reason": "missing deceased wife",
-    "meal": {
-      "type": "breakfast",
-      "intake": "poor (little consumed)"
-    },
-    "psw_intervention": "emotional support, reminiscence therapy",
-    "outcome": "improved mood",
-    "notable": "required extra encouragement to get up"
+    'client': 'John',
+    'mood': 'down, sad',
+    'reason': 'missing deceased wife',
+    'meal': { 'type': 'breakfast', 'intake': 'poor (little consumed)' },
+    'psw_intervention': 'emotional support, reminiscence therapy',
+    'outcome': 'improved mood',
+    'notable': 'required extra encouragement to get up',
   }
 
 Llama 3.3 70B Result: ✅ PASS (empathy recognized)
@@ -384,24 +377,25 @@ Llama 3.3 70B Result: ✅ PASS (empathy recognized)
 
 ```yaml
 Test 3: Multilingual Client
-Input: "Mrs. Chen was speaking Cantonese today, seemed confused.
-        I got the translator app and we figured out she wanted to
-        call her son. After the call she calmed down and ate her
-        lunch well. Rice and vegetables, she really enjoyed it."
+Input: 'Mrs. Chen was speaking Cantonese today, seemed confused.
+  I got the translator app and we figured out she wanted to
+  call her son. After the call she calmed down and ate her
+  lunch well. Rice and vegetables, she really enjoyed it.'
 
 Expected Output:
   {
-    "client": "Mrs. Chen",
-    "language": "Cantonese",
-    "mental_state": "confused initially",
-    "intervention": "facilitated family phone call",
-    "outcome": "calmed after speaking with son",
-    "meal": {
-      "type": "lunch",
-      "intake": "good",
-      "items": ["rice", "vegetables"],
-      "preference_noted": "enjoyed meal"
-    }
+    'client': 'Mrs. Chen',
+    'language': 'Cantonese',
+    'mental_state': 'confused initially',
+    'intervention': 'facilitated family phone call',
+    'outcome': 'calmed after speaking with son',
+    'meal':
+      {
+        'type': 'lunch',
+        'intake': 'good',
+        'items': ['rice', 'vegetables'],
+        'preference_noted': 'enjoyed meal',
+      },
   }
 
 Llama 3.3 70B Result: ✅ PASS (cultural context understood)
@@ -409,15 +403,15 @@ Llama 3.3 70B Result: ✅ PASS (cultural context understood)
 
 ### Performance Benchmarks
 
-| Metric | Target | Llama 3.3 70B | Status |
-|--------|--------|---------------|--------|
-| **Response Time** | <2.5s | 2.69s | ⚠️ Close (acceptable) |
-| **Tokens/Second** | >10 | 13.7 | ✅ Good |
-| **Conversation Accuracy** | >90% | ~95% | ✅ Excellent |
-| **Emotional Context** | Recognized | ✅ Yes | ✅ Pass |
-| **Multilingual** | Supported | ✅ Yes | ✅ Pass |
-| **Context Retention** | Full shift | ✅ Yes (128K) | ✅ Pass |
-| **Cost per Month** | <$500 | $0 (local) | ✅ Excellent |
+| Metric                    | Target     | Llama 3.3 70B | Status                |
+| ------------------------- | ---------- | ------------- | --------------------- |
+| **Response Time**         | <2.5s      | 2.69s         | ⚠️ Close (acceptable) |
+| **Tokens/Second**         | >10        | 13.7          | ✅ Good               |
+| **Conversation Accuracy** | >90%       | ~95%          | ✅ Excellent          |
+| **Emotional Context**     | Recognized | ✅ Yes        | ✅ Pass               |
+| **Multilingual**          | Supported  | ✅ Yes        | ✅ Pass               |
+| **Context Retention**     | Full shift | ✅ Yes (128K) | ✅ Pass               |
+| **Cost per Month**        | <$500      | $0 (local)    | ✅ Excellent          |
 
 **Verdict**: ✅ **Llama 3.3 70B meets all PSW requirements**
 
@@ -462,8 +456,7 @@ Llama 3.3 70B Result: ✅ PASS (cultural context understood)
 ### Quarterly Review Checklist
 
 ```yaml
-Every 3 Months:
-  ☐ Check PSW satisfaction scores
+Every 3 Months: ☐ Check PSW satisfaction scores
   ☐ Review misinterpretation reports
   ☐ Measure average response times
   ☐ Test new model releases
@@ -472,8 +465,7 @@ Every 3 Months:
   ☐ Review context window utilization
   ☐ Test multilingual performance
 
-If any metric degrades:
-  → Test alternative models
+If any metric degrades: → Test alternative models
   → Compare side-by-side
   → Gradual rollout (A/B testing)
 ```
@@ -514,7 +506,7 @@ Output:
   "meal": {"type": "breakfast", "intake": "good"},
   "mood": "good spirits",
   "personal_care": "shower assisted, no problems"
-}`
+}`;
 
 // Use with Ollama
 const response = await fetch('http://localhost:11434/api/generate', {
@@ -525,12 +517,12 @@ const response = await fetch('http://localhost:11434/api/generate', {
     prompt: pswInput,
     stream: false,
     options: {
-      temperature: 0.3,  // Lower = more consistent
+      temperature: 0.3, // Lower = more consistent
       top_p: 0.9,
-      num_predict: 500,   // Enough for structured output
-    }
-  })
-})
+      num_predict: 500, // Enough for structured output
+    },
+  }),
+});
 ```
 
 ### Context Window Management
@@ -539,41 +531,42 @@ const response = await fetch('http://localhost:11434/api/generate', {
 // Track conversation history for context
 class PSWShiftContext {
   constructor() {
-    this.shiftStart = new Date()
-    this.messages = []
-    this.maxTokens = 128000  // Llama 3.3 context limit
+    this.shiftStart = new Date();
+    this.messages = [];
+    this.maxTokens = 128000; // Llama 3.3 context limit
   }
 
   addMessage(role, content) {
-    this.messages.push({ role, content, timestamp: new Date() })
+    this.messages.push({ role, content, timestamp: new Date() });
 
     // Estimate tokens (~0.75 tokens per word)
     const estimatedTokens = this.messages
-      .map(m => m.content.split(' ').length * 0.75)
-      .reduce((a, b) => a + b, 0)
+      .map((m) => m.content.split(' ').length * 0.75)
+      .reduce((a, b) => a + b, 0);
 
     // If approaching limit, summarize older messages
-    if (estimatedTokens > 100000) {  // 80% of limit
-      this.summarizeOldMessages()
+    if (estimatedTokens > 100000) {
+      // 80% of limit
+      this.summarizeOldMessages();
     }
   }
 
   summarizeOldMessages() {
     // Keep last 10 messages, summarize the rest
-    const keep = this.messages.slice(-10)
-    const summarize = this.messages.slice(0, -10)
+    const keep = this.messages.slice(-10);
+    const summarize = this.messages.slice(0, -10);
 
     // Generate summary of older messages
     const summary = {
       role: 'system',
-      content: `Shift summary: ${summarize.length} earlier activities documented. Key points: [AI-generated summary]`
-    }
+      content: `Shift summary: ${summarize.length} earlier activities documented. Key points: [AI-generated summary]`,
+    };
 
-    this.messages = [summary, ...keep]
+    this.messages = [summary, ...keep];
   }
 
   getContext() {
-    return this.messages
+    return this.messages;
   }
 }
 ```
@@ -588,55 +581,59 @@ class PSWAIMonitor {
       responseTime: [],
       extractionErrors: 0,
       totalRequests: 0,
-      pswFeedback: []
-    }
+      pswFeedback: [],
+    };
   }
 
   recordResponse(duration, success, pswFeedback = null) {
-    this.totalRequests++
-    this.responseTime.push(duration)
+    this.totalRequests++;
+    this.responseTime.push(duration);
 
     if (!success) {
-      this.extractionErrors++
+      this.extractionErrors++;
     }
 
     if (pswFeedback) {
-      this.pswFeedback.push(pswFeedback)
+      this.pswFeedback.push(pswFeedback);
     }
 
     // Alert if quality degrades
-    const errorRate = this.extractionErrors / this.totalRequests
-    if (errorRate > 0.1) {  // >10% error rate
-      this.alertModelQualityIssue()
+    const errorRate = this.extractionErrors / this.totalRequests;
+    if (errorRate > 0.1) {
+      // >10% error rate
+      this.alertModelQualityIssue();
     }
 
     // Alert if speed degrades
-    const avgResponseTime = this.responseTime
-      .slice(-100)  // Last 100 requests
-      .reduce((a, b) => a + b, 0) / 100
+    const avgResponseTime =
+      this.responseTime
+        .slice(-100) // Last 100 requests
+        .reduce((a, b) => a + b, 0) / 100;
 
-    if (avgResponseTime > 5000) {  // >5 seconds
-      this.alertModelSpeedIssue()
+    if (avgResponseTime > 5000) {
+      // >5 seconds
+      this.alertModelSpeedIssue();
     }
   }
 
   alertModelQualityIssue() {
-    console.error('⚠️ AI model quality degraded. Consider model upgrade.')
+    console.error('⚠️ AI model quality degraded. Consider model upgrade.');
     // Trigger evaluation of alternative models
   }
 
   alertModelSpeedIssue() {
-    console.error('⚠️ AI model speed degraded. Check system resources.')
+    console.error('⚠️ AI model speed degraded. Check system resources.');
     // Trigger performance optimization
   }
 
   getMetrics() {
     return {
-      avgResponseTime: this.responseTime.reduce((a,b) => a+b, 0) / this.responseTime.length,
+      avgResponseTime:
+        this.responseTime.reduce((a, b) => a + b, 0) / this.responseTime.length,
       errorRate: (this.extractionErrors / this.totalRequests) * 100,
       totalRequests: this.totalRequests,
-      recentFeedback: this.pswFeedback.slice(-20)
-    }
+      recentFeedback: this.pswFeedback.slice(-20),
+    };
   }
 }
 ```
@@ -650,8 +647,7 @@ class PSWAIMonitor {
 **Current Setup: Llama 3.3 70B** = ✅ **OPTIMAL**
 
 ```yaml
-Why It's Perfect:
-  ✓ Dialogue-optimized model
+Why It's Perfect: ✓ Dialogue-optimized model
   ✓ Conversational understanding excellent
   ✓ Emotional context recognition
   ✓ Fast enough for production (<3s)

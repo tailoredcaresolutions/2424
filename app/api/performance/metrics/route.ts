@@ -71,7 +71,10 @@ export async function POST(request: NextRequest) {
   try {
     const optimizer = getPerformanceOptimizer();
 
-    logger.info({ type: 'performance_optimization_triggered' }, 'Performance optimization triggered via API');
+    logger.info(
+      { type: 'performance_optimization_triggered' },
+      'Performance optimization triggered via API'
+    );
 
     // Run optimization
     const result = await optimizer.optimize();

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-25T22:54:28.126Z",
+  "timestamp": "2025-10-28T03:20:21.019Z",
   "system": {
     "hardware": "Mac Studio M3 Ultra",
     "cpu": "60-core",
@@ -12,36 +12,36 @@
       {
         "model": "whisper-small",
         "audioDuration": 10,
-        "transcribeTime": 0.101,
-        "speedMultiplier": "99.0x",
-        "status": "estimated"
-      },
-      {
-        "model": "whisper-small",
-        "audioDuration": 30,
-        "transcribeTime": 0.101,
-        "speedMultiplier": "297.0x",
-        "status": "estimated"
-      },
-      {
-        "model": "whisper-small",
-        "audioDuration": 60,
-        "transcribeTime": 0.101,
-        "speedMultiplier": "594.1x",
-        "status": "estimated"
-      },
-      {
-        "model": "whisper-medium",
-        "audioDuration": 10,
         "transcribeTime": 0.1,
         "speedMultiplier": "100.0x",
         "status": "estimated"
       },
       {
+        "model": "whisper-small",
+        "audioDuration": 30,
+        "transcribeTime": 0.101,
+        "speedMultiplier": "297.0x",
+        "status": "estimated"
+      },
+      {
+        "model": "whisper-small",
+        "audioDuration": 60,
+        "transcribeTime": 0.101,
+        "speedMultiplier": "594.1x",
+        "status": "estimated"
+      },
+      {
+        "model": "whisper-medium",
+        "audioDuration": 10,
+        "transcribeTime": 0.101,
+        "speedMultiplier": "99.0x",
+        "status": "estimated"
+      },
+      {
         "model": "whisper-medium",
         "audioDuration": 30,
-        "transcribeTime": 0.102,
-        "speedMultiplier": "294.1x",
+        "transcribeTime": 0.101,
+        "speedMultiplier": "297.0x",
         "status": "estimated"
       },
       {
@@ -68,8 +68,8 @@
       {
         "model": "whisper-large-v3",
         "audioDuration": 60,
-        "transcribeTime": 0.101,
-        "speedMultiplier": "594.1x",
+        "transcribeTime": 0.102,
+        "speedMultiplier": "588.2x",
         "status": "estimated"
       }
     ],

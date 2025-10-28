@@ -34,3 +34,51 @@
 ## Next Step
 
 Reply **"APPLY CHANGES"** to move files to production paths.
+
+---
+
+## 2025-02-XX Phase 1 Local Audit (Codex)
+
+**Scope**: Validate high-priority routes, note brand/a11y gaps, confirm env hardening + TDZ risks.
+
+### UI Screen Findings
+
+| Page | Brand & Golden Orb | Accessibility | Notes |
+|------|--------------------|---------------|-------|
+| `app/splash/page.tsx` | ✅ Navy/Gold palette, but animation implemented via custom CSS (no Framer Motion/glassmorphism as spec’d) | ✅ Reduced-motion fallback | Need Framer Motion-powered golden orb + subtle glass layer. |
+| `app/auth/page.tsx` | ✅ Gradient Navy/Gold card matches brand | ✅ Semantic labels + alert role | Confirm upstream admin-only routing (route currently public). |
+| `app/session/page.tsx` | ✅ Mic orb + Navy/Gold quick actions | ⚠️ Focus management (record button) + aria-live present but no programmatic focus reset | Add managed focus when recording toggles; ensure keyboard shortcut helper stays accessible. |
+| `app/review/page.tsx` | ⚠️ Uses slate/neutral palette (off-brand); no orb | ⚠️ Missing Ctrl+E / Ctrl+S shortcuts; copy buttons OK | Re-theme to Navy/Gold glass look; add keyboard handlers + status messaging. |
+| `app/settings/page.tsx` | ✅ Brand + required locales & toggles | ⚠️ Toggles only update local state | Wire toggles to persisted/global prefs once store is ready. |
+
+### Environment & Guardrails
+
+- `.env.production.local` already includes all required local-only keys (AUTH_SECRET length 64, Ollama/Whisper paths, `IS_LOCAL_RUNTIME`). **Status: PASS**
+- Need follow-up scan to ensure no `NEXT_PUBLIC_*` secrets ship with production values.
+
+### TDZ / Closure Risks (`components/PSWVoiceReporter.js`)
+
+- `useEffect` blocks depend on callbacks (`toggleListening`, `generateReport`, `startConversation`, `handleSpeechInput`) declared later; these must be hoisted + wrapped in `useCallback` with precise dependency arrays to avoid TDZ/stale closures.
+- Several effects include callbacks they don’t invoke (e.g., scroll effect listing `handleSpeechInput`), inflating dependency noise; plan to tighten dependencies during Phase 2.
+
+### Next Actions
+
+1. Phase 2 – Refactor `PSWVoiceReporter` callbacks (hoist/memoize) and implement dynamic route/client wrapper/config updates.
+2. Prepare v0 prompts for Splash + Review screens once brand/a11y deltas are addressed manually or via DEV-ASSIST.
+3. Re-run lint / a11y tooling post-updates to confirm clean slate before build.
+
+---
+
+## 2025-02-XX Phase 3 UI Remediation (Codex)
+
+**Scope**: Apply on-brand Navy/Gold treatments, reinstate golden orb hero, and wire keyboard/a11y interactions for review workflows.
+
+### Implemented
+
+- `app/splash/page.tsx` now renders a Framer Motion powered GOLDEN ORB with glassmorphism shell, honors `prefers-reduced-motion`, and maintains timed redirect to `/auth`.
+- `app/review/page.tsx` re-themed to Navy/Gold glass UI with orbit accent, adds inline shortcut legend, and implements keyboard handlers for `Ctrl+E`, `Ctrl+S`, and `Ctrl+Shift+C` alongside aria-live status updates.
+
+### Outstanding / Follow-up
+
+- Run lint/a11y tooling in Phase 4 to confirm no regressions.
+- Review page still uses static sample data; wire to generated content when backend ready.

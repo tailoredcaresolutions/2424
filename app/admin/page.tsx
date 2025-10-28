@@ -3,7 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, CardContent, StatCard, Button, Badge, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  StatCard,
+  Button,
+  Badge,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface DashboardStats {
   totalReports: number;
@@ -52,7 +60,7 @@ export default function AdminDashboard() {
         systemHealth: healthData.success ? 'healthy' : 'warning',
         aiPerformance: {
           avgResponseTime: perfData.data?.metrics?.avgQueryTime || 150,
-          errorRate: 0.8
+          errorRate: 0.8,
         },
         recentActivity: [
           {
@@ -60,35 +68,35 @@ export default function AdminDashboard() {
             type: 'report',
             message: 'New shift report created',
             timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-            user: 'Sarah Johnson'
+            user: 'Sarah Johnson',
           },
           {
             id: 2,
             type: 'user',
             message: 'User enrolled in MFA',
             timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
-            user: 'Michael Chen'
+            user: 'Michael Chen',
           },
           {
             id: 3,
             type: 'backup',
             message: 'Automated backup completed',
-            timestamp: new Date(Date.now() - 2 * 3600000).toISOString()
+            timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
           },
           {
             id: 4,
             type: 'system',
             message: 'Performance optimization completed',
-            timestamp: new Date(Date.now() - 4 * 3600000).toISOString()
+            timestamp: new Date(Date.now() - 4 * 3600000).toISOString(),
           },
           {
             id: 5,
             type: 'security',
             message: 'Security audit log exported',
             timestamp: new Date(Date.now() - 6 * 3600000).toISOString(),
-            user: 'Admin'
-          }
-        ]
+            user: 'Admin',
+          },
+        ],
       };
 
       setStats(mockStats);
@@ -107,7 +115,7 @@ export default function AdminDashboard() {
       user: '👤',
       backup: '💾',
       system: '⚙️',
-      security: '🔒'
+      security: '🔒',
     };
     return icons[type] || '📌';
   };
@@ -131,7 +139,13 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-        <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+        <Navigation
+          user={{
+            name: 'Admin User',
+            role: 'admin',
+            email: 'admin@tailoredcare.ca',
+          }}
+        />
         <LoadingSpinner fullScreen text="Loading dashboard..." />
       </div>
     );
@@ -139,25 +153,33 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white">Admin Dashboard</h1>
-            <p className="text-white/70 mt-2">PSW Voice Documentation System • Enterprise Control Center</p>
+            <h1 className="text-white text-4xl font-bold">Admin Dashboard</h1>
+            <p className="text-white/70 mt-2">
+              PSW Voice Documentation System • Enterprise Control Center
+            </p>
           </div>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-[#3B0F0F] to-[#5B1A1A] border border-red-500/40 rounded-2xl text-red-100 shadow-[0_15px_40px_rgba(59,15,15,0.5)]">
+          <div className="border-red-500/40 rounded-2xl text-red-100 mb-6 border bg-gradient-to-r from-[#3B0F0F] to-[#5B1A1A] p-4 shadow-[0_15px_40px_rgba(59,15,15,0.5)]">
             ⚠️ {error}
           </div>
         )}
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
             title="Total Reports"
             value={stats?.totalReports || 0}
@@ -195,52 +217,84 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader title="Quick Actions" icon="⚡" />
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 <Link href="/admin/monitoring">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">📊</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">📊</span>
                     <span className="text-sm">Monitoring</span>
                   </Button>
                 </Link>
                 <Link href="/admin/users">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">👥</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">👥</span>
                     <span className="text-sm">Users</span>
                   </Button>
                 </Link>
                 <Link href="/search">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">🔍</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">🔍</span>
                     <span className="text-sm">Search</span>
                   </Button>
                 </Link>
                 <Link href="/reports">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">📋</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">📋</span>
                     <span className="text-sm">Reports</span>
                   </Button>
                 </Link>
                 <Link href="/admin/backups">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">💾</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">💾</span>
                     <span className="text-sm">Backups</span>
                   </Button>
                 </Link>
                 <Link href="/admin/audit-logs">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">📜</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">📜</span>
                     <span className="text-sm">Audit Logs</span>
                   </Button>
                 </Link>
                 <Link href="/analytics">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">📈</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">📈</span>
                     <span className="text-sm">Analytics</span>
                   </Button>
                 </Link>
                 <Link href="/settings">
-                  <Button variant="ghost" fullWidth className="h-24 flex-col border border-white/15 text-white hover:text-[#2C1301]">
-                    <span className="text-2xl mb-1">⚙️</span>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
+                  >
+                    <span className="mb-1 text-2xl">⚙️</span>
                     <span className="text-sm">Settings</span>
                   </Button>
                 </Link>
@@ -250,7 +304,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity & System Status */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Recent Activity */}
           <Card>
             <CardHeader
@@ -266,17 +320,28 @@ export default function AdminDashboard() {
               {stats?.recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="flex items-start space-x-3 p-3 rounded-2xl bg-white/85 border border-[#F1E0CC] hover:-translate-y-0.5 transition-all"
+                  className="rounded-2xl bg-white/85 flex items-start space-x-3 border border-[#F1E0CC] p-3 transition-all hover:-translate-y-0.5"
                 >
-                  <span className="text-2xl">{getActivityIcon(activity.type)}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#1F1B16]">{activity.message}</p>
+                  <span className="text-2xl">
+                    {getActivityIcon(activity.type)}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-[#1F1B16]">
+                      {activity.message}
+                    </p>
                     {activity.user && (
-                      <p className="text-xs text-[#7A6A58]">by {activity.user}</p>
+                      <p className="text-xs text-[#7A6A58]">
+                        by {activity.user}
+                      </p>
                     )}
-                    <p className="text-xs text-[#9A8A78] mt-1">{formatTimestamp(activity.timestamp)}</p>
+                    <p className="mt-1 text-xs text-[#9A8A78]">
+                      {formatTimestamp(activity.timestamp)}
+                    </p>
                   </div>
-                  <Badge variant={activity.type === 'security' ? 'warning' : 'info'} size="sm">
+                  <Badge
+                    variant={activity.type === 'security' ? 'warning' : 'info'}
+                    size="sm"
+                  >
                     {activity.type}
                   </Badge>
                 </div>
@@ -288,29 +353,33 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader title="System Status" icon="💻" />
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-white/85 border border-[#F1E0CC] rounded-2xl">
+              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">✅</span>
                   <div>
                     <p className="font-medium text-[#1F1B16]">Database</p>
-                    <p className="text-xs text-[#7A6A58]">Connected & healthy</p>
+                    <p className="text-xs text-[#7A6A58]">
+                      Connected & healthy
+                    </p>
                   </div>
                 </div>
                 <Badge variant="success">Online</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-white/85 border border-[#F1E0CC] rounded-2xl">
+              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">🤖</span>
                   <div>
                     <p className="font-medium text-[#1F1B16]">AI Model</p>
-                    <p className="text-xs text-[#7A6A58]">Llama 3.3 70B operational</p>
+                    <p className="text-xs text-[#7A6A58]">
+                      Llama 3.3 70B operational
+                    </p>
                   </div>
                 </div>
                 <Badge variant="success">Running</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-white/85 border border-[#F1E0CC] rounded-2xl">
+              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">⚡</span>
                   <div>
@@ -321,7 +390,7 @@ export default function AdminDashboard() {
                 <Badge variant="success">Active</Badge>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-white/85 border border-[#F1E0CC] rounded-2xl">
+              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">💾</span>
                   <div>

@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, Button, Table, Badge, Modal, ModalFooter, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  Button,
+  Table,
+  Badge,
+  Modal,
+  ModalFooter,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface User {
   id: number;
@@ -31,7 +40,7 @@ export default function UsersPage() {
     fullName: '',
     role: 'psw' as 'admin' | 'supervisor' | 'psw',
     password: '',
-    active: true
+    active: true,
   });
 
   const fetchUsers = useCallback(async () => {
@@ -48,7 +57,7 @@ export default function UsersPage() {
           mfaEnabled: true,
           active: true,
           createdAt: '2025-01-01T00:00:00Z',
-          lastLogin: new Date().toISOString()
+          lastLogin: new Date().toISOString(),
         },
         {
           id: 2,
@@ -59,7 +68,7 @@ export default function UsersPage() {
           mfaEnabled: true,
           active: true,
           createdAt: '2025-01-15T00:00:00Z',
-          lastLogin: new Date(Date.now() - 2 * 3600000).toISOString()
+          lastLogin: new Date(Date.now() - 2 * 3600000).toISOString(),
         },
         {
           id: 3,
@@ -70,7 +79,7 @@ export default function UsersPage() {
           mfaEnabled: true,
           active: true,
           createdAt: '2025-01-10T00:00:00Z',
-          lastLogin: new Date(Date.now() - 5 * 3600000).toISOString()
+          lastLogin: new Date(Date.now() - 5 * 3600000).toISOString(),
         },
         {
           id: 4,
@@ -81,7 +90,7 @@ export default function UsersPage() {
           mfaEnabled: false,
           active: true,
           createdAt: '2025-02-01T00:00:00Z',
-          lastLogin: new Date(Date.now() - 24 * 3600000).toISOString()
+          lastLogin: new Date(Date.now() - 24 * 3600000).toISOString(),
         },
         {
           id: 5,
@@ -91,13 +100,14 @@ export default function UsersPage() {
           role: 'psw',
           mfaEnabled: false,
           active: false,
-          createdAt: '2024-12-15T00:00:00Z'
-        }
+          createdAt: '2024-12-15T00:00:00Z',
+        },
       ];
 
-      const filtered = filterRole === 'all'
-        ? mockUsers
-        : mockUsers.filter(u => u.role === filterRole);
+      const filtered =
+        filterRole === 'all'
+          ? mockUsers
+          : mockUsers.filter((u) => u.role === filterRole);
 
       setUsers(filtered);
     } catch (error) {
@@ -118,7 +128,7 @@ export default function UsersPage() {
       fullName: '',
       role: 'psw',
       password: '',
-      active: true
+      active: true,
     });
     setShowAddModal(true);
   };
@@ -131,7 +141,7 @@ export default function UsersPage() {
       fullName: user.fullName,
       role: user.role,
       password: '',
-      active: user.active
+      active: user.active,
     });
     setShowEditModal(true);
   };
@@ -178,12 +188,12 @@ export default function UsersPage() {
     const variants: Record<string, 'danger' | 'warning' | 'info'> = {
       admin: 'danger',
       supervisor: 'warning',
-      psw: 'info'
+      psw: 'info',
     };
     const icons: Record<string, string> = {
       admin: '👑',
       supervisor: '👨‍💼',
-      psw: '👨‍⚕️'
+      psw: '👨‍⚕️',
     };
     return (
       <Badge variant={variants[role] || 'default'}>
@@ -196,7 +206,7 @@ export default function UsersPage() {
     {
       key: 'id',
       header: 'ID',
-      width: '80px'
+      width: '80px',
     },
     {
       key: 'fullName',
@@ -204,22 +214,22 @@ export default function UsersPage() {
       width: '200px',
       render: (value: string, row: User) => (
         <div>
-          <p className="font-medium text-gray-900">{value}</p>
-          <p className="text-xs text-gray-500">{row.username}</p>
+          <p className="text-gray-900 font-medium">{value}</p>
+          <p className="text-gray-500 text-xs">{row.username}</p>
         </div>
-      )
+      ),
     },
     {
       key: 'email',
       header: 'Email',
-      width: '250px'
+      width: '250px',
     },
     {
       key: 'role',
       header: 'Role',
       width: '150px',
       align: 'center' as const,
-      render: (value: string) => getRoleBadge(value)
+      render: (value: string) => getRoleBadge(value),
     },
     {
       key: 'mfaEnabled',
@@ -230,7 +240,7 @@ export default function UsersPage() {
         <Badge variant={value ? 'success' : 'warning'}>
           {value ? '🔒 Yes' : '⚠️ No'}
         </Badge>
-      )
+      ),
     },
     {
       key: 'active',
@@ -241,14 +251,14 @@ export default function UsersPage() {
         <Badge variant={value ? 'success' : 'default'}>
           {value ? '✅ Active' : '⏸️ Inactive'}
         </Badge>
-      )
+      ),
     },
     {
       key: 'lastLogin',
       header: 'Last Login',
       width: '150px',
       render: (value?: string) =>
-        value ? new Date(value).toLocaleDateString() : 'Never'
+        value ? new Date(value).toLocaleDateString() : 'Never',
     },
     {
       key: 'id',
@@ -267,24 +277,38 @@ export default function UsersPage() {
           >
             {row.active ? '⏸️' : '▶️'}
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => handleDeleteUser(row)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => handleDeleteUser(row)}
+          >
             🗑️
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">User Management</h1>
-            <p className="text-gray-600 mt-2">Manage users, roles, and permissions</p>
+            <h1 className="text-gray-900 text-4xl font-bold">
+              User Management
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Manage users, roles, and permissions
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <Button size="sm" variant="primary" onClick={handleAddUser}>
@@ -297,50 +321,54 @@ export default function UsersPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card padding="sm">
             <div className="text-center">
-              <p className="text-3xl font-bold text-[#1B365D]">{users.length}</p>
-              <p className="text-sm text-gray-600">Total Users</p>
+              <p className="text-3xl font-bold text-[#1B365D]">
+                {users.length}
+              </p>
+              <p className="text-gray-600 text-sm">Total Users</p>
             </div>
           </Card>
           <Card padding="sm">
             <div className="text-center">
-              <p className="text-3xl font-bold text-green-600">
-                {users.filter(u => u.active).length}
+              <p className="text-green-600 text-3xl font-bold">
+                {users.filter((u) => u.active).length}
               </p>
-              <p className="text-sm text-gray-600">Active Users</p>
+              <p className="text-gray-600 text-sm">Active Users</p>
             </div>
           </Card>
           <Card padding="sm">
             <div className="text-center">
-              <p className="text-3xl font-bold text-amber-600">
-                {users.filter(u => u.mfaEnabled).length}
+              <p className="text-amber-600 text-3xl font-bold">
+                {users.filter((u) => u.mfaEnabled).length}
               </p>
-              <p className="text-sm text-gray-600">MFA Enabled</p>
+              <p className="text-gray-600 text-sm">MFA Enabled</p>
             </div>
           </Card>
           <Card padding="sm">
             <div className="text-center">
-              <p className="text-3xl font-bold text-red-600">
-                {users.filter(u => u.role === 'admin').length}
+              <p className="text-red-600 text-3xl font-bold">
+                {users.filter((u) => u.role === 'admin').length}
               </p>
-              <p className="text-sm text-gray-600">Administrators</p>
+              <p className="text-gray-600 text-sm">Administrators</p>
             </div>
           </Card>
         </div>
 
         {/* Filters */}
         <Card className="mb-6">
-          <div className="p-4 flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-700">Filter by role:</span>
+          <div className="flex items-center space-x-4 p-4">
+            <span className="text-gray-700 text-sm font-medium">
+              Filter by role:
+            </span>
             {['all', 'admin', 'supervisor', 'psw'].map((role) => (
               <button
                 key={role}
                 onClick={() => setFilterRole(role)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                   filterRole === role
-                    ? 'bg-[#1B365D] text-white'
+                    ? 'text-white bg-[#1B365D]'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -375,49 +403,57 @@ export default function UsersPage() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-gray-700 mb-1 block text-sm font-medium">
               Full Name
             </label>
             <input
               type="text"
               value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, fullName: e.target.value })
+              }
+              className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-gray-700 mb-1 block text-sm font-medium">
               Username
             </label>
             <input
               type="text"
               value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+              className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-gray-700 mb-1 block text-sm font-medium">
               Email
             </label>
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="text-gray-700 mb-1 block text-sm font-medium">
               Role
             </label>
             <select
               value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, role: e.target.value as any })
+              }
+              className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
             >
               <option value="psw">PSW - Personal Support Worker</option>
               <option value="supervisor">Supervisor</option>
@@ -427,14 +463,16 @@ export default function UsersPage() {
 
           {showAddModal && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="text-gray-700 mb-1 block text-sm font-medium">
                 Password
               </label>
               <input
                 type="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
               />
             </div>
           )}
@@ -444,10 +482,12 @@ export default function UsersPage() {
               type="checkbox"
               id="active"
               checked={formData.active}
-              onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-              className="w-4 h-4 text-[#1B365D] rounded focus:ring-[#1B365D]"
+              onChange={(e) =>
+                setFormData({ ...formData, active: e.target.checked })
+              }
+              className="rounded h-4 w-4 text-[#1B365D] focus:ring-[#1B365D]"
             />
-            <label htmlFor="active" className="text-sm text-gray-700">
+            <label htmlFor="active" className="text-gray-700 text-sm">
               Active user
             </label>
           </div>
@@ -478,10 +518,12 @@ export default function UsersPage() {
       >
         <div className="space-y-4">
           <p className="text-gray-700">
-            Are you sure you want to delete user <span className="font-bold">{selectedUser?.fullName}</span>?
+            Are you sure you want to delete user{' '}
+            <span className="font-bold">{selectedUser?.fullName}</span>?
           </p>
-          <p className="text-sm text-gray-600">
-            This action cannot be undone. All user data and associated reports will remain but will be unlinked from this user account.
+          <p className="text-gray-600 text-sm">
+            This action cannot be undone. All user data and associated reports
+            will remain but will be unlinked from this user account.
           </p>
         </div>
 

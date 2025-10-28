@@ -17,8 +17,12 @@ export async function GET(request: NextRequest) {
 
     const filters: SearchFilters = {
       query: searchParams.get('q') || undefined,
-      pswId: searchParams.get('pswId') ? parseInt(searchParams.get('pswId')!) : undefined,
-      clientId: searchParams.get('clientId') ? parseInt(searchParams.get('clientId')!) : undefined,
+      pswId: searchParams.get('pswId')
+        ? parseInt(searchParams.get('pswId')!)
+        : undefined,
+      clientId: searchParams.get('clientId')
+        ? parseInt(searchParams.get('clientId')!)
+        : undefined,
       dateFrom: searchParams.get('dateFrom') || undefined,
       dateTo: searchParams.get('dateTo') || undefined,
       status: searchParams.get('status') || undefined,
@@ -26,8 +30,12 @@ export async function GET(request: NextRequest) {
       includeDeleted: searchParams.get('includeDeleted') === 'true',
       sortBy: (searchParams.get('sortBy') as any) || 'date',
       sortOrder: (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc',
-      limit: searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : 50,
-      offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : 0,
+      limit: searchParams.get('limit')
+        ? parseInt(searchParams.get('limit')!)
+        : 50,
+      offset: searchParams.get('offset')
+        ? parseInt(searchParams.get('offset')!)
+        : 0,
     };
 
     const searchEngine = getSearchEngine();

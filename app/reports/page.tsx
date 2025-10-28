@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, Button, Table, Pagination, Badge, Modal, ModalFooter, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  Button,
+  Table,
+  Pagination,
+  Badge,
+  Modal,
+  ModalFooter,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface Report {
   id: number;
@@ -39,22 +49,40 @@ export default function ReportsPage() {
       const mockReports: Report[] = Array.from({ length: 50 }, (_, i) => ({
         id: i + 1,
         pswId: Math.floor(Math.random() * 20) + 1,
-        pswName: ['Sarah Johnson', 'Michael Chen', 'Emma Wilson', 'James Brown'][Math.floor(Math.random() * 4)],
+        pswName: [
+          'Sarah Johnson',
+          'Michael Chen',
+          'Emma Wilson',
+          'James Brown',
+        ][Math.floor(Math.random() * 4)],
         clientId: Math.floor(Math.random() * 30) + 1,
-        clientName: ['Client A', 'Client B', 'Client C', 'Client D'][Math.floor(Math.random() * 4)],
-        shiftDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        status: ['completed', 'pending', 'draft'][Math.floor(Math.random() * 3)],
-        activities: 'Personal care, medication administration, meal preparation',
-        concerns: Math.random() > 0.7 ? 'Minor mobility issues noted' : undefined,
+        clientName: ['Client A', 'Client B', 'Client C', 'Client D'][
+          Math.floor(Math.random() * 4)
+        ],
+        shiftDate: new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+        )
+          .toISOString()
+          .split('T')[0],
+        status: ['completed', 'pending', 'draft'][
+          Math.floor(Math.random() * 3)
+        ],
+        activities:
+          'Personal care, medication administration, meal preparation',
+        concerns:
+          Math.random() > 0.7 ? 'Minor mobility issues noted' : undefined,
         notes: 'Shift completed successfully',
-        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-        updatedAt: new Date().toISOString()
+        createdAt: new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+        updatedAt: new Date().toISOString(),
       }));
 
       // Filter by status
-      const filtered = filterStatus === 'all'
-        ? mockReports
-        : mockReports.filter(r => r.status === filterStatus);
+      const filtered =
+        filterStatus === 'all'
+          ? mockReports
+          : mockReports.filter((r) => r.status === filterStatus);
 
       // Paginate
       const start = (currentPage - 1) * pageSize;
@@ -102,8 +130,17 @@ export default function ReportsPage() {
 
   const exportToCSV = () => {
     const csv = [
-      ['ID', 'Date', 'PSW', 'Client', 'Status', 'Activities', 'Concerns', 'Notes'].join(','),
-      ...reports.map(r =>
+      [
+        'ID',
+        'Date',
+        'PSW',
+        'Client',
+        'Status',
+        'Activities',
+        'Concerns',
+        'Notes',
+      ].join(','),
+      ...reports.map((r) =>
         [
           r.id,
           r.shiftDate,
@@ -112,9 +149,9 @@ export default function ReportsPage() {
           r.status,
           `"${r.activities}"`,
           `"${r.concerns || ''}"`,
-          `"${r.notes || ''}"`
+          `"${r.notes || ''}"`,
         ].join(',')
-      )
+      ),
     ].join('\n');
 
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -132,7 +169,7 @@ export default function ReportsPage() {
     const variants: Record<string, 'success' | 'warning' | 'info'> = {
       completed: 'success',
       pending: 'warning',
-      draft: 'info'
+      draft: 'info',
     };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
@@ -141,30 +178,30 @@ export default function ReportsPage() {
     {
       key: 'id',
       header: 'ID',
-      width: '80px'
+      width: '80px',
     },
     {
       key: 'shiftDate',
       header: 'Date',
       width: '120px',
-      render: (value: string) => new Date(value).toLocaleDateString()
+      render: (value: string) => new Date(value).toLocaleDateString(),
     },
     {
       key: 'pswName',
       header: 'PSW',
-      width: '150px'
+      width: '150px',
     },
     {
       key: 'clientName',
       header: 'Client',
-      width: '150px'
+      width: '150px',
     },
     {
       key: 'status',
       header: 'Status',
       width: '120px',
       align: 'center' as const,
-      render: (value: string) => getStatusBadge(value)
+      render: (value: string) => getStatusBadge(value),
     },
     {
       key: 'activities',
@@ -173,7 +210,7 @@ export default function ReportsPage() {
         <div className="max-w-xs truncate" title={value}>
           {value}
         </div>
-      )
+      ),
     },
     {
       key: 'id',
@@ -182,27 +219,45 @@ export default function ReportsPage() {
       align: 'center' as const,
       render: (_: any, row: Report) => (
         <div className="flex items-center justify-center space-x-2">
-          <Button size="sm" variant="ghost" onClick={() => handleViewReport(row)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => handleViewReport(row)}
+          >
             👁️ View
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => handleDeleteReport(row)}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => handleDeleteReport(row)}
+          >
             🗑️ Delete
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-white">Reports Management</h1>
-            <p className="text-white/70 mt-2">View, manage, and export all shift reports</p>
+            <h1 className="text-white text-4xl font-bold">
+              Reports Management
+            </h1>
+            <p className="text-white/70 mt-2">
+              View, manage, and export all shift reports
+            </p>
           </div>
           <div className="flex items-center space-x-3">
             <Button size="sm" variant="primary" onClick={exportToCSV}>
@@ -216,8 +271,10 @@ export default function ReportsPage() {
 
         {/* Filters */}
         <Card className="mb-6">
-          <div className="p-4 flex flex-wrap items-center gap-4">
-            <span className="text-sm font-medium text-[#5C4C3C]">Filter by status:</span>
+          <div className="flex flex-wrap items-center gap-4 p-4">
+            <span className="text-sm font-medium text-[#5C4C3C]">
+              Filter by status:
+            </span>
             {['all', 'completed', 'pending', 'draft'].map((status) => (
               <button
                 key={status}
@@ -225,10 +282,10 @@ export default function ReportsPage() {
                   setFilterStatus(status);
                   setCurrentPage(1);
                 }}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all border ${
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
                   filterStatus === status
-                    ? 'bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] text-[#2C1301] border-transparent shadow-[0_12px_25px_rgba(241,168,82,0.35)]'
-                    : 'bg-white/80 text-[#5C4C3C] border-[#F1E0CC] hover:bg-white'
+                    ? 'border-transparent bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] text-[#2C1301] shadow-[0_12px_25px_rgba(241,168,82,0.35)]'
+                    : 'bg-white/80 hover:bg-white border-[#F1E0CC] text-[#5C4C3C]'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -236,7 +293,9 @@ export default function ReportsPage() {
             ))}
             <div className="flex-1" />
             <span className="text-sm text-[#7A6A58]">
-              Total: <span className="font-bold text-[#2C1301]">{totalReports}</span> reports
+              Total:{' '}
+              <span className="font-bold text-[#2C1301]">{totalReports}</span>{' '}
+              reports
             </span>
           </div>
         </Card>
@@ -278,58 +337,68 @@ export default function ReportsPage() {
           size="lg"
         >
           <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58]">PSW</p>
-                    <p className="text-base text-[#1F1B16]">{selectedReport.pswName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58]">Client</p>
-                    <p className="text-base text-[#1F1B16]">{selectedReport.clientName}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58]">Shift Date</p>
-                    <p className="text-base text-[#1F1B16]">
-                      {new Date(selectedReport.shiftDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58]">Status</p>
-                    <div className="mt-1">{getStatusBadge(selectedReport.status)}</div>
-                  </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm font-medium text-[#7A6A58]">PSW</p>
+                <p className="text-base text-[#1F1B16]">
+                  {selectedReport.pswName}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-[#7A6A58]">Client</p>
+                <p className="text-base text-[#1F1B16]">
+                  {selectedReport.clientName}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-[#7A6A58]">Shift Date</p>
+                <p className="text-base text-[#1F1B16]">
+                  {new Date(selectedReport.shiftDate).toLocaleDateString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-[#7A6A58]">Status</p>
+                <div className="mt-1">
+                  {getStatusBadge(selectedReport.status)}
                 </div>
+              </div>
+            </div>
 
-                <hr />
+            <hr />
 
-                <div>
-                  <p className="text-sm font-medium text-[#7A6A58] mb-2">Activities</p>
-                  <p className="text-base text-[#1F1B16] bg-white/85 p-3 rounded-2xl border border-[#F1E0CC]">
-                    {selectedReport.activities}
-                  </p>
-                </div>
+            <div>
+              <p className="mb-2 text-sm font-medium text-[#7A6A58]">
+                Activities
+              </p>
+              <p className="bg-white/85 rounded-2xl border border-[#F1E0CC] p-3 text-base text-[#1F1B16]">
+                {selectedReport.activities}
+              </p>
+            </div>
 
-                {selectedReport.concerns && (
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58] mb-2">Concerns</p>
-                    <p className="text-base text-[#1F1B16] bg-gradient-to-r from-[#FFF4C7] to-[#FFE6A7] p-3 rounded-2xl border border-[#F5D98B]">
-                      {selectedReport.concerns}
-                    </p>
-                  </div>
-                )}
+            {selectedReport.concerns && (
+              <div>
+                <p className="mb-2 text-sm font-medium text-[#7A6A58]">
+                  Concerns
+                </p>
+                <p className="rounded-2xl border border-[#F5D98B] bg-gradient-to-r from-[#FFF4C7] to-[#FFE6A7] p-3 text-base text-[#1F1B16]">
+                  {selectedReport.concerns}
+                </p>
+              </div>
+            )}
 
-                {selectedReport.notes && (
-                  <div>
-                    <p className="text-sm font-medium text-[#7A6A58] mb-2">Notes</p>
-                    <p className="text-base text-[#1F1B16] bg-gradient-to-r from-[#E3ECFF] to-[#D0DBFF] p-3 rounded-2xl">
-                      {selectedReport.notes}
-                    </p>
-                  </div>
-                )}
+            {selectedReport.notes && (
+              <div>
+                <p className="mb-2 text-sm font-medium text-[#7A6A58]">Notes</p>
+                <p className="rounded-2xl bg-gradient-to-r from-[#E3ECFF] to-[#D0DBFF] p-3 text-base text-[#1F1B16]">
+                  {selectedReport.notes}
+                </p>
+              </div>
+            )}
 
-                <div className="grid grid-cols-2 gap-4 text-xs text-[#9A8A78]">
-                  <div>
-                    <span className="font-medium">Created:</span>{' '}
-                    {new Date(selectedReport.createdAt).toLocaleString()}
+            <div className="grid grid-cols-2 gap-4 text-xs text-[#9A8A78]">
+              <div>
+                <span className="font-medium">Created:</span>{' '}
+                {new Date(selectedReport.createdAt).toLocaleString()}
               </div>
               <div>
                 <span className="font-medium">Updated:</span>{' '}
@@ -342,7 +411,10 @@ export default function ReportsPage() {
             <Button variant="ghost" onClick={() => setShowViewModal(false)}>
               Close
             </Button>
-            <Button variant="primary" onClick={() => console.log('Edit report:', selectedReport.id)}>
+            <Button
+              variant="primary"
+              onClick={() => console.log('Edit report:', selectedReport.id)}
+            >
               Edit Report
             </Button>
           </ModalFooter>
@@ -359,10 +431,12 @@ export default function ReportsPage() {
         >
           <div className="space-y-4">
             <p className="text-[#1F1B16]">
-              Are you sure you want to delete report <span className="font-bold">#{selectedReport.id}</span>?
+              Are you sure you want to delete report{' '}
+              <span className="font-bold">#{selectedReport.id}</span>?
             </p>
             <p className="text-sm text-[#7A6A58]">
-              This action cannot be undone. The report will be permanently removed from the system.
+              This action cannot be undone. The report will be permanently
+              removed from the system.
             </p>
           </div>
 

@@ -1,15 +1,65 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
+import { useState, type ChangeEvent } from 'react';
 
 interface SettingsState {
-  language: string
-  autoSaveSessions: boolean
-  shareAnalytics: boolean
-  enableVoiceFeedback: boolean
-  reduceMotion: boolean
-  highContrastMode: boolean
-  largeText: boolean
+  language: string;
+  autoSaveSessions: boolean;
+  shareAnalytics: boolean;
+  enableVoiceFeedback: boolean;
+  reduceMotion: boolean;
+  highContrastMode: boolean;
+  largeText: boolean;
+}
+
+interface ToggleSwitchProps {
+  id: string;
+  checked: boolean;
+  onChange: () => void;
+  label: string;
+  description?: string;
+}
+
+function ToggleSwitch({
+  id,
+  checked,
+  onChange,
+  label,
+  description,
+}: ToggleSwitchProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex-1">
+        <label
+          htmlFor={id}
+          className="text-white block cursor-pointer text-sm font-medium"
+        >
+          {label}
+        </label>
+        {description && (
+          <p className="text-gray-300 mt-1 text-xs">{description}</p>
+        )}
+      </div>
+      <button
+        type="button"
+        id={id}
+        role="switch"
+        aria-checked={checked}
+        aria-labelledby={`${id}-label`}
+        onClick={onChange}
+        className={`rounded-full focus:ring-blue-500 focus:ring-offset-gray-800 relative inline-flex h-6 w-11 items-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+          checked ? 'bg-blue-600' : 'bg-gray-600'
+        }`}
+      >
+        <span className="sr-only">{label}</span>
+        <span
+          className={`rounded-full bg-white inline-block h-4 w-4 transform transition-transform ${
+            checked ? 'translate-x-6' : 'translate-x-1'
+          }`}
+        />
+      </button>
+    </div>
+  );
 }
 
 export default function SettingsPage() {
@@ -20,10 +70,10 @@ export default function SettingsPage() {
     enableVoiceFeedback: true,
     reduceMotion: false,
     highContrastMode: false,
-    largeText: false
-  })
+    largeText: false,
+  });
 
-  const [showToast, setShowToast] = useState<boolean>(false)
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   const languages = [
     { value: 'en-CA', label: 'English (Canadian)' },
@@ -31,86 +81,52 @@ export default function SettingsPage() {
     { value: 'tl', label: 'Tagalog (Filipino)' },
     { value: 'es', label: 'Español' },
     { value: 'hi', label: 'हिन्दी (Hindi)' },
-    { value: 'bo', label: 'བོད་སྐད (Tibetan)' }
-  ]
+    { value: 'bo', label: 'བོད་སྐད (Tibetan)' },
+  ];
 
-  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSettings(prev => ({ ...prev, language: event.target.value }))
-  }
+  const handleLanguageChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    setSettings((prev) => ({ ...prev, language: event.target.value }));
+  };
 
   const handleToggle = (key: keyof SettingsState) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }))
-  }
+    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleSave = () => {
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 3000)
-  }
-
-  const ToggleSwitch = ({ 
-    id, 
-    checked, 
-    onChange, 
-    label, 
-    description 
-  }: {
-    id: string
-    checked: boolean
-    onChange: () => void
-    label: string
-    description?: string
-  }) => (
-    <div className="flex items-center justify-between">
-      <div className="flex-1">
-        <label htmlFor={id} className="block text-sm font-medium text-white cursor-pointer">
-          {label}
-        </label>
-        {description && (
-          <p className="text-xs text-gray-300 mt-1">{description}</p>
-        )}
-      </div>
-      <button
-        type="button"
-        id={id}
-        role="switch"
-        aria-checked={checked}
-        aria-labelledby={`${id}-label`}
-        onClick={onChange}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
-          checked ? 'bg-blue-600' : 'bg-gray-600'
-        }`}
-      >
-        <span className="sr-only">{label}</span>
-        <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-            checked ? 'translate-x-6' : 'translate-x-1'
-          }`}
-        />
-      </button>
-    </div>
-  )
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   return (
     <div className="min-h-screen bg-[#1B365D] p-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto max-w-2xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Settings & Preferences</h1>
-          <p className="text-gray-300 mt-2">Customize your experience and accessibility options</p>
+          <h1 className="text-white text-3xl font-bold">
+            Settings & Preferences
+          </h1>
+          <p className="text-gray-300 mt-2">
+            Customize your experience and accessibility options
+          </p>
         </header>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          <section className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
             <fieldset>
-              <legend className="text-lg font-semibold text-white mb-4">Language Preferences</legend>
+              <legend className="text-white mb-4 text-lg font-semibold">
+                Language Preferences
+              </legend>
               <div>
-                <label htmlFor="language-select" className="block text-sm font-medium text-white mb-2">
+                <label
+                  htmlFor="language-select"
+                  className="text-white mb-2 block text-sm font-medium"
+                >
                   Select Language
                 </label>
                 <select
                   id="language-select"
                   value={settings.language}
                   onChange={handleLanguageChange}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="bg-gray-800 border-gray-600 text-white focus:ring-blue-500 focus:border-transparent w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2"
                   aria-describedby="language-help"
                 >
                   {languages.map((lang) => (
@@ -119,16 +135,18 @@ export default function SettingsPage() {
                     </option>
                   ))}
                 </select>
-                <p id="language-help" className="text-xs text-gray-300 mt-1">
+                <p id="language-help" className="text-gray-300 mt-1 text-xs">
                   Choose your preferred language for the interface
                 </p>
               </div>
             </fieldset>
           </section>
 
-          <section className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
             <fieldset>
-              <legend className="text-lg font-semibold text-white mb-4">Privacy Settings</legend>
+              <legend className="text-white mb-4 text-lg font-semibold">
+                Privacy Settings
+              </legend>
               <div className="space-y-4">
                 <ToggleSwitch
                   id="auto-save"
@@ -155,9 +173,11 @@ export default function SettingsPage() {
             </fieldset>
           </section>
 
-          <section className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
             <fieldset>
-              <legend className="text-lg font-semibold text-white mb-4">Accessibility Options</legend>
+              <legend className="text-white mb-4 text-lg font-semibold">
+                Accessibility Options
+              </legend>
               <div className="space-y-4">
                 <ToggleSwitch
                   id="reduce-motion"
@@ -188,7 +208,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleSave}
-              className="px-6 py-3 bg-[#D4A574] text-white font-semibold rounded-lg hover:bg-[#C19660] focus:outline-none focus:ring-2 focus:ring-[#D4A574] focus:ring-offset-2 focus:ring-offset-[#1B365D] transition-colors"
+              className="text-white rounded-lg bg-[#D4A574] px-6 py-3 font-semibold transition-colors hover:bg-[#C19660] focus:outline-none focus:ring-2 focus:ring-[#D4A574] focus:ring-offset-2 focus:ring-offset-[#1B365D]"
             >
               Save Preferences
             </button>
@@ -199,12 +219,12 @@ export default function SettingsPage() {
           <div
             role="alert"
             aria-live="polite"
-            className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg"
+            className="bg-green-600 text-white fixed bottom-4 right-4 rounded-lg px-6 py-3 shadow-lg"
           >
             Preferences saved successfully!
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

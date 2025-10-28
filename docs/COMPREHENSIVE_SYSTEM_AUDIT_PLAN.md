@@ -1,4 +1,5 @@
 # COMPREHENSIVE SYSTEM AUDIT & TESTING PLAN
+
 **Created:** October 24, 2025, 10:35 AM
 **Status:** 🔄 PLANNING PHASE
 
@@ -9,6 +10,7 @@
 This comprehensive audit covers three major areas:
 
 ### 1. FILE ORGANIZATION & STRUCTURE AUDIT
+
 - Directory structure and organization
 - File placement and naming conventions
 - Identification of misplaced, duplicate, or unnecessary files
@@ -16,6 +18,7 @@ This comprehensive audit covers three major areas:
 - Configuration files review
 
 ### 2. UI/UX COMPLETE AUDIT
+
 - Every page visual appearance
 - Every button, link, and interactive element
 - Color consistency and branding
@@ -26,6 +29,7 @@ This comprehensive audit covers three major areas:
 - Accessibility features
 
 ### 3. NAVIGATION & FUNCTIONALITY AUDIT
+
 - Every navigation link and route
 - Page loading and rendering
 - API endpoints functionality
@@ -60,6 +64,7 @@ This comprehensive audit covers three major areas:
 ### Issues Identified
 
 #### 🔴 CRITICAL ISSUES
+
 1. **PRODUCTION-BUILD/** directory still exists
    - Should have been deleted after deployment
    - Taking up space
@@ -70,6 +75,7 @@ This comprehensive audit covers three major areas:
    - **Action:** Move to proper location or delete if unused
 
 #### 🟡 ORGANIZATIONAL ISSUES
+
 3. **16 markdown documentation files** in root
    - Makes root cluttered
    - **Action:** Organize into /docs folder
@@ -84,6 +90,7 @@ This comprehensive audit covers three major areas:
    - **Action:** Move to /scripts folder
 
 #### ✅ CORRECT STRUCTURE
+
 - `app/` - Next.js App Router ✅
 - `components/` - React components ✅
 - `lib/` - Libraries and utilities ✅
@@ -95,11 +102,13 @@ This comprehensive audit covers three major areas:
 ### File Organization Action Plan
 
 #### Phase 1: Cleanup (5 minutes)
+
 - [ ] Delete PRODUCTION-BUILD/ directory
 - [ ] Move or delete local_psw_data.db
 - [ ] Check for other .db files in wrong locations
 
 #### Phase 2: Documentation Organization (3 minutes)
+
 - [ ] Create /docs directory
 - [ ] Move all .md files except README.md to /docs
 - [ ] Keep only essential docs in root:
@@ -108,10 +117,12 @@ This comprehensive audit covers three major areas:
   - AUDIT_COMPLETE.md
 
 #### Phase 3: Scripts Organization (2 minutes)
+
 - [ ] Move download-all-ai-models.sh to /scripts
 - [ ] Verify all scripts are in /scripts folder
 
 #### Phase 4: Data Organization (2 minutes)
+
 - [ ] Create /data directory if needed
 - [ ] Move database files to proper location
 - [ ] Verify /backups and /migrations organization
@@ -123,6 +134,7 @@ This comprehensive audit covers three major areas:
 ### Pages to Test
 
 #### Public Pages
+
 - [ ] **Homepage (/)**
   - PSWVoiceReporter component
   - Tailored Care Solutions branding
@@ -132,6 +144,7 @@ This comprehensive audit covers three major areas:
   - Report generation button
 
 #### Admin Pages
+
 - [ ] **/admin** - Admin dashboard
   - Overview cards
   - Quick stats
@@ -164,6 +177,7 @@ This comprehensive audit covers three major areas:
   - Progress indicators
 
 #### User Pages
+
 - [ ] **/profile** - User profile
   - Profile information
   - Stats display
@@ -192,6 +206,7 @@ This comprehensive audit covers three major areas:
   - Trend analysis
 
 #### Settings Pages
+
 - [ ] **/settings** - General settings
   - Profile settings
   - Notification preferences
@@ -209,6 +224,7 @@ This comprehensive audit covers three major areas:
 ### UI/UX Testing Checklist
 
 #### Visual Elements
+
 - [ ] **Colors**
   - Primary: #1B365D (Dark Blue)
   - Secondary: #D4A574 (Gold)
@@ -234,6 +250,7 @@ This comprehensive audit covers three major areas:
   - Responsive breakpoints
 
 #### Interactive Elements
+
 - [ ] **Buttons**
   - Correct colors
   - Hover states work
@@ -266,6 +283,7 @@ This comprehensive audit covers three major areas:
   - Breadcrumbs (if applicable)
 
 #### Functionality
+
 - [ ] **Page Loading**
   - Fast load times
   - Loading indicators
@@ -295,6 +313,7 @@ This comprehensive audit covers three major areas:
   - Proper z-index
 
 #### Responsive Design
+
 - [ ] **Desktop (1920x1080)**
   - Layout looks good
   - No horizontal scroll
@@ -312,6 +331,7 @@ This comprehensive audit covers three major areas:
   - Font sizes readable
 
 #### Performance
+
 - [ ] **Loading Speed**
   - Pages load < 2 seconds
   - Images optimized
@@ -334,6 +354,7 @@ This comprehensive audit covers three major areas:
 ### Navigation Routes Audit
 
 #### Route Structure
+
 ```
 /                           → Homepage (PSWVoiceReporter)
 /admin                      → Admin Dashboard
@@ -350,6 +371,7 @@ This comprehensive audit covers three major areas:
 ```
 
 #### Navigation Components to Test
+
 - [ ] **Top Navigation Bar**
   - Logo link to homepage
   - Home link
@@ -376,20 +398,20 @@ This comprehensive audit covers three major areas:
 
 ### Link Testing Matrix
 
-| From Page | To Page | Link Location | Expected Behavior |
-|-----------|---------|---------------|-------------------|
-| / (Home) | /admin | Nav: Admin | Admin dashboard loads |
-| / (Home) | /reports | Nav: Reports | Reports list loads |
-| / (Home) | /search | Nav: Search | Search page loads |
-| / (Home) | /analytics | Nav: Analytics | Analytics loads |
-| / (Home) | /profile | Nav: Profile | Profile page loads |
-| / (Home) | /settings | Nav: Settings | Settings page loads |
-| /admin | /admin/users | Link: Users | User management loads |
-| /admin | /admin/audit-logs | Link: Audit Logs | Audit logs load |
-| /admin | /admin/monitoring | Link: Monitoring | Monitoring loads |
-| /admin | /admin/backups | Link: Backups | Backups page loads |
-| /settings | /settings/mfa | Link: MFA Security | MFA settings load |
-| [Any] | / | Logo click | Returns to homepage |
+| From Page | To Page           | Link Location      | Expected Behavior     |
+| --------- | ----------------- | ------------------ | --------------------- |
+| / (Home)  | /admin            | Nav: Admin         | Admin dashboard loads |
+| / (Home)  | /reports          | Nav: Reports       | Reports list loads    |
+| / (Home)  | /search           | Nav: Search        | Search page loads     |
+| / (Home)  | /analytics        | Nav: Analytics     | Analytics loads       |
+| / (Home)  | /profile          | Nav: Profile       | Profile page loads    |
+| / (Home)  | /settings         | Nav: Settings      | Settings page loads   |
+| /admin    | /admin/users      | Link: Users        | User management loads |
+| /admin    | /admin/audit-logs | Link: Audit Logs   | Audit logs load       |
+| /admin    | /admin/monitoring | Link: Monitoring   | Monitoring loads      |
+| /admin    | /admin/backups    | Link: Backups      | Backups page loads    |
+| /settings | /settings/mfa     | Link: MFA Security | MFA settings load     |
+| [Any]     | /                 | Logo click         | Returns to homepage   |
 
 ### API Endpoints to Test
 
@@ -429,6 +451,7 @@ This comprehensive audit covers three major areas:
 ### Feature Testing Checklist
 
 #### Voice Recording (Homepage)
+
 - [ ] Microphone permission request
 - [ ] Voice recording starts/stops
 - [ ] Transcript displays in real-time
@@ -442,6 +465,7 @@ This comprehensive audit covers three major areas:
 - [ ] New session clears data
 
 #### User Management (Admin)
+
 - [ ] User list loads
 - [ ] Pagination works
 - [ ] Add user modal opens
@@ -454,6 +478,7 @@ This comprehensive audit covers three major areas:
 - [ ] Filter by role works
 
 #### Reports Page
+
 - [ ] Reports list loads
 - [ ] Search reports works
 - [ ] Filter by date works
@@ -465,6 +490,7 @@ This comprehensive audit covers three major areas:
 - [ ] Share report works
 
 #### Search Page
+
 - [ ] Search input accepts text
 - [ ] Search executes
 - [ ] Results display
@@ -475,6 +501,7 @@ This comprehensive audit covers three major areas:
 - [ ] Saved searches work
 
 #### Analytics Dashboard
+
 - [ ] Charts load
 - [ ] Data is accurate
 - [ ] Date range selector works
@@ -485,6 +512,7 @@ This comprehensive audit covers three major areas:
 - [ ] Drill-down works
 
 #### Settings Pages
+
 - [ ] Profile update works
 - [ ] Password change works
 - [ ] Email update works
@@ -530,12 +558,14 @@ This comprehensive audit covers three major areas:
 ## TESTING METHODOLOGY
 
 ### Phase 1: File Organization (30 minutes)
+
 1. Clean up PRODUCTION-BUILD and misplaced files
 2. Organize documentation
 3. Verify directory structure
 4. Document changes
 
 ### Phase 2: Visual UI Audit (45 minutes)
+
 1. Open each page in browser
 2. Screenshot each page
 3. Check colors and branding
@@ -543,6 +573,7 @@ This comprehensive audit covers three major areas:
 5. Document issues
 
 ### Phase 3: Interactive Testing (60 minutes)
+
 1. Click every button
 2. Test every link
 3. Fill out every form
@@ -551,6 +582,7 @@ This comprehensive audit covers three major areas:
 6. Document functionality issues
 
 ### Phase 4: Navigation Testing (30 minutes)
+
 1. Test all navigation links
 2. Verify page transitions
 3. Check mobile menu
@@ -558,6 +590,7 @@ This comprehensive audit covers three major areas:
 5. Document navigation issues
 
 ### Phase 5: API & Feature Testing (45 minutes)
+
 1. Test voice recording
 2. Test report generation
 3. Test admin features
@@ -566,6 +599,7 @@ This comprehensive audit covers three major areas:
 6. Document API issues
 
 ### Phase 6: Documentation (30 minutes)
+
 1. Compile all findings
 2. Create issue list with priorities
 3. Create fix recommendations
@@ -664,6 +698,7 @@ Before I begin the audit, please clarify:
 **STATUS: ⏸️ AWAITING USER APPROVAL TO PROCEED**
 
 Please review this plan and let me know:
+
 1. If you approve this plan
 2. Which phase to start with
 3. Any modifications needed

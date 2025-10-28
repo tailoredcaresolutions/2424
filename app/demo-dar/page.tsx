@@ -1,40 +1,38 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import DARCard from "@/components/DARCard";
+import React, { useState } from 'react';
+import DARCard from '@/components/DARCard';
 
 type DAR = Record<string, any>;
 
 export default function DemoDARPage() {
-  const [input, setInput] = useState("");
-  const [noteText, setNoteText] = useState<string>("");
+  const [input, setInput] = useState('');
+  const [noteText, setNoteText] = useState<string>('');
   const [dar, setDar] = useState<DAR | null>(null);
   const [loading, setLoading] = useState(false);
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState('en');
 
   const run = async () => {
     setLoading(true);
-    setNoteText("");
+    setNoteText('');
     setDar(null);
 
     try {
-      const res = await fetch("/api/generate-ai-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/generate-ai-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           shiftData: {
-            client_name: "Demo Client",
-            psw_name: "Demo PSW",
+            client_name: 'Demo Client',
+            psw_name: 'Demo PSW',
             observations: [input],
             care_activities: [],
             client_responses: [],
             communications: [],
-            languages_used: [lang]
+            languages_used: [lang],
           },
-          conversation: [
-            { role: "user", content: input }
-          ]
-        })
+          conversation: [{ role: 'user', content: input }],
+        }),
       });
 
       if (!res.ok) {
@@ -44,7 +42,7 @@ export default function DemoDARPage() {
 
       const data = await res.json();
       // Your updated API returns: noteText (paragraph) + dar (JSON)
-      setNoteText(data.noteText || data.response || "");
+      setNoteText(data.noteText || data.response || '');
       setDar(data.dar || null);
     } catch (e: any) {
       alert(`Request failed: ${e?.message || e}`);
@@ -54,14 +52,15 @@ export default function DemoDARPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl p-6 space-y-6">
+    <main className="mx-auto max-w-3xl space-y-6 p-6">
       <h1 className="text-2xl font-bold">DAR Demo (Paragraph + JSON)</h1>
-      <p className="text-sm text-gray-600">
-        Enter a PSW-style narrative and click <b>Generate</b>. The page will show a concise paragraph + DAR JSON,
-        with options to copy or export the JSON.
+      <p className="text-gray-600 text-sm">
+        Enter a PSW-style narrative and click <b>Generate</b>. The page will
+        show a concise paragraph + DAR JSON, with options to copy or export the
+        JSON.
       </p>
 
-      <div className="rounded-2xl border border-gray-200 p-4 bg-white shadow-sm space-y-3">
+      <div className="rounded-2xl border-gray-200 bg-white space-y-3 border p-4 shadow-sm">
         <label className="text-sm font-medium">Input Language</label>
         <select
           className="w-full rounded-lg border px-3 py-2"
@@ -78,7 +77,7 @@ export default function DemoDARPage() {
 
         <label className="text-sm font-medium">PSW Input</label>
         <textarea
-          className="w-full rounded-lg border px-3 py-2 min-h-[140px]"
+          className="min-h-[140px] w-full rounded-lg border px-3 py-2"
           placeholder='e.g., "Helped Mr. Johnson with breakfast. He ate about 75%..."'
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -87,9 +86,9 @@ export default function DemoDARPage() {
         <button
           onClick={run}
           disabled={loading || !input.trim()}
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white disabled:opacity-50"
+          className="bg-blue-600 text-white rounded-lg px-4 py-2 disabled:opacity-50"
         >
-          {loading ? "Generating…" : "Generate"}
+          {loading ? 'Generating…' : 'Generate'}
         </button>
       </div>
 

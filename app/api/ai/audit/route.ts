@@ -28,7 +28,10 @@ export async function POST(request: NextRequest) {
     // Validation
     if (!reportId || !aiGeneratedContent) {
       return NextResponse.json(
-        { success: false, error: 'reportId and aiGeneratedContent are required' },
+        {
+          success: false,
+          error: 'reportId and aiGeneratedContent are required',
+        },
         { status: 400 }
       );
     }
@@ -49,7 +52,10 @@ export async function POST(request: NextRequest) {
 
     if (completenessScore < 0 || completenessScore > 100) {
       return NextResponse.json(
-        { success: false, error: 'completenessScore must be between 0 and 100' },
+        {
+          success: false,
+          error: 'completenessScore must be between 0 and 100',
+        },
         { status: 400 }
       );
     }
@@ -117,7 +123,8 @@ export async function GET(request: NextRequest) {
 
     const monitor = getAIMonitor();
 
-    const period = startDate && endDate ? { start: startDate, end: endDate } : undefined;
+    const period =
+      startDate && endDate ? { start: startDate, end: endDate } : undefined;
     const sample = monitor.selectRandomAuditSample(sampleSize, period);
 
     logger.info(

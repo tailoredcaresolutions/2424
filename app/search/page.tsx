@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, CardContent, Button, Table, Pagination, Badge, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Button,
+  Table,
+  Pagination,
+  Badge,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface SearchFilters {
   query: string;
@@ -41,9 +50,11 @@ export default function SearchPage() {
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
     sortBy: 'relevance',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
-  const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResponse | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -120,12 +131,13 @@ export default function SearchPage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
-      completed: 'success',
-      pending: 'warning',
-      draft: 'info',
-      error: 'danger'
-    };
+    const variants: Record<string, 'success' | 'warning' | 'danger' | 'info'> =
+      {
+        completed: 'success',
+        pending: 'warning',
+        draft: 'info',
+        error: 'danger',
+      };
     return <Badge variant={variants[status] || 'default'}>{status}</Badge>;
   };
 
@@ -134,17 +146,17 @@ export default function SearchPage() {
       key: 'shiftDate',
       header: 'Date',
       width: '120px',
-      render: (value: string) => new Date(value).toLocaleDateString()
+      render: (value: string) => new Date(value).toLocaleDateString(),
     },
     {
       key: 'pswName',
       header: 'PSW',
-      width: '150px'
+      width: '150px',
     },
     {
       key: 'clientName',
       header: 'Client',
-      width: '150px'
+      width: '150px',
     },
     {
       key: 'activities',
@@ -153,14 +165,14 @@ export default function SearchPage() {
         <div className="max-w-xs truncate" title={value}>
           {value}
         </div>
-      )
+      ),
     },
     {
       key: 'status',
       header: 'Status',
       width: '120px',
       align: 'center' as const,
-      render: (value: string) => getStatusBadge(value)
+      render: (value: string) => getStatusBadge(value),
     },
     {
       key: 'id',
@@ -168,22 +180,34 @@ export default function SearchPage() {
       width: '100px',
       align: 'center' as const,
       render: (value: number) => (
-        <Button size="sm" variant="ghost" onClick={() => window.location.href = `/reports/${value}`}>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => (window.location.href = `/reports/${value}`)}
+        >
           View
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white">Search Reports</h1>
-          <p className="text-white/70 mt-2">Full-text search across every shift report and note</p>
+          <h1 className="text-white text-4xl font-bold">Search Reports</h1>
+          <p className="text-white/70 mt-2">
+            Full-text search across every shift report and note
+          </p>
         </div>
 
         {/* Search Form */}
@@ -191,15 +215,21 @@ export default function SearchPage() {
           <CardContent>
             <form onSubmit={handleSearch}>
               {/* Main search input */}
-              <div className="flex gap-3 mb-4">
+              <div className="mb-4 flex gap-3">
                 <input
                   type="text"
                   value={filters.query}
-                  onChange={(e) => setFilters({ ...filters, query: e.target.value })}
+                  onChange={(e) =>
+                    setFilters({ ...filters, query: e.target.value })
+                  }
                   placeholder="Search reports, activities, concerns, notes..."
-                  className="flex-1 input-premium"
+                  className="input-premium flex-1"
                 />
-                <Button type="submit" variant="primary" disabled={!filters.query || loading}>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={!filters.query || loading}
+                >
                   {loading ? '🔄 Searching...' : '🔍 Search'}
                 </Button>
                 <Button
@@ -213,65 +243,75 @@ export default function SearchPage() {
 
               {/* Advanced filters */}
               {showAdvanced && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-[#F1E0CC]">
+                <div className="grid grid-cols-1 gap-4 border-t border-[#F1E0CC] pt-4 md:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       PSW ID
                     </label>
                     <input
                       type="text"
                       value={filters.pswId || ''}
-                      onChange={(e) => setFilters({ ...filters, pswId: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, pswId: e.target.value })
+                      }
                       placeholder="Filter by PSW"
-                      className="w-full input-premium"
+                      className="input-premium w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       Client ID
                     </label>
                     <input
                       type="text"
                       value={filters.clientId || ''}
-                      onChange={(e) => setFilters({ ...filters, clientId: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, clientId: e.target.value })
+                      }
                       placeholder="Filter by client"
-                      className="w-full input-premium"
+                      className="input-premium w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       Start Date
                     </label>
                     <input
                       type="date"
                       value={filters.startDate || ''}
-                      onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                      className="w-full input-premium"
+                      onChange={(e) =>
+                        setFilters({ ...filters, startDate: e.target.value })
+                      }
+                      className="input-premium w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       End Date
                     </label>
                     <input
                       type="date"
                       value={filters.endDate || ''}
-                      onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                      className="w-full input-premium"
+                      onChange={(e) =>
+                        setFilters({ ...filters, endDate: e.target.value })
+                      }
+                      className="input-premium w-full"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       Status
                     </label>
                     <select
                       value={filters.status || ''}
-                      onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                      className="w-full input-premium"
+                      onChange={(e) =>
+                        setFilters({ ...filters, status: e.target.value })
+                      }
+                      className="input-premium w-full"
                     >
                       <option value="">All statuses</option>
                       <option value="completed">Completed</option>
@@ -281,13 +321,18 @@ export default function SearchPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       Sort By
                     </label>
                     <select
                       value={filters.sortBy || 'relevance'}
-                      onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as any })}
-                      className="w-full input-premium"
+                      onChange={(e) =>
+                        setFilters({
+                          ...filters,
+                          sortBy: e.target.value as any,
+                        })
+                      }
+                      className="input-premium w-full"
                     >
                       <option value="relevance">Relevance</option>
                       <option value="date">Date</option>
@@ -297,13 +342,18 @@ export default function SearchPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[#7A6A58] mb-1">
+                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
                       Sort Order
                     </label>
                     <select
                       value={filters.sortOrder || 'desc'}
-                      onChange={(e) => setFilters({ ...filters, sortOrder: e.target.value as any })}
-                      className="w-full input-premium"
+                      onChange={(e) =>
+                        setFilters({
+                          ...filters,
+                          sortOrder: e.target.value as any,
+                        })
+                      }
+                      className="input-premium w-full"
                     >
                       <option value="desc">Descending</option>
                       <option value="asc">Ascending</option>
@@ -319,7 +369,7 @@ export default function SearchPage() {
                         setFilters({
                           query: filters.query,
                           sortBy: 'relevance',
-                          sortOrder: 'desc'
+                          sortOrder: 'desc',
                         });
                       }}
                     >
@@ -338,12 +388,19 @@ export default function SearchPage() {
         {searchResults && !loading && (
           <>
             {/* Results header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
+            <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <p className="text-white/80">
-                Found <span className="font-bold">{searchResults.totalResults}</span> results
+                Found{' '}
+                <span className="font-bold">{searchResults.totalResults}</span>{' '}
+                results
                 {filters.query && ` for "${filters.query}"`}
               </p>
-              <Button size="sm" variant="primary" onClick={exportToCSV} disabled={searchResults.totalResults === 0}>
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={exportToCSV}
+                disabled={searchResults.totalResults === 0}
+              >
                 📥 Export CSV
               </Button>
             </div>
@@ -373,16 +430,22 @@ export default function SearchPage() {
             ) : (
               <Card>
                 <CardContent>
-                  <div className="text-center py-12">
-                    <p className="text-4xl mb-4">🔍</p>
-                    <h3 className="text-xl font-bold text-[#1F1B16] mb-2">No results found</h3>
-                    <p className="text-[#7A6A58] mb-6">
+                  <div className="py-12 text-center">
+                    <p className="mb-4 text-4xl">🔍</p>
+                    <h3 className="mb-2 text-xl font-bold text-[#1F1B16]">
+                      No results found
+                    </h3>
+                    <p className="mb-6 text-[#7A6A58]">
                       Try adjusting your search query or filters
                     </p>
                     <Button
                       variant="ghost"
                       onClick={() => {
-                        setFilters({ query: '', sortBy: 'relevance', sortOrder: 'desc' });
+                        setFilters({
+                          query: '',
+                          sortBy: 'relevance',
+                          sortOrder: 'desc',
+                        });
                         setSearchResults(null);
                       }}
                     >
@@ -399,15 +462,21 @@ export default function SearchPage() {
         {!searchResults && !loading && (
           <Card>
             <CardContent>
-              <div className="text-center py-12">
-                <p className="text-6xl mb-4">🔍</p>
-                <h3 className="text-2xl font-bold text-[#1F1B16] mb-2">Search Reports</h3>
-                <p className="text-[#7A6A58] mb-6">
-                  Enter keywords to search across all shift reports, activities, concerns, and notes
+              <div className="py-12 text-center">
+                <p className="mb-4 text-6xl">🔍</p>
+                <h3 className="mb-2 text-2xl font-bold text-[#1F1B16]">
+                  Search Reports
+                </h3>
+                <p className="mb-6 text-[#7A6A58]">
+                  Enter keywords to search across all shift reports, activities,
+                  concerns, and notes
                 </p>
-                <div className="text-sm text-[#9A8A78] space-y-1">
+                <div className="space-y-1 text-sm text-[#9A8A78]">
                   <p>💡 Tip: Use advanced filters to narrow down your search</p>
-                  <p>💡 Tip: Search supports full-text search with relevance ranking</p>
+                  <p>
+                    💡 Tip: Search supports full-text search with relevance
+                    ranking
+                  </p>
                 </div>
               </div>
             </CardContent>

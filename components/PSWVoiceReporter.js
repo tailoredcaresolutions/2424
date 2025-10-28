@@ -261,6 +261,187 @@ const PSWVoiceReporter = () => {
     'hi-IN': 'Hindi'
   };
 
+  const startConversation = useCallback(() => {
+    const welcomeMessage = {
+      type: 'ai',
+      content: 'Hello! I\'m here to help you document your shift. Let\'s start - what\'s your name?',
+      timestamp: new Date()
+    };
+    setConversation([welcomeMessage]);
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, []);
+
+  // Enhanced audio playback for cross-browser compatibility
+  const playAudio = useCallback(async (audioUrl) => {
+    try {
+      const audio = new Audio(audioUrl);
+      
+      // iOS Safari requires user interaction before playing audio
+      if (isIOS) {
+        audio.muted = false;
+        audio.volume = 1.0;
+        
+        // Add event listeners for iOS
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.warn('Audio autoplay prevented on iOS:', error);
+            // Could show a "Tap to play audio" button here
+          });
+        }
+      } else {
+        await audio.play();
+      }
+    } catch (error) {
+      console.error('Audio playback failed:', error);
+    }
+  }, [isIOS]);
+
+  const toggleListening = useCallback(async () => {
+    if (!browserSupport.speechRecognition) {
+      setShowTextInput(true);
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    } else {
+      try {
+        // Request microphone permission first (especially important for iOS)
+        if (browserSupport.mediaDevices) {
+          await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+        recognitionRef.current?.start();
+        setIsListening(true);
+      } catch (error) {
+        console.error('Microphone access denied or error:', error);
+        setShowTextInput(true);
+        alert('Microphone access is required for voice input. Please use the text input instead.');
+      }
+    }
+  }, [browserSupport, isListening]);
+
+  const generateReport = useCallback(async () => {
+    setIsReportGenerating(true);
+    try {
+      const response = await fetch('/api/generate-ai-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation,
+          language: selectedLanguage
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // DAR JSON Integration: Store both paragraph and structured data
+        setReport(data.noteText || data.report);
+        setDarJson(data.dar);
+        setShowReport(true);
+
+        // Phase 2 Q1: Parse report into collapsible sections (use noteText)
+        const sections = parseReportIntoSections(data.noteText || data.report);
+        setReportSections(sections);
+        setAllSectionsExpanded(true); // All expanded by default
+
+        // Phase 1 Q4: Show success toast
+        setSuccessMessage('✅ DAR Report generated successfully!');
+        setShowSuccessToast(true);
+        setTimeout(() => setShowSuccessToast(false), 4000);
+
+        // Phase 2 Q2: Save current session immediately when report generated
+        saveCurrentSession(conversation, data.noteText || data.report, parseReportIntoSections(data.noteText || data.report));
+
+        // Phase 1 Q4: Trigger celebratory animation
+        setShowCelebration(true);
+        setTimeout(() => setShowCelebration(false), 4000);
+      } else {
+        setSuccessMessage('⚠️ Failed to generate DAR report. Please try again.');
+        setShowSuccessToast(false);
+        setShowCelebration(false);
+      }
+    } catch (error) {
+      console.error('Error generating report:', error);
+      setSuccessMessage('⚠️ DAR report generation failed. Check console for details.');
+      setShowSuccessToast(false);
+      setShowCelebration(false);
+    } finally {
+      setIsReportGenerating(false);
+    }
+  }, [conversation, selectedLanguage]);
+
+  const handleSpeechInput = useCallback(async (text) => {
+    if (!text.trim() || isProcessing) return;
+
+    const sanitized = text.trim();
+    setIsProcessing(true);
+    const userMessage = { type: 'user', content: sanitized, timestamp: new Date() };
+    setConversation(prev => [...prev, userMessage]);
+
+    setConsecutiveAIMessages(0);
+
+    try {
+      const response = await fetch('/api/process-conversation-ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userInput: sanitized,
+          conversationHistory: [...conversation, userMessage],
+          language: selectedLanguage,
+          consecutiveAIMessages
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        const aiMessage = {
+          type: 'ai',
+          content: data.response,
+          timestamp: new Date(),
+          audioUrl: data.audioUrl
+        };
+        setConversation(prev => [...prev, aiMessage]);
+        setConsecutiveAIMessages(prev => prev + 1);
+
+        if (data.audioUrl) {
+          await playAudio(data.audioUrl);
+        }
+
+        if (data.documentationComplete) {
+          setTimeout(() => generateReport(), 2000);
+        }
+      } else {
+        const errorMessage = {
+          type: 'ai',
+          content: data.error || 'Sorry, I encountered an error. Please try again.',
+          timestamp: new Date()
+        };
+        setConversation(prev => [...prev, errorMessage]);
+        setConsecutiveAIMessages(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error('Error processing conversation:', error);
+      const errorMessage = {
+        type: 'ai',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: new Date()
+      };
+      setConversation(prev => [...prev, errorMessage]);
+      setConsecutiveAIMessages(prev => prev + 1);
+    } finally {
+      setIsProcessing(false);
+      setTranscript('');
+    }
+  }, [conversation, consecutiveAIMessages, generateReport, isProcessing, playAudio, selectedLanguage]);
+
   // Detect browser and device capabilities
   useEffect(() => {
     const detectBrowserSupport = () => {
@@ -338,22 +519,18 @@ const PSWVoiceReporter = () => {
     }
 
     scrollToBottom();
-  }, [selectedLanguage, browserSupport, handleSpeechInput]);
+  }, [selectedLanguage, browserSupport, handleSpeechInput, scrollToBottom]);
 
   useEffect(() => {
     // Start conversation automatically when component loads or resets
     if (conversation.length === 0 && !isProcessing) {
       startConversation();
     }
-  }, [conversation.length, isProcessing]);
+  }, [conversation.length, isProcessing, startConversation]);
 
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
-
-  useEffect(scrollToBottom, [conversation, currentResponse]);
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation, currentResponse, scrollToBottom]);
 
   // Phase 2 Q2: Auto-save current session (debounced)
   useEffect(() => {
@@ -478,106 +655,6 @@ const PSWVoiceReporter = () => {
     generateReport
   ]);
 
-  const startConversation = () => {
-    const welcomeMessage = {
-      type: 'ai',
-      content: 'Hello! I\'m here to help you document your shift. Let\'s start - what\'s your name?',
-      timestamp: new Date()
-    };
-    setConversation([welcomeMessage]);
-  };
-
-  // Enhanced audio playback for cross-browser compatibility
-  const playAudio = useCallback(async (audioUrl) => {
-    try {
-      const audio = new Audio(audioUrl);
-      
-      // iOS Safari requires user interaction before playing audio
-      if (isIOS) {
-        audio.muted = false;
-        audio.volume = 1.0;
-        
-        // Add event listeners for iOS
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(error => {
-            console.warn('Audio autoplay prevented on iOS:', error);
-            // Could show a "Tap to play audio" button here
-          });
-        }
-      } else {
-        await audio.play();
-      }
-    } catch (error) {
-      console.error('Audio playback failed:', error);
-    }
-  }, [isIOS]);
-
-  const handleSpeechInput = useCallback(async (text) => {
-    if (!text.trim() || isProcessing) return;
-
-    const sanitized = text.trim();
-    setIsProcessing(true);
-    const userMessage = { type: 'user', content: sanitized, timestamp: new Date() };
-    setConversation(prev => [...prev, userMessage]);
-
-    setConsecutiveAIMessages(0);
-
-    try {
-      const response = await fetch('/api/process-conversation-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userInput: sanitized,
-          conversationHistory: [...conversation, userMessage],
-          language: selectedLanguage,
-          consecutiveAIMessages
-        })
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        const aiMessage = {
-          type: 'ai',
-          content: data.response,
-          timestamp: new Date(),
-          audioUrl: data.audioUrl
-        };
-        setConversation(prev => [...prev, aiMessage]);
-        setConsecutiveAIMessages(prev => prev + 1);
-
-        if (data.audioUrl) {
-          await playAudio(data.audioUrl);
-        }
-
-        if (data.documentationComplete) {
-          setTimeout(() => generateReport(), 2000);
-        }
-      } else {
-        const errorMessage = {
-          type: 'ai',
-          content: data.error || 'Sorry, I encountered an error. Please try again.',
-          timestamp: new Date()
-        };
-        setConversation(prev => [...prev, errorMessage]);
-        setConsecutiveAIMessages(prev => prev + 1);
-      }
-    } catch (error) {
-      console.error('Error processing conversation:', error);
-      const errorMessage = {
-        type: 'ai',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date()
-      };
-      setConversation(prev => [...prev, errorMessage]);
-      setConsecutiveAIMessages(prev => prev + 1);
-    } finally {
-      setIsProcessing(false);
-      setTranscript('');
-    }
-  }, [conversation, consecutiveAIMessages, generateReport, isProcessing, playAudio, selectedLanguage]);
-
   const handleTextSubmit = () => {
     if (textInput.trim()) {
       handleSpeechInput(textInput.trim());
@@ -591,67 +668,6 @@ const PSWVoiceReporter = () => {
       handleTextSubmit();
     }
   };
-
-  const toggleListening = useCallback(async () => {
-    if (!browserSupport.speechRecognition) {
-      setShowTextInput(true);
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      try {
-        // Request microphone permission first (especially important for iOS)
-        if (browserSupport.mediaDevices) {
-          await navigator.mediaDevices.getUserMedia({ audio: true });
-        }
-        recognitionRef.current?.start();
-        setIsListening(true);
-      } catch (error) {
-        console.error('Microphone access denied or error:', error);
-        setShowTextInput(true);
-        alert('Microphone access is required for voice input. Please use the text input instead.');
-      }
-    }
-  }, [browserSupport, isListening]);
-
-  const generateReport = useCallback(async () => {
-    setIsReportGenerating(true);
-    try {
-      const response = await fetch('/api/generate-ai-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation,
-          language: selectedLanguage
-        })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        // DAR JSON Integration: Store both paragraph and structured data
-        setReport(data.noteText || data.report);
-        setDarJson(data.dar);
-        setShowReport(true);
-
-        // Phase 2 Q1: Parse report into collapsible sections (use noteText)
-        const sections = parseReportIntoSections(data.noteText || data.report);
-        setReportSections(sections);
-        setAllSectionsExpanded(true); // All expanded by default
-
-        // Phase 1 Q4: Show success toast
-        setSuccessMessage('✅ DAR Report generated successfully!');
-        setShowSuccessToast(true);
-        setTimeout(() => setShowSuccessToast(false), 4000);
-      }
-    } catch (error) {
-      console.error('Error generating report:', error);
-    } finally {
-      setIsReportGenerating(false);
-    }
-  }, [conversation, selectedLanguage]);
 
   const startNewSession = () => {
     setConversation([]);

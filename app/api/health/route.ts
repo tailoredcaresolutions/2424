@@ -69,14 +69,17 @@ export async function GET() {
       // In development mode, better-sqlite3 native bindings may not load in Next.js
       // This is expected and doesn't indicate a real problem
       const isDevelopment = process.env.NEXT_PUBLIC_ENVIRONMENT === 'local';
-      const errorMessage = error instanceof Error ? error.message : 'Database connection failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Database connection failed';
       const isNativeBindingError = errorMessage.includes('bindings file');
 
       health.services.database = {
-        status: isDevelopment && isNativeBindingError ? 'dev_mode_skip' : 'error',
-        message: isDevelopment && isNativeBindingError
-          ? 'Native module - use production build or direct Node.js scripts for DB access'
-          : errorMessage,
+        status:
+          isDevelopment && isNativeBindingError ? 'dev_mode_skip' : 'error',
+        message:
+          isDevelopment && isNativeBindingError
+            ? 'Native module - use production build or direct Node.js scripts for DB access'
+            : errorMessage,
         responseTime: Date.now() - dbStart,
       };
 
@@ -99,7 +102,9 @@ export async function GET() {
 
       if (response.ok) {
         const data = await response.json();
-        const hasLlama = data.models?.some((m: any) => m.name.includes('llama3.3'));
+        const hasLlama = data.models?.some((m: any) =>
+          m.name.includes('llama3.3')
+        );
         health.services.ollama = {
           status: hasLlama ? 'ok' : 'degraded',
           message: hasLlama ? undefined : 'Llama 3.3 70B not found',
@@ -117,7 +122,8 @@ export async function GET() {
     } catch (error) {
       health.services.ollama = {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Ollama not reachable',
+        message:
+          error instanceof Error ? error.message : 'Ollama not reachable',
         responseTime: Date.now() - ollamaStart,
       };
       health.status = 'degraded'; // AI not critical, mark degraded
@@ -135,7 +141,8 @@ export async function GET() {
     } catch (error) {
       health.services.filesystem = {
         status: 'error',
-        message: error instanceof Error ? error.message : 'Filesystem check failed',
+        message:
+          error instanceof Error ? error.message : 'Filesystem check failed',
       };
       health.status = 'degraded';
     }
@@ -151,7 +158,12 @@ export async function GET() {
     };
 
     // Return appropriate status code
-    const statusCode = health.status === 'healthy' ? 200 : health.status === 'degraded' ? 200 : 503;
+    const statusCode =
+      health.status === 'healthy'
+        ? 200
+        : health.status === 'degraded'
+          ? 200
+          : 503;
     const totalResponseTime = Date.now() - startTime;
 
     return NextResponse.json(

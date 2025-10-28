@@ -1,4 +1,5 @@
 # 🚀 AI MODELS QUICK REFERENCE
+
 ## For PSW Voice Documentation System - Local Deployment
 
 ---
@@ -7,13 +8,13 @@
 
 ### CRITICAL MODELS (Required for Core Functionality)
 
-| # | Model Name | Size | RAM | Purpose | Download Command |
-|---|------------|------|-----|---------|------------------|
-| 1 | **Llama 3.2 70B Q4_K_M** | 38GB | 42-48GB | Main conversational AI | `ollama pull llama3.2:70b-instruct-q4_K_M` |
-| 2 | **BioMistral 7B** | 14GB | 8GB | Medical entity extraction | `huggingface-cli download BioMistral/BioMistral-7B-GGUF` |
-| 3 | **WhisperKit Large-v3-turbo** | 3.1GB | 4GB | Speech-to-text | `pip install whisperkit` |
-| 4 | **XTTS v2** | 1.8GB | 2GB | Text-to-speech | `pip install coqui-tts` |
-| 5 | **BGE-M3** | 2.2GB | 3GB | Embeddings/semantic search | `pip install sentence-transformers` |
+| #   | Model Name                    | Size  | RAM     | Purpose                    | Download Command                                         |
+| --- | ----------------------------- | ----- | ------- | -------------------------- | -------------------------------------------------------- |
+| 1   | **Llama 3.2 70B Q4_K_M**      | 38GB  | 42-48GB | Main conversational AI     | `ollama pull llama3.2:70b-instruct-q4_K_M`               |
+| 2   | **BioMistral 7B**             | 14GB  | 8GB     | Medical entity extraction  | `huggingface-cli download BioMistral/BioMistral-7B-GGUF` |
+| 3   | **WhisperKit Large-v3-turbo** | 3.1GB | 4GB     | Speech-to-text             | `pip install whisperkit`                                 |
+| 4   | **XTTS v2**                   | 1.8GB | 2GB     | Text-to-speech             | `pip install coqui-tts`                                  |
+| 5   | **BGE-M3**                    | 2.2GB | 3GB     | Embeddings/semantic search | `pip install sentence-transformers`                      |
 
 **Total**: ~60GB storage, ~65GB RAM
 
@@ -68,6 +69,7 @@ Location: ~/.ollama/models/ or /Volumes/AI/models/llama3.2-70b/
 ```
 
 **Test Command**:
+
 ```bash
 ollama run llama3.2:70b-instruct-q4_K_M "Write a brief PSW shift note"
 ```
@@ -88,6 +90,7 @@ Use Case: Extract vital signs, medications, medical entities
 ```
 
 **Test Command**:
+
 ```bash
 llama-cli -m /Volumes/AI/models/biomistral/*.gguf \
   -p "Extract medical info: BP 120/80, pulse 72"
@@ -109,6 +112,7 @@ Use Case: Convert voice to text
 ```
 
 **Test Command**:
+
 ```python
 from whisperkit import WhisperKit
 whisper = WhisperKit(model_path="/Volumes/AI/models/whisper")
@@ -131,6 +135,7 @@ Use Case: Generate voice responses
 ```
 
 **Test Command**:
+
 ```python
 from TTS.api import TTS
 tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
@@ -152,6 +157,7 @@ Use Case: Semantic search, RAG, similar case finding
 ```
 
 **Test Command**:
+
 ```python
 from sentence_transformers import SentenceTransformer
 model = SentenceTransformer('BAAI/bge-m3')
@@ -224,11 +230,11 @@ Improvement:                           50-70% faster
 ### Concurrent Requests
 
 | Load Level | Concurrent Users | Response Time | Memory Used |
-|------------|------------------|---------------|-------------|
-| Light | 1-10 | 1.5s | 65GB |
-| Medium | 10-30 | 2.0s | 70GB |
-| Heavy | 30-50 | 3.5s | 75GB |
-| Max | 50+ | 5.0s+ | 80GB+ |
+| ---------- | ---------------- | ------------- | ----------- |
+| Light      | 1-10             | 1.5s          | 65GB        |
+| Medium     | 10-30            | 2.0s          | 70GB        |
+| Heavy      | 30-50            | 3.5s          | 75GB        |
+| Max        | 50+              | 5.0s+         | 80GB+       |
 
 ---
 
@@ -273,13 +279,13 @@ ollama stop llama3.2:70b-instruct-q4_K_M
 
 ### If You Want Different Trade-offs
 
-| Need | Alternative Model | Size | RAM | Speed |
-|------|------------------|------|-----|-------|
-| Faster responses | Llama 3.2 34B Q6_K | 24GB | 28GB | 70-80 tok/s |
-| More accuracy | Llama 3.2 70B Q6_K | 54GB | 58GB | 35-45 tok/s |
-| Less storage | Llama 3.2 13B Q4_K_M | 8GB | 10GB | 150+ tok/s |
-| Medical focus | PointLLM 13B | 8GB | 10GB | 120 tok/s |
-| Multilingual STT | Whisper Large-v3 | 3GB | 4GB | 40x realtime |
+| Need             | Alternative Model    | Size | RAM  | Speed        |
+| ---------------- | -------------------- | ---- | ---- | ------------ |
+| Faster responses | Llama 3.2 34B Q6_K   | 24GB | 28GB | 70-80 tok/s  |
+| More accuracy    | Llama 3.2 70B Q6_K   | 54GB | 58GB | 35-45 tok/s  |
+| Less storage     | Llama 3.2 13B Q4_K_M | 8GB  | 10GB | 150+ tok/s   |
+| Medical focus    | PointLLM 13B         | 8GB  | 10GB | 120 tok/s    |
+| Multilingual STT | Whisper Large-v3     | 3GB  | 4GB  | 40x realtime |
 
 ---
 
@@ -289,7 +295,7 @@ Print this and check off as you download:
 
 ```
 □ Ollama installed
-□ Python 3.11+ installed  
+□ Python 3.11+ installed
 □ Hugging Face CLI installed
 □ MLX installed
 □ WhisperKit installed

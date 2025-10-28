@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
 
     // Default to last quarter if not specified
     const end = endDate || new Date().toISOString();
-    const start = startDate || new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    const start =
+      startDate ||
+      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
 
     const monitor = getAIMonitor();
 
@@ -32,27 +34,42 @@ export async function GET(request: NextRequest) {
     const recommendations: string[] = [];
 
     if (quarterlyStats.errorRate > 5) {
-      recommendations.push(`High error rate (${quarterlyStats.errorRate}%) - Review model performance and error logs`);
+      recommendations.push(
+        `High error rate (${quarterlyStats.errorRate}%) - Review model performance and error logs`
+      );
     }
 
     if (quarterlyStats.avgResponseTime > 3000) {
-      recommendations.push(`Slow response times (${quarterlyStats.avgResponseTime}ms avg) - Consider hardware upgrade or model optimization`);
+      recommendations.push(
+        `Slow response times (${quarterlyStats.avgResponseTime}ms avg) - Consider hardware upgrade or model optimization`
+      );
     }
 
     if (satisfactionScores.accuracyScore < 4.0) {
-      recommendations.push(`Low accuracy rating (${satisfactionScores.accuracyScore}/5) - Audit AI outputs and consider fine-tuning`);
+      recommendations.push(
+        `Low accuracy rating (${satisfactionScores.accuracyScore}/5) - Audit AI outputs and consider fine-tuning`
+      );
     }
 
-    if (quarterlyStats.contextUsageTrend.longConversations > quarterlyStats.totalRequests * 0.1) {
-      recommendations.push(`Context usage increasing - ${quarterlyStats.contextUsageTrend.longConversations} long conversations detected`);
+    if (
+      quarterlyStats.contextUsageTrend.longConversations >
+      quarterlyStats.totalRequests * 0.1
+    ) {
+      recommendations.push(
+        `Context usage increasing - ${quarterlyStats.contextUsageTrend.longConversations} long conversations detected`
+      );
     }
 
     if (quarterlyStats.issueCount > quarterlyStats.totalRequests * 0.05) {
-      recommendations.push(`${quarterlyStats.issueCount} issues reported - Review common error patterns`);
+      recommendations.push(
+        `${quarterlyStats.issueCount} issues reported - Review common error patterns`
+      );
     }
 
     if (quarterlyStats.auditedSampleSize < 20) {
-      recommendations.push(`Low audit sample size (${quarterlyStats.auditedSampleSize}) - Increase random audits for better quality assurance`);
+      recommendations.push(
+        `Low audit sample size (${quarterlyStats.auditedSampleSize}) - Increase random audits for better quality assurance`
+      );
     }
 
     logger.info(
@@ -79,11 +96,27 @@ export async function GET(request: NextRequest) {
         },
         recommendations,
         summary: {
-          overallHealth: calculateOverallHealth(quarterlyStats, satisfactionScores),
+          overallHealth: calculateOverallHealth(
+            quarterlyStats,
+            satisfactionScores
+          ),
           keyMetrics: {
-            aiPerformance: quarterlyStats.avgResponseTime < 3000 ? 'Good' : 'Needs Improvement',
-            userSatisfaction: satisfactionScores.overallSatisfaction >= 4.0 ? 'Excellent' : satisfactionScores.overallSatisfaction >= 3.5 ? 'Good' : 'Needs Improvement',
-            reliability: quarterlyStats.errorRate < 5 ? 'Excellent' : quarterlyStats.errorRate < 10 ? 'Good' : 'Needs Improvement',
+            aiPerformance:
+              quarterlyStats.avgResponseTime < 3000
+                ? 'Good'
+                : 'Needs Improvement',
+            userSatisfaction:
+              satisfactionScores.overallSatisfaction >= 4.0
+                ? 'Excellent'
+                : satisfactionScores.overallSatisfaction >= 3.5
+                  ? 'Good'
+                  : 'Needs Improvement',
+            reliability:
+              quarterlyStats.errorRate < 5
+                ? 'Excellent'
+                : quarterlyStats.errorRate < 10
+                  ? 'Good'
+                  : 'Needs Improvement',
           },
         },
       },
@@ -110,7 +143,10 @@ export async function GET(request: NextRequest) {
 /**
  * Calculate overall health score
  */
-function calculateOverallHealth(stats: any, satisfaction: any): {
+function calculateOverallHealth(
+  stats: any,
+  satisfaction: any
+): {
   score: number;
   rating: string;
 } {
@@ -129,7 +165,10 @@ function calculateOverallHealth(stats: any, satisfaction: any): {
   else if (satisfaction.overallSatisfaction < 4.0) score -= 15;
 
   // Deduct for high issue rate
-  const issueRate = stats.totalRequests > 0 ? (stats.issueCount / stats.totalRequests) * 100 : 0;
+  const issueRate =
+    stats.totalRequests > 0
+      ? (stats.issueCount / stats.totalRequests) * 100
+      : 0;
   if (issueRate > 10) score -= 20;
   else if (issueRate > 5) score -= 10;
 

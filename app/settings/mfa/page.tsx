@@ -3,7 +3,15 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, CardContent, CardFooter, Button, Badge, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Button,
+  Badge,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface MFAStatus {
   enrolled: boolean;
@@ -19,7 +27,9 @@ interface EnrollmentData {
 
 export default function MFAPage() {
   const [mfaStatus, setMfaStatus] = useState<MFAStatus | null>(null);
-  const [enrollmentData, setEnrollmentData] = useState<EnrollmentData | null>(null);
+  const [enrollmentData, setEnrollmentData] = useState<EnrollmentData | null>(
+    null
+  );
   const [verificationCode, setVerificationCode] = useState('');
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
@@ -38,7 +48,7 @@ export default function MFAPage() {
       // Mock status for now - replace with actual API call
       const mockStatus: MFAStatus = {
         enrolled: false,
-        backupCodesRemaining: 0
+        backupCodesRemaining: 0,
       };
 
       setMfaStatus(mockStatus);
@@ -58,7 +68,7 @@ export default function MFAPage() {
       const response = await fetch('/api/auth/mfa/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: 1 }) // Replace with actual user ID
+        body: JSON.stringify({ userId: 1 }), // Replace with actual user ID
       });
 
       const data = await response.json();
@@ -92,8 +102,8 @@ export default function MFAPage() {
         body: JSON.stringify({
           userId: 1, // Replace with actual user ID
           token: verificationCode,
-          secret: enrollmentData?.secret
-        })
+          secret: enrollmentData?.secret,
+        }),
       });
 
       const data = await response.json();
@@ -113,7 +123,11 @@ export default function MFAPage() {
   };
 
   const disableMFA = async () => {
-    if (!confirm('Are you sure you want to disable MFA? This will reduce your account security.')) {
+    if (
+      !confirm(
+        'Are you sure you want to disable MFA? This will reduce your account security.'
+      )
+    ) {
       return;
     }
 
@@ -156,7 +170,9 @@ export default function MFAPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-        <Navigation user={{ name: 'User', role: 'psw', email: 'user@tailoredcare.ca' }} />
+        <Navigation
+          user={{ name: 'User', role: 'psw', email: 'user@tailoredcare.ca' }}
+        />
         <LoadingSpinner fullScreen text="Loading MFA settings..." />
       </div>
     );
@@ -164,24 +180,30 @@ export default function MFAPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'User', role: 'psw', email: 'user@tailoredcare.ca' }} />
+      <Navigation
+        user={{ name: 'User', role: 'psw', email: 'user@tailoredcare.ca' }}
+      />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Multi-Factor Authentication</h1>
-          <p className="text-gray-600 mt-2">Enhance your account security with MFA</p>
+          <h1 className="text-gray-900 text-4xl font-bold">
+            Multi-Factor Authentication
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Enhance your account security with MFA
+          </p>
         </div>
 
         {/* Error/Success Messages */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+          <div className="bg-red-50 border-red-200 text-red-800 mb-6 rounded-lg border p-4">
             ⚠️ {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+          <div className="bg-green-50 border-green-200 text-green-800 mb-6 rounded-lg border p-4">
             ✅ {success}
           </div>
         )}
@@ -204,58 +226,78 @@ export default function MFAPage() {
               {mfaStatus.enrolled ? (
                 <div className="space-y-4">
                   <p className="text-gray-700">
-                    Multi-factor authentication is currently <span className="font-bold text-green-600">enabled</span> for your account.
+                    Multi-factor authentication is currently{' '}
+                    <span className="text-green-600 font-bold">enabled</span>{' '}
+                    for your account.
                   </p>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium text-gray-600">Enabled On</p>
-                      <p className="text-lg font-bold text-gray-900">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-gray-600 text-sm font-medium">
+                        Enabled On
+                      </p>
+                      <p className="text-gray-900 text-lg font-bold">
                         {mfaStatus.enrolledAt
                           ? new Date(mfaStatus.enrolledAt).toLocaleDateString()
                           : 'N/A'}
                       </p>
                     </div>
-                    <div className="p-4 bg-gray-50 rounded-lg">
-                      <p className="text-sm font-medium text-gray-600">Backup Codes Remaining</p>
-                      <p className="text-lg font-bold text-gray-900">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <p className="text-gray-600 text-sm font-medium">
+                        Backup Codes Remaining
+                      </p>
+                      <p className="text-gray-900 text-lg font-bold">
                         {mfaStatus.backupCodesRemaining || 0} / 10
                       </p>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h4 className="font-bold text-blue-900 mb-2">✅ Your account is protected</h4>
-                    <p className="text-sm text-blue-800">
-                      You&rsquo;ll be prompted for a verification code from your authenticator app when logging in.
+                  <div className="bg-blue-50 border-blue-200 rounded-lg border p-4">
+                    <h4 className="text-blue-900 mb-2 font-bold">
+                      ✅ Your account is protected
+                    </h4>
+                    <p className="text-blue-800 text-sm">
+                      You&rsquo;ll be prompted for a verification code from your
+                      authenticator app when logging in.
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <p className="text-gray-700">
-                    Multi-factor authentication is currently <span className="font-bold text-amber-600">not enabled</span> for your account.
+                    Multi-factor authentication is currently{' '}
+                    <span className="text-amber-600 font-bold">
+                      not enabled
+                    </span>{' '}
+                    for your account.
                   </p>
 
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                    <h4 className="font-bold text-amber-900 mb-2">⚠️ Enhance your security</h4>
-                    <p className="text-sm text-amber-800 mb-3">
-                      Enable MFA to add an extra layer of protection to your account. You&rsquo;ll need an authenticator app like:
+                  <div className="bg-amber-50 border-amber-200 rounded-lg border p-4">
+                    <h4 className="text-amber-900 mb-2 font-bold">
+                      ⚠️ Enhance your security
+                    </h4>
+                    <p className="text-amber-800 mb-3 text-sm">
+                      Enable MFA to add an extra layer of protection to your
+                      account. You&rsquo;ll need an authenticator app like:
                     </p>
-                    <ul className="text-sm text-amber-800 space-y-1 ml-4">
+                    <ul className="text-amber-800 ml-4 space-y-1 text-sm">
                       <li>• Google Authenticator (iOS/Android)</li>
                       <li>• Microsoft Authenticator (iOS/Android)</li>
                       <li>• Authy (iOS/Android/Desktop)</li>
                     </ul>
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-gray-900 mb-2">How it works:</h4>
-                    <ol className="text-sm text-gray-700 space-y-2">
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-gray-900 mb-2 font-bold">
+                      How it works:
+                    </h4>
+                    <ol className="text-gray-700 space-y-2 text-sm">
                       <li>1️⃣ Scan a QR code with your authenticator app</li>
                       <li>2️⃣ Enter the 6-digit code to verify</li>
                       <li>3️⃣ Save your backup codes in a safe place</li>
-                      <li>4️⃣ Use your authenticator app for all future logins</li>
+                      <li>
+                        4️⃣ Use your authenticator app for all future logins
+                      </li>
                     </ol>
                   </div>
                 </div>
@@ -264,7 +306,10 @@ export default function MFAPage() {
             <CardFooter>
               {mfaStatus.enrolled ? (
                 <>
-                  <Button variant="secondary" onClick={() => console.log('Generate new backup codes')}>
+                  <Button
+                    variant="secondary"
+                    onClick={() => console.log('Generate new backup codes')}
+                  >
                     🔄 Generate New Backup Codes
                   </Button>
                   <Button variant="danger" onClick={disableMFA}>
@@ -272,7 +317,11 @@ export default function MFAPage() {
                   </Button>
                 </>
               ) : (
-                <Button variant="primary" onClick={startEnrollment} loading={enrolling}>
+                <Button
+                  variant="primary"
+                  onClick={startEnrollment}
+                  loading={enrolling}
+                >
                   🔒 Enable MFA
                 </Button>
               )}
@@ -292,25 +341,25 @@ export default function MFAPage() {
                   </p>
 
                   {/* QR Code */}
-                  <div className="p-6 bg-white border-4 border-[#1B365D] rounded-xl">
+                  <div className="bg-white rounded-xl border-4 border-[#1B365D] p-6">
                     <Image
                       src={enrollmentData.qrCode}
                       alt="MFA QR Code"
                       width={256}
                       height={256}
-                      className="w-64 h-64"
+                      className="h-64 w-64"
                       priority
                     />
                   </div>
 
                   {/* Manual entry option */}
                   <details className="w-full">
-                    <summary className="cursor-pointer text-sm text-gray-600 hover:text-gray-900">
+                    <summary className="text-gray-600 hover:text-gray-900 cursor-pointer text-sm">
                       Can&rsquo;t scan? Enter key manually
                     </summary>
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Secret Key:</p>
-                      <code className="text-sm font-mono bg-white px-3 py-2 rounded border border-gray-300 block">
+                    <div className="bg-gray-50 mt-3 rounded-lg p-3">
+                      <p className="text-gray-600 mb-1 text-xs">Secret Key:</p>
+                      <code className="bg-white rounded border-gray-300 block border px-3 py-2 font-mono text-sm">
                         {enrollmentData.secret}
                       </code>
                     </div>
@@ -323,16 +372,21 @@ export default function MFAPage() {
               <CardHeader title="Step 2: Verify Code" icon="🔢" />
               <CardContent>
                 <p className="text-gray-700 mb-4">
-                  Enter the 6-digit code from your authenticator app to complete setup
+                  Enter the 6-digit code from your authenticator app to complete
+                  setup
                 </p>
 
                 <div className="flex items-center space-x-3">
                   <input
                     type="text"
                     value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    onChange={(e) =>
+                      setVerificationCode(
+                        e.target.value.replace(/\D/g, '').slice(0, 6)
+                      )
+                    }
                     placeholder="000000"
-                    className="flex-1 px-4 py-3 text-2xl font-mono text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1B365D] focus:border-transparent"
+                    className="border-gray-300 focus:border-transparent flex-1 rounded-lg border px-4 py-3 text-center font-mono text-2xl focus:ring-2 focus:ring-[#1B365D]"
                     maxLength={6}
                   />
                   <Button
@@ -351,21 +405,29 @@ export default function MFAPage() {
             <Card className="mt-6">
               <CardHeader title="Step 3: Save Backup Codes" icon="💾" />
               <CardContent>
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg mb-4">
-                  <p className="text-sm text-amber-800 font-medium">
-                    ⚠️ Important: Save these backup codes in a secure location. Each code can only be used once.
+                <div className="bg-amber-50 border-amber-200 mb-4 rounded-lg border p-4">
+                  <p className="text-amber-800 text-sm font-medium">
+                    ⚠️ Important: Save these backup codes in a secure location.
+                    Each code can only be used once.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="mb-4 grid grid-cols-2 gap-3">
                   {enrollmentData.backupCodes.map((code, index) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                      <code className="text-sm font-mono">{code}</code>
+                    <div
+                      key={index}
+                      className="bg-gray-50 border-gray-200 rounded-lg border p-3"
+                    >
+                      <code className="font-mono text-sm">{code}</code>
                     </div>
                   ))}
                 </div>
 
-                <Button variant="secondary" onClick={downloadBackupCodes} fullWidth>
+                <Button
+                  variant="secondary"
+                  onClick={downloadBackupCodes}
+                  fullWidth
+                >
                   📥 Download Backup Codes
                 </Button>
               </CardContent>

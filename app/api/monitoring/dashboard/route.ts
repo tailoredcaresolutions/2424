@@ -32,7 +32,12 @@ export async function GET(request: NextRequest) {
     );
 
     // Return appropriate status code based on health
-    const statusCode = report.overall === 'healthy' ? 200 : report.overall === 'degraded' ? 200 : 503;
+    const statusCode =
+      report.overall === 'healthy'
+        ? 200
+        : report.overall === 'degraded'
+          ? 200
+          : 503;
 
     return NextResponse.json(report, { status: statusCode });
   } catch (error) {

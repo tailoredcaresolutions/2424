@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
-import { Card, CardHeader, CardContent, StatCard, Button, Badge, LoadingSpinner } from '@/components/ui';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  StatCard,
+  Button,
+  Badge,
+  LoadingSpinner,
+} from '@/components/ui';
 
 interface SystemMetrics {
   cpu: { usage: number; cores: number };
@@ -96,28 +104,34 @@ export default function MonitoringDashboard() {
     const variants = {
       healthy: 'success',
       warning: 'warning',
-      error: 'danger'
+      error: 'danger',
     } as const;
 
     const labels = {
       healthy: '✅ Healthy',
       warning: '⚠️ Warning',
-      error: '❌ Error'
+      error: '❌ Error',
     };
 
     return <Badge variant={variants[status]}>{labels[status]}</Badge>;
   };
 
-  const getMetricColor = (percentage: number): 'green' | 'amber' | 'red' => {
-    if (percentage < 70) return 'green';
-    if (percentage < 85) return 'amber';
-    return 'red';
+  const getMetricColor = (percentage: number): 'emerald' | 'gold' | 'rose' => {
+    if (percentage < 70) return 'emerald';
+    if (percentage < 85) return 'gold';
+    return 'rose';
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-        <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+        <Navigation
+          user={{
+            name: 'Admin User',
+            role: 'admin',
+            email: 'admin@tailoredcare.ca',
+          }}
+        />
         <LoadingSpinner fullScreen text="Loading monitoring dashboard..." />
       </div>
     );
@@ -125,16 +139,26 @@ export default function MonitoringDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
-      <Navigation user={{ name: 'Admin User', role: 'admin', email: 'admin@tailoredcare.ca' }} />
+      <Navigation
+        user={{
+          name: 'Admin User',
+          role: 'admin',
+          email: 'admin@tailoredcare.ca',
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">System Monitoring</h1>
-            <p className="text-gray-600 mt-2">Real-time health and performance metrics</p>
+            <h1 className="text-gray-900 text-4xl font-bold">
+              System Monitoring
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Real-time health and performance metrics
+            </p>
             {healthData && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-gray-500 mt-1 text-sm">
                 Last updated: {new Date(healthData.timestamp).toLocaleString()}
               </p>
             )}
@@ -154,7 +178,7 @@ export default function MonitoringDashboard() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+          <div className="bg-red-50 border-red-200 text-red-800 mb-6 rounded-lg border p-4">
             ⚠️ {error}
           </div>
         )}
@@ -162,13 +186,13 @@ export default function MonitoringDashboard() {
         {/* System Overview Stats */}
         {healthData && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Overall Status"
                 value={healthData.status === 'healthy' ? 'Healthy' : 'Warning'}
                 subtitle="System operational"
                 icon="💚"
-                color={healthData.status === 'healthy' ? 'green' : 'amber'}
+                color={healthData.status === 'healthy' ? 'emerald' : 'gold'}
               />
               <StatCard
                 title="CPU Usage"
@@ -189,12 +213,12 @@ export default function MonitoringDashboard() {
                 value={formatUptime(healthData.system.uptime)}
                 subtitle="Continuous operation"
                 icon="⏱️"
-                color="blue"
+                color="aqua"
               />
             </div>
 
             {/* Service Status Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
               {/* Database Status */}
               <Card>
                 <CardHeader title="Database Status" icon="🗄️" />
@@ -205,15 +229,27 @@ export default function MonitoringDashboard() {
                       {getStatusBadge(healthData.services.database.status)}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Response Time</span>
+                      <span className="text-gray-700 font-medium">
+                        Response Time
+                      </span>
                       <span className="text-gray-900 font-semibold">
                         {healthData.services.database.responseTime.toFixed(1)}ms
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Encryption</span>
-                      <Badge variant={healthData.services.database.encrypted ? 'success' : 'danger'}>
-                        {healthData.services.database.encrypted ? '🔒 AES-256' : '⚠️ Not encrypted'}
+                      <span className="text-gray-700 font-medium">
+                        Encryption
+                      </span>
+                      <Badge
+                        variant={
+                          healthData.services.database.encrypted
+                            ? 'success'
+                            : 'danger'
+                        }
+                      >
+                        {healthData.services.database.encrypted
+                          ? '🔒 AES-256'
+                          : '⚠️ Not encrypted'}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between">
@@ -240,13 +276,17 @@ export default function MonitoringDashboard() {
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Response Time</span>
+                      <span className="text-gray-700 font-medium">
+                        Response Time
+                      </span>
                       <span className="text-gray-900 font-semibold">
                         {healthData.services.ollama.responseTime.toFixed(0)}ms
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Provider</span>
+                      <span className="text-gray-700 font-medium">
+                        Provider
+                      </span>
                       <span className="text-gray-900">Ollama (Local)</span>
                     </div>
                   </div>
@@ -263,14 +303,26 @@ export default function MonitoringDashboard() {
                       {getStatusBadge(healthData.services.redis.status)}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Connection</span>
-                      <Badge variant={healthData.services.redis.connected ? 'success' : 'danger'}>
-                        {healthData.services.redis.connected ? '✅ Connected' : '❌ Disconnected'}
+                      <span className="text-gray-700 font-medium">
+                        Connection
+                      </span>
+                      <Badge
+                        variant={
+                          healthData.services.redis.connected
+                            ? 'success'
+                            : 'danger'
+                        }
+                      >
+                        {healthData.services.redis.connected
+                          ? '✅ Connected'
+                          : '❌ Disconnected'}
                       </Badge>
                     </div>
                     {healthData.services.redis.hitRate !== undefined && (
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-700 font-medium">Hit Rate</span>
+                        <span className="text-gray-700 font-medium">
+                          Hit Rate
+                        </span>
                         <span className="text-gray-900 font-semibold">
                           {healthData.services.redis.hitRate.toFixed(1)}%
                         </span>
@@ -292,23 +344,33 @@ export default function MonitoringDashboard() {
                     {healthData.recentBackup ? (
                       <>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700 font-medium">Last Backup</span>
+                          <span className="text-gray-700 font-medium">
+                            Last Backup
+                          </span>
                           <span className="text-gray-900 font-semibold">
-                            {new Date(healthData.recentBackup.timestamp).toLocaleString()}
+                            {new Date(
+                              healthData.recentBackup.timestamp
+                            ).toLocaleString()}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700 font-medium">Backup Size</span>
+                          <span className="text-gray-700 font-medium">
+                            Backup Size
+                          </span>
                           <span className="text-gray-900 font-semibold">
                             {formatBytes(healthData.recentBackup.size)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700 font-medium">Schedule</span>
+                          <span className="text-gray-700 font-medium">
+                            Schedule
+                          </span>
                           <Badge variant="success">Every 6 hours</Badge>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-700 font-medium">Retention</span>
+                          <span className="text-gray-700 font-medium">
+                            Retention
+                          </span>
                           <span className="text-gray-900">30 days</span>
                         </div>
                       </>
@@ -325,40 +387,43 @@ export default function MonitoringDashboard() {
               <CardHeader title="Disk Usage" icon="💿" />
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-2 flex items-center justify-between">
                     <span className="text-gray-700 font-medium">
-                      {formatBytes(healthData.system.disk.used)} / {formatBytes(healthData.system.disk.total)}
+                      {formatBytes(healthData.system.disk.used)} /{' '}
+                      {formatBytes(healthData.system.disk.total)}
                     </span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-gray-900 text-2xl font-bold">
                       {healthData.system.disk.percentage.toFixed(1)}%
                     </span>
                   </div>
 
                   {/* Progress bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                  <div className="bg-gray-200 rounded-full h-4 w-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all ${
+                      className={`rounded-full h-full transition-all ${
                         healthData.system.disk.percentage < 70
                           ? 'bg-green-500'
                           : healthData.system.disk.percentage < 85
-                          ? 'bg-amber-500'
-                          : 'bg-red-500'
+                            ? 'bg-amber-500'
+                            : 'bg-red-500'
                       }`}
                       style={{ width: `${healthData.system.disk.percentage}%` }}
                     />
                   </div>
 
-                  <p className="text-sm text-gray-600">
+                  <p className="text-gray-600 text-sm">
                     {healthData.system.disk.percentage > 85 && (
                       <span className="text-red-600 font-medium">
-                        ⚠️ Warning: Disk usage is high. Consider cleaning up old backups or expanding storage.
+                        ⚠️ Warning: Disk usage is high. Consider cleaning up old
+                        backups or expanding storage.
                       </span>
                     )}
-                    {healthData.system.disk.percentage <= 85 && healthData.system.disk.percentage > 70 && (
-                      <span className="text-amber-600 font-medium">
-                        ⚠️ Disk usage approaching limit. Monitor closely.
-                      </span>
-                    )}
+                    {healthData.system.disk.percentage <= 85 &&
+                      healthData.system.disk.percentage > 70 && (
+                        <span className="text-amber-600 font-medium">
+                          ⚠️ Disk usage approaching limit. Monitor closely.
+                        </span>
+                      )}
                     {healthData.system.disk.percentage <= 70 && (
                       <span className="text-green-600 font-medium">
                         ✅ Disk usage is healthy.

@@ -1,4 +1,5 @@
 # 🔍 ISSUES FOUND & STRATEGIC SOLUTIONS
+
 ## PSW Voice Documentation System - Production Fixes
 
 **Analysis Date:** January 24, 2025  
@@ -22,12 +23,14 @@
 ## 🚨 ISSUE #1: Database Bindings Not Found (HIGH PRIORITY)
 
 ### Problem Description
+
 ```
 ❌ Failed to initialize encrypted database: Error: Could not locate the bindings file.
 Tried: better_sqlite3.node in multiple locations
 ```
 
 ### Impact
+
 - **Severity:** High (but non-blocking)
 - **Affected Features:**
   - Database persistence for reports
@@ -38,7 +41,9 @@ Tried: better_sqlite3.node in multiple locations
 - **User Impact:** Reports not persisted to database, only browser storage
 
 ### Root Cause Analysis
+
 The `better-sqlite3` package requires native bindings compiled for the specific Node.js version and architecture. The current installation is missing the native `.node` binary for:
+
 - **Node Version:** v22.21.0
 - **Architecture:** darwin/arm64 (Apple Silicon M3)
 - **Expected Location:** `node_modules/better-sqlite3/build/Release/better_sqlite3.node`
@@ -48,6 +53,7 @@ The `better-sqlite3` package requires native bindings compiled for the specific 
 **Source:** https://github.com/WiseLibs/better-sqlite3
 
 #### Step 1: Remove Current Installation
+
 ```bash
 cd /Volumes/AI/Psw\ reporting\ conversational
 npm uninstall better-sqlite3
@@ -55,6 +61,7 @@ rm -rf node_modules/better-sqlite3
 ```
 
 #### Step 2: Install with Native Compilation
+
 ```bash
 # Install build tools if not present
 xcode-select --install
@@ -68,11 +75,13 @@ npm rebuild better-sqlite3
 ```
 
 #### Step 3: Verify Installation
+
 ```bash
 node -e "const db = require('better-sqlite3')(':memory:'); console.log('✅ better-sqlite3 working');"
 ```
 
 #### Alternative Solution: Use Pre-built Binaries
+
 ```bash
 # Force download of pre-built binaries
 npm install better-sqlite3 --force
@@ -82,6 +91,7 @@ npm install better-sqlite3@9.2.2
 ```
 
 ### Implementation Plan
+
 1. **Backup current data** (LocalStorage exports)
 2. **Stop Next.js server**
 3. **Remove and reinstall better-sqlite3**
@@ -90,12 +100,14 @@ npm install better-sqlite3@9.2.2
 6. **Restart server and verify**
 
 ### Testing Verification
+
 ```bash
 # Test script to verify fix
 curl -s http://localhost:3000/api/health | grep -o '"database":{"status":"ok"'
 ```
 
 ### Expected Outcome
+
 - ✅ Database status changes from "error" to "ok"
 - ✅ Reports can be saved to SQLite database
 - ✅ Search functionality enabled
@@ -106,11 +118,13 @@ curl -s http://localhost:3000/api/health | grep -o '"database":{"status":"ok"'
 ## 🚨 ISSUE #2: Text-to-Speech Service Not Configured (MEDIUM PRIORITY)
 
 ### Problem Description
+
 ```
 {"error":"TTS generation failed"}
 ```
 
 ### Impact
+
 - **Severity:** Medium (optional feature)
 - **Affected Features:**
   - Voice responses from AI
@@ -120,7 +134,9 @@ curl -s http://localhost:3000/api/health | grep -o '"database":{"status":"ok"'
 - **User Impact:** No audio feedback, text-only interface
 
 ### Root Cause Analysis
+
 The `/api/text-to-speech` endpoint is implemented but not connected to an actual TTS service. The code expects either:
+
 1. Browser Web Speech API (client-side)
 2. External TTS service (server-side)
 3. Local TTS engine
@@ -128,9 +144,11 @@ The `/api/text-to-speech` endpoint is implemented but not connected to an actual
 ### Official Solutions
 
 #### Option 1: Browser Web Speech API (Recommended - Free)
+
 **Source:** https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
 
 **Implementation:**
+
 ```javascript
 // In components/PSWVoiceReporter.js
 const speak = (text) => {
@@ -145,19 +163,23 @@ const speak = (text) => {
 ```
 
 **Pros:**
+
 - ✅ Free, built into browsers
 - ✅ No API keys needed
 - ✅ Works offline
 - ✅ Multi-language support
 
 **Cons:**
+
 - ⚠️ Voice quality varies by browser
 - ⚠️ Requires user interaction to start
 
 #### Option 2: Coqui TTS (Local, Privacy-Focused)
+
 **Source:** https://github.com/coqui-ai/TTS
 
 **Installation:**
+
 ```bash
 # Install Coqui TTS
 pip3 install TTS
@@ -169,6 +191,7 @@ tts --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
 ```
 
 **API Integration:**
+
 ```javascript
 // In app/api/text-to-speech/route.js
 import { exec } from 'child_process';
@@ -178,39 +201,43 @@ const execAsync = promisify(exec);
 
 export async function POST(request) {
   const { text, language } = await request.json();
-  
+
   const outputPath = `/tmp/tts_${Date.now()}.wav`;
-  
+
   await execAsync(
     `tts --model_name tts_models/multilingual/multi-dataset/xtts_v2 \
          --text "${text}" \
          --language_idx "${language}" \
          --out_path "${outputPath}"`
   );
-  
+
   // Return audio file
   return new Response(fs.readFileSync(outputPath), {
-    headers: { 'Content-Type': 'audio/wav' }
+    headers: { 'Content-Type': 'audio/wav' },
   });
 }
 ```
 
 **Pros:**
+
 - ✅ High-quality voices
 - ✅ Runs locally (HIPAA compliant)
 - ✅ Multi-language support
 - ✅ Voice cloning capability
 
 **Cons:**
+
 - ⚠️ Requires Python and model download (1.8GB)
 - ⚠️ Slower than browser API
 
 #### Option 3: ElevenLabs API (Cloud, Premium Quality)
+
 **Source:** https://elevenlabs.io/docs/api-reference/text-to-speech
 
 **Not Recommended** - Violates HIPAA compliance (sends data to cloud)
 
 ### Implementation Plan (Recommended: Browser API)
+
 1. **Update PSWVoiceReporter.js** to use Web Speech API
 2. **Add voice selection UI** (optional)
 3. **Test across browsers** (Chrome, Safari, Firefox)
@@ -218,13 +245,15 @@ export async function POST(request) {
 5. **Update documentation**
 
 ### Testing Verification
+
 ```javascript
 // Test in browser console
-const utterance = new SpeechSynthesisUtterance("Test");
+const utterance = new SpeechSynthesisUtterance('Test');
 speechSynthesis.speak(utterance);
 ```
 
 ### Expected Outcome
+
 - ✅ AI responses spoken aloud
 - ✅ Report summaries can be read
 - ✅ Accessibility improved
@@ -235,11 +264,13 @@ speechSynthesis.speak(utterance);
 ## 🚨 ISSUE #3: Translation Service Not Configured (MEDIUM PRIORITY)
 
 ### Problem Description
+
 ```
 POST /api/translate-report returns: {}
 ```
 
 ### Impact
+
 - **Severity:** Medium (optional feature)
 - **Affected Features:**
   - Report translation to other languages
@@ -248,7 +279,9 @@ POST /api/translate-report returns: {}
 - **User Impact:** Cannot translate reports for non-English speakers
 
 ### Root Cause Analysis
+
 The `/api/translate-report` endpoint exists but has no translation service connected. The code structure suggests it was designed for:
+
 1. External translation API (Google Translate, DeepL)
 2. Local translation model
 3. LLM-based translation (using Ollama)
@@ -256,22 +289,24 @@ The `/api/translate-report` endpoint exists but has no translation service conne
 ### Official Solutions
 
 #### Option 1: Use Ollama for Translation (Recommended - Free & Local)
+
 **Source:** https://ollama.ai/library
 
 **Implementation:**
+
 ```javascript
 // In app/api/translate-report/route.js
 export async function POST(request) {
   const { reportText, targetLanguage } = await request.json();
-  
+
   const languageNames = {
-    'es': 'Spanish',
-    'fr': 'French',
-    'pt': 'Portuguese',
-    'fil': 'Filipino',
-    'hi': 'Hindi'
+    es: 'Spanish',
+    fr: 'French',
+    pt: 'Portuguese',
+    fil: 'Filipino',
+    hi: 'Hindi',
   };
-  
+
   const prompt = `Translate the following PSW shift report to ${languageNames[targetLanguage]}. 
 Maintain the DAR (Data-Action-Response) format and professional medical terminology.
 
@@ -289,36 +324,40 @@ Translated Report:`;
       stream: false,
       options: {
         temperature: 0.3,
-        num_predict: 2000
-      }
-    })
+        num_predict: 2000,
+      },
+    }),
   });
-  
+
   const data = await response.json();
-  
+
   return Response.json({
     success: true,
     translatedText: data.response,
     sourceLanguage: 'en',
-    targetLanguage: targetLanguage
+    targetLanguage: targetLanguage,
   });
 }
 ```
 
 **Pros:**
+
 - ✅ Free, uses existing Ollama setup
 - ✅ Runs locally (HIPAA compliant)
 - ✅ No API keys needed
 - ✅ Maintains context and terminology
 
 **Cons:**
+
 - ⚠️ Slower than dedicated translation APIs
 - ⚠️ Quality depends on model
 
 #### Option 2: LibreTranslate (Local, Open Source)
+
 **Source:** https://github.com/LibreTranslate/LibreTranslate
 
 **Installation:**
+
 ```bash
 # Install LibreTranslate
 pip3 install libretranslate
@@ -328,6 +367,7 @@ libretranslate --host 0.0.0.0 --port 5000
 ```
 
 **API Integration:**
+
 ```javascript
 const response = await fetch('http://localhost:5000/translate', {
   method: 'POST',
@@ -336,33 +376,37 @@ const response = await fetch('http://localhost:5000/translate', {
     q: reportText,
     source: 'en',
     target: targetLanguage,
-    format: 'text'
-  })
+    format: 'text',
+  }),
 });
 
 const data = await response.json();
 return Response.json({
   success: true,
-  translatedText: data.translatedText
+  translatedText: data.translatedText,
 });
 ```
 
 **Pros:**
+
 - ✅ Fast translation
 - ✅ Runs locally
 - ✅ Dedicated translation engine
 - ✅ Good quality
 
 **Cons:**
+
 - ⚠️ Requires separate service
 - ⚠️ Additional memory usage
 
 #### Option 3: Google Cloud Translation API
+
 **Source:** https://cloud.google.com/translate/docs
 
 **Not Recommended** - Violates HIPAA compliance (sends data to cloud)
 
 ### Implementation Plan (Recommended: Ollama)
+
 1. **Update translate-report route** with Ollama integration
 2. **Add language detection** (optional)
 3. **Test translations** for accuracy
@@ -370,6 +414,7 @@ return Response.json({
 5. **Update UI** to show translation option
 
 ### Testing Verification
+
 ```bash
 curl -X POST http://localhost:3000/api/translate-report \
   -H "Content-Type: application/json" \
@@ -378,6 +423,7 @@ curl -X POST http://localhost:3000/api/translate-report \
 ```
 
 ### Expected Outcome
+
 - ✅ Reports can be translated to 6 languages
 - ✅ DAR format maintained in translation
 - ✅ Medical terminology preserved
@@ -388,6 +434,7 @@ curl -X POST http://localhost:3000/api/translate-report \
 ## 📋 IMPLEMENTATION PRIORITY & TIMELINE
 
 ### Phase 1: Critical Fixes (Day 1)
+
 **Priority:** HIGH  
 **Time Estimate:** 2-3 hours
 
@@ -398,6 +445,7 @@ curl -X POST http://localhost:3000/api/translate-report \
    - **Expected Result:** Database status = "ok"
 
 ### Phase 2: Feature Completion (Day 2-3)
+
 **Priority:** MEDIUM  
 **Time Estimate:** 4-6 hours
 
@@ -414,6 +462,7 @@ curl -X POST http://localhost:3000/api/translate-report \
    - **Expected Result:** Reports translatable
 
 ### Phase 3: Testing & Validation (Day 4)
+
 **Priority:** HIGH  
 **Time Estimate:** 3-4 hours
 
@@ -427,6 +476,7 @@ curl -X POST http://localhost:3000/api/translate-report \
 ## 🔧 DETAILED IMPLEMENTATION SCRIPTS
 
 ### Script 1: Fix Database Bindings
+
 ```bash
 #!/bin/bash
 # fix_database.sh
@@ -470,71 +520,79 @@ echo "✅ Script complete!"
 ```
 
 ### Script 2: Implement TTS (Web Speech API)
+
 ```javascript
 // add_tts.js - Add to PSWVoiceReporter.js
 
 // Add this function to the component
-const speakText = useCallback((text) => {
-  if (!('speechSynthesis' in window)) {
-    console.warn('Text-to-speech not supported in this browser');
-    return;
-  }
+const speakText = useCallback(
+  (text) => {
+    if (!('speechSynthesis' in window)) {
+      console.warn('Text-to-speech not supported in this browser');
+      return;
+    }
 
-  // Cancel any ongoing speech
-  window.speechSynthesis.cancel();
+    // Cancel any ongoing speech
+    window.speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Map language codes to speech synthesis voices
-  const langMap = {
-    'en-CA': 'en-US',
-    'fil-PH': 'fil-PH',
-    'es-ES': 'es-ES',
-    'pt-BR': 'pt-BR',
-    'hi-IN': 'hi-IN'
-  };
-  
-  utterance.lang = langMap[selectedLanguage] || 'en-US';
-  utterance.rate = 0.9;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
+    const utterance = new SpeechSynthesisUtterance(text);
 
-  window.speechSynthesis.speak(utterance);
-}, [selectedLanguage]);
+    // Map language codes to speech synthesis voices
+    const langMap = {
+      'en-CA': 'en-US',
+      'fil-PH': 'fil-PH',
+      'es-ES': 'es-ES',
+      'pt-BR': 'pt-BR',
+      'hi-IN': 'hi-IN',
+    };
+
+    utterance.lang = langMap[selectedLanguage] || 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    window.speechSynthesis.speak(utterance);
+  },
+  [selectedLanguage]
+);
 
 // Use in AI response handler
 if (data.success && data.response) {
   const aiMessage = {
     type: 'ai',
     content: data.response,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
-  setConversation(prev => [...prev, aiMessage]);
-  
+  setConversation((prev) => [...prev, aiMessage]);
+
   // Speak the response
   speakText(data.response);
 }
 ```
 
 ### Script 3: Implement Translation (Ollama)
+
 ```javascript
 // app/api/translate-report/route.js - Complete implementation
 
 export async function POST(request) {
   try {
     const { reportText, targetLanguage } = await request.json();
-    
+
     if (!reportText || !targetLanguage) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+      return Response.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
     }
 
     const languageNames = {
-      'es': 'Spanish',
-      'fr': 'French',
-      'pt': 'Portuguese',
-      'fil': 'Filipino',
-      'hi': 'Hindi',
-      'bo': 'Tibetan'
+      es: 'Spanish',
+      fr: 'French',
+      pt: 'Portuguese',
+      fil: 'Filipino',
+      hi: 'Hindi',
+      bo: 'Tibetan',
     };
 
     const targetLangName = languageNames[targetLanguage] || targetLanguage;
@@ -563,9 +621,9 @@ Translated Report (${targetLangName}):`;
         options: {
           temperature: 0.3,
           top_p: 0.9,
-          num_predict: 2000
-        }
-      })
+          num_predict: 2000,
+        },
+      }),
     });
 
     if (!response.ok) {
@@ -579,16 +637,18 @@ Translated Report (${targetLangName}):`;
       translatedText: data.response,
       sourceLanguage: 'en',
       targetLanguage: targetLanguage,
-      model: 'llama3.3:70b'
+      model: 'llama3.3:70b',
     });
-
   } catch (error) {
     console.error('Translation error:', error);
-    return Response.json({
-      success: false,
-      error: 'Translation failed',
-      message: error.message
-    }, { status: 500 });
+    return Response.json(
+      {
+        success: false,
+        error: 'Translation failed',
+        message: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
 ```
@@ -598,6 +658,7 @@ Translated Report (${targetLangName}):`;
 ## 🧪 COMPREHENSIVE TEST PLAN
 
 ### Test 1: Database Fix Verification
+
 ```bash
 # After running fix_database.sh
 curl -s http://localhost:3000/api/health | python3 -c "
@@ -611,11 +672,12 @@ print('✅ Database test PASSED')
 ```
 
 ### Test 2: TTS Verification
+
 ```javascript
 // In browser console at http://localhost:3000
 // After implementing TTS
 const testTTS = () => {
-  const utterance = new SpeechSynthesisUtterance("Testing text to speech");
+  const utterance = new SpeechSynthesisUtterance('Testing text to speech');
   speechSynthesis.speak(utterance);
   console.log('✅ TTS test initiated');
 };
@@ -623,6 +685,7 @@ testTTS();
 ```
 
 ### Test 3: Translation Verification
+
 ```bash
 # Test translation endpoint
 curl -X POST http://localhost:3000/api/translate-report \
@@ -645,12 +708,14 @@ print(f'Translated: {data[\"translatedText\"][:100]}...')
 ## 📊 SUCCESS METRICS
 
 ### Before Fixes
+
 - ❌ Database: error
 - ❌ TTS: not working
 - ❌ Translation: not working
 - **Score:** 7/10
 
 ### After Fixes (Expected)
+
 - ✅ Database: ok
 - ✅ TTS: working
 - ✅ Translation: working
@@ -661,26 +726,31 @@ print(f'Translated: {data[\"translatedText\"][:100]}...')
 ## 📚 OFFICIAL DOCUMENTATION REFERENCES
 
 ### better-sqlite3
+
 - **GitHub:** https://github.com/WiseLibs/better-sqlite3
 - **Installation:** https://github.com/WiseLibs/better-sqlite3/blob/master/docs/compilation.md
 - **Troubleshooting:** https://github.com/WiseLibs/better-sqlite3/blob/master/docs/troubleshooting.md
 
 ### Web Speech API
+
 - **MDN Docs:** https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API
 - **SpeechSynthesis:** https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis
 - **Browser Support:** https://caniuse.com/speech-synthesis
 
 ### Ollama
+
 - **Official Docs:** https://ollama.ai/docs
 - **API Reference:** https://github.com/ollama/ollama/blob/main/docs/api.md
 - **Model Library:** https://ollama.ai/library
 
 ### Coqui TTS (Optional)
+
 - **GitHub:** https://github.com/coqui-ai/TTS
 - **Documentation:** https://tts.readthedocs.io/
 - **Models:** https://github.com/coqui-ai/TTS/wiki/Released-Models
 
 ### LibreTranslate (Optional)
+
 - **GitHub:** https://github.com/LibreTranslate/LibreTranslate
 - **API Docs:** https://libretranslate.com/docs
 - **Self-Hosting:** https://github.com/LibreTranslate/LibreTranslate#install-and-run
@@ -690,17 +760,20 @@ print(f'Translated: {data[\"translatedText\"][:100]}...')
 ## 🎯 FINAL RECOMMENDATIONS
 
 ### Immediate Actions (Today)
+
 1. ✅ Run `fix_database.sh` script
 2. ✅ Verify database connection
 3. ✅ Test report persistence
 
 ### Short-term (This Week)
+
 1. ✅ Implement Web Speech API for TTS
 2. ✅ Implement Ollama-based translation
 3. ✅ Run comprehensive tests
 4. ✅ Update documentation
 
 ### Long-term (Optional Enhancements)
+
 1. Consider Coqui TTS for higher quality voices
 2. Add voice cloning for personalized experience
 3. Implement offline translation caching

@@ -1,0 +1,66 @@
+# Backend server (runs locally, not on Vercel)
+backend/
+
+# Local data
+data/
+backups/
+
+# Environment files
+.env.local
+.env.*.local
+
+# Test files
+tests/
+test-results/
+reports/
+playwright-report/
+coverage/
+
+# Documentation (reduce deploy size)
+docs/
+*.md
+!README.md
+
+# Development tools
+.tools/
+scripts/bench-*.js
+
+# Mac metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node modules are handled by Vercel
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+.turbo/
+dist/
+build/
+out/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Backup files
+*.backup
+*.bak
+*.bak2
+*.bak3

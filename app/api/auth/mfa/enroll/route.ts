@@ -47,7 +47,8 @@ export async function POST(request: NextRequest) {
         backupCodes: enrollment.backupCodes,
         enrollmentToken: enrollment.enrollmentToken,
       },
-      message: 'Scan the QR code with your authenticator app and save your backup codes',
+      message:
+        'Scan the QR code with your authenticator app and save your backup codes',
     });
   } catch (error) {
     logger.error(

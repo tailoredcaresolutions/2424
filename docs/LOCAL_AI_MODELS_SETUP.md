@@ -1,4 +1,5 @@
 # > LOCAL AI MODELS SETUP GUIDE
+
 ## Complete Model Download & Configuration for PSW System
 
 **Target Hardware**: Mac Studio M3 Ultra (96GB RAM) + Thunderbolt 5 SSD (/Volumes/AI)
@@ -8,7 +9,7 @@
 
 ---
 
-## =Ë TABLE OF CONTENTS
+## =ï¿½ TABLE OF CONTENTS
 
 1. [Required Models Overview](#required-models-overview)
 2. [Prerequisites & Tools](#prerequisites--tools)
@@ -19,26 +20,26 @@
 
 ---
 
-## <¯ REQUIRED MODELS OVERVIEW
+## <ï¿½ REQUIRED MODELS OVERVIEW
 
 ### Complete Model Stack
 
-| Model | Purpose | Size | RAM Usage | Speed | Priority |
-|-------|---------|------|-----------|-------|----------|
-| **Llama 3.2 70B Q4_K_M** | Main conversational AI | 38GB | 42-48GB | 45-55 tok/s | CRITICAL |
-| **BioMistral 7B FP16** | Medical entity extraction | 14GB | 8GB | 180+ tok/s | CRITICAL |
-| **WhisperKit Large-v3-turbo** | Speech-to-text | 3.1GB | 4GB | 52x realtime | CRITICAL |
-| **XTTS v2** | Text-to-speech | 1.8GB | 2GB | <200ms latency | REQUIRED |
-| **BGE-M3** | Embeddings | 2.2GB | 3GB | 10k emb/s | REQUIRED |
-| **Llama 3.2 34B Q6_K** | Alternative (lighter) | 24GB | 28GB | 70-80 tok/s | OPTIONAL |
-| **PointLLM 13B** | Clinical notes | 8GB | 6GB | 120 tok/s | OPTIONAL |
+| Model                         | Purpose                   | Size  | RAM Usage | Speed          | Priority |
+| ----------------------------- | ------------------------- | ----- | --------- | -------------- | -------- |
+| **Llama 3.2 70B Q4_K_M**      | Main conversational AI    | 38GB  | 42-48GB   | 45-55 tok/s    | CRITICAL |
+| **BioMistral 7B FP16**        | Medical entity extraction | 14GB  | 8GB       | 180+ tok/s     | CRITICAL |
+| **WhisperKit Large-v3-turbo** | Speech-to-text            | 3.1GB | 4GB       | 52x realtime   | CRITICAL |
+| **XTTS v2**                   | Text-to-speech            | 1.8GB | 2GB       | <200ms latency | REQUIRED |
+| **BGE-M3**                    | Embeddings                | 2.2GB | 3GB       | 10k emb/s      | REQUIRED |
+| **Llama 3.2 34B Q6_K**        | Alternative (lighter)     | 24GB  | 28GB      | 70-80 tok/s    | OPTIONAL |
+| **PointLLM 13B**              | Clinical notes            | 8GB   | 6GB       | 120 tok/s      | OPTIONAL |
 
 **Total Storage**: ~70GB (critical models) + ~32GB (optional models)
 **Total RAM**: ~65GB (all critical models loaded)
 
 ---
 
-## =à PREREQUISITES & TOOLS
+## =ï¿½ PREREQUISITES & TOOLS
 
 ### 1. Install Homebrew (if not installed)
 
@@ -104,7 +105,7 @@ mkdir -p /Volumes/AI/checkpoints
 
 ---
 
-## =å MODEL DOWNLOADS
+## =ï¿½ MODEL DOWNLOADS
 
 ### MODEL 1: Llama 3.2 70B (Primary Conversational AI)
 
@@ -394,7 +395,7 @@ huggingface-cli download \
 
 ---
 
-## ™ CONFIGURATION & TESTING
+## ï¿½ CONFIGURATION & TESTING
 
 ### Create Model Configuration File
 
@@ -478,13 +479,13 @@ def test_llama():
 
     if result.returncode == 0:
         print(f"   SUCCESS - Response time: {elapsed:.2f}s")
-        print(f"  =Ý Response: {result.stdout.strip()[:100]}")
+        print(f"  =ï¿½ Response: {result.stdout.strip()[:100]}")
     else:
         print(f"  L FAILED - {result.stderr}")
 
 def test_whisper():
     """Test WhisperKit"""
-    print("\n<¤ Testing WhisperKit...")
+    print("\n<ï¿½ Testing WhisperKit...")
     try:
         from whisperkit import WhisperKit
 
@@ -510,7 +511,7 @@ def test_tts():
 
 def test_embeddings():
     """Test BGE-M3"""
-    print("\n=Ê Testing BGE-M3 Embeddings...")
+    print("\n=ï¿½ Testing BGE-M3 Embeddings...")
     try:
         from sentence_transformers import SentenceTransformer
 
@@ -525,13 +526,13 @@ def test_embeddings():
         elapsed = time.time() - start
 
         print(f"   SUCCESS - Embedding generated in {elapsed*1000:.1f}ms")
-        print(f"  =Ð Shape: {embedding.shape}")
+        print(f"  =ï¿½ Shape: {embedding.shape}")
     except Exception as e:
         print(f"  L FAILED - {str(e)}")
 
 def check_memory():
     """Check memory usage"""
-    print("\n=¾ Memory Status:")
+    print("\n=ï¿½ Memory Status:")
     mem = psutil.virtual_memory()
     print(f"  Total: {mem.total / (1024**3):.1f} GB")
     print(f"  Available: {mem.available / (1024**3):.1f} GB")
@@ -539,14 +540,14 @@ def check_memory():
 
 def check_storage():
     """Check storage"""
-    print("\n=¿ Storage Status:")
+    print("\n=ï¿½ Storage Status:")
     ai_volume = Path("/Volumes/AI")
     if ai_volume.exists():
         import shutil
         total, used, free = shutil.disk_usage(ai_volume)
         print(f"  AI Volume: {used / (1024**3):.1f} GB used / {total / (1024**3):.1f} GB total")
     else:
-        print("     AI Volume not mounted")
+        print("  ï¿½  AI Volume not mounted")
 
 if __name__ == "__main__":
     print("=" * 60)
@@ -588,7 +589,7 @@ python3 /Volumes/AI/test_models.py
 
 ---
 
-## >à MEMORY MANAGEMENT
+## >ï¿½ MEMORY MANAGEMENT
 
 ### Monitor Memory Usage
 
@@ -596,7 +597,8 @@ python3 /Volumes/AI/test_models.py
 # Create monitoring script
 cat > /Volumes/AI/monitor_memory.sh << 'EOF'
 #!/bin/bash
-echo "= PSW System Memory Monitor"
+echo "=
+ PSW System Memory Monitor"
 echo "================================"
 
 while true; do
@@ -676,7 +678,7 @@ class MemoryOptimizer:
         if total_required <= self.available:
             print("\n All models can run simultaneously")
         else:
-            print("\n   Insufficient memory - consider alternative configuration")
+            print("\nï¿½  Insufficient memory - consider alternative configuration")
 
         return configs
 
@@ -744,7 +746,7 @@ sudo chown -R $(whoami) /Volumes/AI/models
 cat > /Volumes/AI/benchmark.sh << 'EOF'
 #!/bin/bash
 
-echo "=€ PSW System Performance Benchmark"
+echo "=ï¿½ PSW System Performance Benchmark"
 echo "===================================="
 
 # Test Llama inference speed
@@ -784,19 +786,19 @@ Before proceeding, verify:
 
 ---
 
-## <¯ NEXT STEPS
+## <ï¿½ NEXT STEPS
 
 Once all models are downloaded and tested:
 
 1.  Return to [LOCAL_SETUP.md](LOCAL_SETUP.md) for app configuration
 2.  Update `.env.local` with local model paths
 3.  Configure the PSW app to use local models
-4.  Test end-to-end voice ’ documentation flow
+4.  Test end-to-end voice ï¿½ documentation flow
 5.  Monitor performance and optimize as needed
 
 ---
 
-## =Ú ADDITIONAL RESOURCES
+## =ï¿½ ADDITIONAL RESOURCES
 
 - **Ollama Documentation**: https://ollama.ai/docs
 - **MLX Documentation**: https://ml-explore.github.io/mlx/

@@ -39,6 +39,7 @@ Thank you for your interest in contributing to this project! This guide will hel
 - Add detailed description if needed
 
 Example:
+
 ```
 Add multilingual support for Hindi
 
@@ -70,6 +71,7 @@ Add multilingual support for Hindi
 ## Reporting Issues
 
 When reporting bugs, please include:
+
 - Browser and version
 - Operating system
 - Steps to reproduce

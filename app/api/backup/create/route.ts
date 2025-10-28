@@ -20,7 +20,10 @@ export async function POST(request: NextRequest) {
     const rateLimitResult = await withRateLimit(request, apiLimiter, 100);
     if (rateLimitResult) return rateLimitResult;
 
-    logger.info({ type: 'api_backup_create_started' }, 'Backup creation requested');
+    logger.info(
+      { type: 'api_backup_create_started' },
+      'Backup creation requested'
+    );
 
     // Create backup
     const backupService = getBackupService();

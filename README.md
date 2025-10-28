@@ -1,155 +1,428 @@
 # PSW Voice Documentation System
 
-A multilingual voice-enabled documentation system for Personal Support Workers (PSWs) built with Next.js, OpenAI, and Supabase.
+> **PHIPA-Compliant Healthcare Documentation Platform for Ontario, Canada**
+> **100% Local AI Processing - All Patient Data Stays in Ontario**
 
-## Features
+A secure, enterprise-grade voice-enabled documentation system for Personal Support Workers (PSWs) in Ontario, Canada. Features conversational AI, multi-language support, and **PHIPA compliance** (Personal Health Information Protection Act, 2004) with all AI processing and data storage running locally on your Mac in Ontario.
 
-- 🎤 **Voice Recognition**: Multi-language speech-to-text support
-- 🗣️ **AI Voice Responses**: Natural conversation flow with OpenAI TTS
-- 🌍 **Multilingual Support**: English, Filipino, Spanish, Portuguese, Hindi, and Tibetan
-- 📝 **AI Report Generation**: Professional healthcare documentation
-- 📱 **Cross-Platform**: Works on desktop and mobile devices
-- 🔒 **Secure**: Built with healthcare data privacy in mind
+---
 
-## Supported Languages
+## 🎯 Key Features
 
-- English (Canadian)
-- Filipino (Tagalog)
-- Spanish
-- Portuguese
-- Hindi
-- Tibetan
+- ✅ **Voice & Text Documentation** - Natural conversation with AI assistant
+- ✅ **100% Local AI** - Ollama (LLaMA 3.3 70B), Whisper.cpp, Coqui XTTS
+- ✅ **Multi-Language Support** - English, Filipino, Spanish, Portuguese, Hindi, Tibetan
+- ✅ **Encrypted Database** - SQLCipher AES-256-CBC encryption
+- ✅ **Multi-Factor Authentication** - TOTP with backup codes
+- ✅ **WCAG 2.1 AA Accessible** - Full keyboard navigation, screen reader support
+- ✅ **Real-time Health Monitoring** - System and AI service monitoring
+- ✅ **Hybrid Deployment** - Frontend on Vercel, backend on your Mac
 
-## Technology Stack
+---
 
-- **Frontend**: Next.js 13, React, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **AI Services**: OpenAI GPT-4 Turbo, OpenAI TTS
-- **Database**: Supabase
-- **Voice**: Web Speech API, OpenAI Text-to-Speech
+## 🏗️ Architecture
 
-## Prerequisites
-
-Before running this application, you need:
-
-1. **Node.js** (version 18 or higher)
-2. **OpenAI API Key** - Get one from [OpenAI Platform](https://platform.openai.com/api-keys)
-3. **Supabase Project** - Create one at [Supabase](https://supabase.com)
-
-## Environment Variables
-
-Create a `.env.local` file in the root directory with the following variables:
-
-```env
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key_here
-
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+Frontend (Vercel)          Cloudflare Tunnel          Backend (Your Mac)
+┌─────────────────┐              │                 ┌──────────────────┐
+│  Next.js 16     │ ─── HTTPS ───┤───── HTTPS ──── │  Express Server  │
+│  React 19       │              │                 │  SQLCipher DB    │
+│  Tailwind 4     │              │                 │  Ollama AI       │
+└─────────────────┘              │                 │  Whisper.cpp     │
+                                 │                 │  Coqui XTTS      │
+                                 │                 └──────────────────┘
 ```
 
-## Installation
+**Why Hybrid Architecture?**
+- **PHIPA Compliance:** All PHI stays in Ontario (your Mac) - never crosses Canadian border
+- **Data Sovereignty:** Patient data never leaves your physical location
+- **Privacy:** 100% local AI processing (no cloud AI services)
+- **Cost:** $0/month (Vercel + Cloudflare free tiers + local compute)
+- **Performance:** Vercel CDN for fast frontend, M3 Ultra for AI speed
+- **Security:** End-to-end encryption, no exposed ports
+- **Flexibility:** Update frontend/backend independently
 
-1. Clone the repository:
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **macOS** with M-series chip (M1/M2/M3)
+- **Node.js** 22.21.0+
+- **Homebrew** (for package management)
+- **GitHub** account (free)
+- **Vercel** account (free)
+
+### 1. Install Local AI Services
+
 ```bash
-git clone https://github.com/yourusername/psw-voice-documentation.git
-cd psw-voice-documentation
+# Install Ollama
+brew install ollama
+ollama serve &
+ollama pull llama3.3:70b
+
+# Install Cloudflare Tunnel
+brew install cloudflare/cloudflare/cloudflared
 ```
 
-2. Install dependencies:
+See [docs/LOCAL_AI_MODELS_SETUP.md](docs/LOCAL_AI_MODELS_SETUP.md) for Whisper.cpp and XTTS setup.
+
+### 2. Setup Backend
+
 ```bash
+cd backend
+
+# Install dependencies
 npm install
+
+# Configure environment
+cp .env.example .env
+nano .env  # Edit DATABASE_ENCRYPTION_KEY and other settings
+
+# Start backend
+npm start
 ```
 
-3. Set up environment variables (see above)
+**Backend runs on:** http://localhost:4000
 
-4. Run the development server:
+### 3. Start Cloudflare Tunnel
+
 ```bash
+# Quick tunnel (URL changes each time)
+cloudflared tunnel --url http://localhost:4000
+
+# Save the URL: https://random-name.trycloudflare.com
+```
+
+**For permanent URL:** See [docs/CLOUDFLARE_TUNNEL_SETUP.md](docs/CLOUDFLARE_TUNNEL_SETUP.md)
+
+### 4. Deploy Frontend to Vercel
+
+1. Push code to GitHub (see [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md))
+2. Import repository to Vercel
+3. Add environment variables:
+   ```
+   NEXT_PUBLIC_BACKEND_URL=https://your-tunnel-url.trycloudflare.com
+   NEXTAUTH_SECRET=your-secret-here
+   ```
+4. Deploy!
+
+**Your app will be live at:** https://your-app.vercel.app
+
+---
+
+## 📁 Project Structure
+
+```
+/
+├── app/                          # Next.js 16 App Router
+│   ├── (auth)/                   # Auth pages
+│   ├── admin/                    # Admin dashboard
+│   ├── analytics/                # Analytics
+│   ├── profile/                  # User profile
+│   ├── reports/                  # Reports listing
+│   ├── review/                   # Report review
+│   ├── search/                   # Search interface
+│   ├── session/                  # Voice documentation
+│   ├── settings/                 # User settings
+│   └── layout.tsx                # Root layout
+│
+├── backend/                      # Express.js Backend (Local)
+│   ├── routes/                   # API routes
+│   │   ├── auth.js               # MFA authentication
+│   │   ├── ai.js                 # AI features
+│   │   ├── search.js             # Advanced search
+│   │   ├── backup.js             # Database backup
+│   │   └── health.js             # Health checks
+│   ├── lib/                      # Shared libraries (copied)
+│   ├── server.js                 # Express server
+│   ├── package.json              # Backend dependencies
+│   └── .env.example              # Backend config template
+│
+├── components/                   # React Components
+│   ├── PSWVoiceReporter.js       # Main voice UI (1934 lines)
+│   ├── GoldOrb3D.js              # 3D avatar animation
+│   └── Navigation.tsx            # Navigation component
+│
+├── lib/                          # Frontend Libraries
+│   ├── ai/                       # AI adapters
+│   ├── database/                 # Database layer
+│   ├── security/                 # MFA service
+│   ├── monitoring/               # Health monitoring
+│   ├── api-client.ts             # API client helper
+│   └── logger.ts                 # Logging service
+│
+├── data/                         # SQLite Database (Local)
+│   └── local_psw_data.db         # Encrypted database
+│
+├── docs/                         # Documentation
+│   ├── DEPLOYMENT_GUIDE.md       # Full deployment guide
+│   ├── CLOUDFLARE_TUNNEL_SETUP.md # Tunnel setup
+│   ├── LOCAL_AI_MODELS_SETUP.md  # AI setup
+│   └── ...                       # 28 total docs
+│
+├── scripts/                      # Utility Scripts
+│   ├── start-all-services.sh     # Start everything
+│   ├── start-backend.sh          # Start backend only
+│   ├── start-tunnel.sh           # Start tunnel only
+│   └── stop-all-services.sh      # Stop everything
+│
+├── .env.example.frontend         # Frontend environment template
+├── vercel.json                   # Vercel configuration
+├── .vercelignore                 # Files to exclude from Vercel
+└── package.json                  # Frontend dependencies
+```
+
+---
+
+## 🛠️ Development
+
+### Start Everything
+
+```bash
+# One command to start all services
+./scripts/start-all-services.sh
+```
+
+This starts:
+1. Ollama (localhost:11434)
+2. Backend Server (localhost:4000)
+3. Cloudflare Tunnel
+
+### Start Services Individually
+
+```bash
+# Backend only
+./scripts/start-backend.sh
+
+# Tunnel only
+./scripts/start-tunnel.sh
+
+# Frontend (development)
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+### Stop Everything
 
-## Database Setup
-
-The application uses Supabase for data storage. You'll need to create the following table:
-
-```sql
-CREATE TABLE shift_documentation (
-  id SERIAL PRIMARY KEY,
-  psw_name TEXT NOT NULL,
-  client_name TEXT NOT NULL,
-  shift_date DATE NOT NULL,
-  shift_time TEXT NOT NULL,
-  observations TEXT[],
-  care_activities TEXT[],
-  client_responses TEXT[],
-  communications TEXT[],
-  conversation_transcript JSONB,
-  languages_used TEXT[],
-  urgent_alerts TEXT[],
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+```bash
+./scripts/stop-all-services.sh
 ```
 
-## Usage
+---
 
-1. **Start Documentation**: The system will greet you and ask for basic information
-2. **Voice or Text**: Use voice input (if supported) or text input for responses
-3. **Multilingual**: Speak in any supported language - the system will detect and respond accordingly
-4. **Professional Reports**: Generate comprehensive healthcare documentation
-5. **Download**: Export reports as text files for record-keeping
+## 🔒 Security
 
-## Browser Compatibility
+### Authentication
+- **NextAuth.js v5** - Credentials provider with JWT sessions
+- **Multi-Factor Authentication** - TOTP (Google Authenticator, Authy)
+- **Backup Codes** - 10 single-use recovery codes
+- **Password Hashing** - bcrypt/Argon2id
 
-- **Best Experience**: Chrome, Firefox, Edge (desktop)
-- **Mobile**: iOS Safari and Android Chrome (with text input fallback)
-- **Voice Recognition**: Limited on iOS Safari (text input recommended)
+### Data Protection
+- **SQLCipher Encryption** - AES-256-CBC at rest
+- **PBKDF2 Key Derivation** - 256,000 iterations (HIPAA 2025)
+- **Audit Logging** - All data access tracked
+- **Secure Tunnel** - Cloudflare encrypted connection
 
-## Deployment
+### Ontario Healthcare Compliance
+- ✅ **PHIPA (Ontario)** - Personal Health Information Protection Act, 2004
+  - All PHI stored in Ontario only (your Mac)
+  - No cross-border data transfer without consent
+  - Encryption at rest and in transit
+  - Audit trails for all data access
+  - 100% local AI (no cloud processing)
+- ✅ **WCAG 2.1 AA** - Accessibility standards for Ontario healthcare
 
-### Vercel (Recommended)
+---
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy automatically
+## 📊 Monitoring
 
-### Other Platforms
+### Health Checks
 
-This application can be deployed to any platform that supports Node.js:
-- Netlify
-- Railway
-- Heroku
-- DigitalOcean App Platform
+```bash
+# Backend health
+curl http://localhost:4000/health
 
-## Contributing
+# From Vercel frontend
+curl https://your-tunnel-url.trycloudflare.com/health
+```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Logs
 
-## Privacy & Security
+```bash
+# Backend logs
+tail -f /tmp/psw-backend.log
 
-This application is designed with healthcare data privacy in mind:
-- No audio recordings are stored permanently
-- Conversations are processed securely through OpenAI
-- Database connections are encrypted
-- Environment variables keep API keys secure
+# Tunnel logs
+tail -f /tmp/cloudflared.log
 
-## License
+# Ollama logs
+tail -f /tmp/ollama.log
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Dashboard
 
-## Support
+Access monitoring dashboard:
+- **Local:** http://localhost:4000/api/monitoring/dashboard
+- **Production:** https://your-tunnel-url.trycloudflare.com/api/monitoring/dashboard
 
-For support, please open an issue on GitHub or contact the development team.
+---
 
-## Acknowledgments
+## 🧪 Testing
 
-- OpenAI for GPT-4 and TTS services
-- Supabase for database infrastructure
-- The healthcare workers who inspired this project
+### Unit Tests
+
+```bash
+npm run test              # Run tests
+npm run test:ui           # Test UI
+npm run test:coverage     # Coverage report
+```
+
+### E2E Tests
+
+```bash
+npm run test:e2e          # Playwright tests
+npm run test:e2e:ui       # Interactive mode
+```
+
+### Manual Testing
+
+See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for testing scenarios
+
+---
+
+## 📚 Documentation
+
+### Essential Guides
+- **[PHIPA_COMPLIANCE_ONTARIO.md](docs/PHIPA_COMPLIANCE_ONTARIO.md)** - ⭐ Ontario healthcare compliance guide
+- **[DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md)** - Complete deployment walkthrough
+- **[CLOUDFLARE_TUNNEL_SETUP.md](docs/CLOUDFLARE_TUNNEL_SETUP.md)** - Tunnel configuration + PHIPA notes
+- **[LOCAL_SETUP.md](docs/LOCAL_SETUP.md)** - 5-minute quick start
+- **[LOCAL_AI_MODELS_SETUP.md](docs/LOCAL_AI_MODELS_SETUP.md)** - AI service setup
+
+### Architecture Docs
+- **[PHASE1_COMPLETION_REPORT.md](docs/PHASE1_COMPLETION_REPORT.md)** - Phase 1 review (819 lines)
+- **[AI_MODELS_PSW_FOCUSED_OCT_2025.md](docs/AI_MODELS_PSW_FOCUSED_OCT_2025.md)** - AI model analysis
+- **[COMPREHENSIVE_SYSTEM_AUDIT_PLAN.md](docs/COMPREHENSIVE_SYSTEM_AUDIT_PLAN.md)** - System audit
+
+### Testing & QA
+- **[ACCESSIBILITY_AUDIT_CHECKLIST.md](docs/ACCESSIBILITY_AUDIT_CHECKLIST.md)** - 100+ test cases
+- **[CROSS_BROWSER_TESTING_GUIDE.md](docs/CROSS_BROWSER_TESTING_GUIDE.md)** - 6 browsers tested
+- **[FINAL_COMPREHENSIVE_TEST_RESULTS.md](docs/FINAL_COMPREHENSIVE_TEST_RESULTS.md)** - Test results
+
+**28 total documentation files available in `/docs`**
+
+---
+
+## 🚢 Deployment Checklist
+
+### Before First Deploy
+
+- [ ] **Read [PHIPA_COMPLIANCE_ONTARIO.md](docs/PHIPA_COMPLIANCE_ONTARIO.md)** ⚠️ REQUIRED
+- [ ] Consult with healthcare privacy lawyer (Ontario PHIPA)
+- [ ] Complete Privacy Impact Assessment (PIA)
+- [ ] Implement formal consent processes
+- [ ] Generate strong `DATABASE_ENCRYPTION_KEY` (32+ bytes)
+- [ ] Generate strong `NEXTAUTH_SECRET` (32+ bytes)
+- [ ] Update backend `.env` with secure values
+- [ ] Test backend locally (`npm start`)
+- [ ] Test tunnel connection
+- [ ] Push to GitHub (verify no secrets leaked)
+- [ ] Verify Sentry PII scrubbing or disable for production
+
+### Vercel Configuration
+
+- [ ] Add environment variables:
+  - `NEXT_PUBLIC_BACKEND_URL`
+  - `NEXTAUTH_SECRET`
+  - `NEXTAUTH_URL`
+- [ ] Verify build succeeds locally
+- [ ] Deploy to Vercel
+- [ ] Test production URL
+
+### Post-Deploy
+
+- [ ] Test health check endpoint
+- [ ] Test voice recording (confirm local Whisper.cpp processing)
+- [ ] Test AI features (confirm local Ollama processing)
+- [ ] Test database operations (confirm data in Ontario only)
+- [ ] Change default admin password
+- [ ] Enable MFA for ALL accounts (PHIPA best practice)
+- [ ] Create encrypted database backup
+- [ ] Establish breach response procedures
+- [ ] Train all users on PHIPA requirements
+- [ ] Document consent processes
+- [ ] Verify IPC of Ontario contact information
+
+---
+
+## 💰 Costs
+
+| Service | Plan | Monthly Cost |
+|---------|------|-------------|
+| **Vercel** | Hobby | **$0** (100 GB bandwidth) |
+| **GitHub** | Free | **$0** (private repo) |
+| **Cloudflare Tunnel** | Free | **$0** (unlimited) |
+| **Your Mac** | Local | **$0** (electricity only) |
+| **TOTAL** | | **$0/month** 🎉 |
+
+---
+
+## 🆘 Support
+
+### Troubleshooting
+
+**Frontend shows "API Error"**
+- Check backend is running: `lsof -i :4000`
+- Check tunnel is running: `pgrep cloudflared`
+- Verify `NEXT_PUBLIC_BACKEND_URL` in Vercel
+
+**Database connection fails**
+- Check encryption key in `backend/.env`
+- Verify database file exists: `ls -la data/local_psw_data.db`
+- Check file permissions
+
+**Ollama not responding**
+- Start Ollama: `ollama serve &`
+- Test API: `curl http://localhost:11434/api/tags`
+- Pull model: `ollama pull llama3.3:70b`
+
+### Resources
+
+- **Cloudflare Tunnel:** https://developers.cloudflare.com/cloudflare-one/
+- **Vercel:** https://vercel.com/docs
+- **Next.js:** https://nextjs.org/docs
+- **Ollama:** https://ollama.ai/docs
+
+---
+
+## 🎯 Roadmap
+
+### Phase 1: Complete ✅
+- Core voice documentation
+- Local AI integration
+- Database encryption
+- MFA authentication
+- Accessibility (WCAG 2.1 AA)
+- Hybrid architecture
+
+### Phase 2: In Progress
+- Auth.js v5 migration
+- Global settings context
+- Conversation history
+
+### Phase 3: Planned
+- Mobile app (Expo)
+- Advanced analytics
+- Team collaboration
+- Report templates
+- Backup automation
+
+---
+
+**Built with ❤️ using Next.js 16, React 19, and 100% local AI**
+
+**Status:** ✅ Production Ready (Hybrid Architecture)
+**Version:** 1.0.0
+**Last Updated:** October 28, 2025

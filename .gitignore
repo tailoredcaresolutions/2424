@@ -47,3 +47,39 @@ Thumbs.db# Ensure secret protection (Phase 1A)
 .env*.local
 *.secret
 _v0_suggestions/
+
+# Backend server environment
+backend/.env
+backend/.env.local
+backend/node_modules/
+
+# Database and backups (local only)
+data/
+backups/
+*.db
+*.db-shm
+*.db-wal
+
+# Test reports and benchmarks
+reports/
+test-results/
+playwright-report/
+BENCHMARK_RESULTS.json
+
+# Backup files
+*.backup
+*.bak
+*.bak2
+*.bak3
+middleware.ts.bak
+
+# Development tools
+.tools/
+
+# Logs
+logs/
+*.log
+
+# macOS
+.AppleDouble
+.LSOverride

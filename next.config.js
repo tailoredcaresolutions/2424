@@ -1,14 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Vercel deployment - standalone output for optimal performance
+  output: 'standalone',
+
   // Turbopack is now STABLE in Next.js 16 (released Oct 21, 2025)
   // Use --turbopack flag in dev script for explicit control
   // Next.js 16 features: Cache Components, Build Adapters API, React Compiler stable
 
   // React Compiler (automatic memoization) - now stable and top-level in Next.js 16
-  reactCompiler: true,
+  reactCompiler: false,  // Temporarily disabled for production cutover
 
   // Allow dev access from network devices (iPhone, tablets, etc.)
   allowedDevOrigins: ['192.168.1.187', 'localhost'],
+
+  // Image optimization for Vercel
+  images: {
+    domains: [],
+    unoptimized: false,
+  },
 
   // Production optimizations
   compiler: {
@@ -24,6 +33,10 @@ const nextConfig = {
     // Cache Components enabled via `use cache` directive in code
   },
 
+  // Note: API routes are now handled by local backend server
+  // SQLite packages not needed on Vercel (frontend only)
+  serverExternalPackages: [],
+
   // Turbopack configuration (empty config to acknowledge migration from webpack)
   turbopack: {},
 
@@ -38,9 +51,15 @@ const nextConfig = {
     };
 
     // Optimize for better-sqlite3
+    config.externals = config.externals || [];
+
     if (!isServer) {
-      config.externals = config.externals || [];
-      config.externals.push('better-sqlite3');
+      config.externals.push('better-sqlite3', 'better-sqlite3-multiple-ciphers');
+    } else {
+      config.externals.push({
+        'better-sqlite3': 'commonjs better-sqlite3',
+        'better-sqlite3-multiple-ciphers': 'commonjs better-sqlite3-multiple-ciphers',
+      });
     }
 
     return config;
