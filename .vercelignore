@@ -84,3 +84,6 @@ out/
 *.bak
 *.bak2
 *.bak3
+# Monitoring files (use SQLite - backend only)
+lib/monitoring/
+lib/database/
