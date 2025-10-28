@@ -87,3 +87,9 @@ out/
 # Monitoring files (use SQLite - backend only)
 lib/monitoring/
 lib/database/
+
+# API routes that use SQLite (backend only)
+app/api/ai/
+app/api/monitoring/
+app/api/health/
+lib/search/
