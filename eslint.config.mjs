@@ -9,6 +9,7 @@ const config = [
       'reports/**/*',
       'test-results/**/*',
       'scripts/prod-start.sh',
+      'backend/**/*',
     ],
   },
   ...next,
