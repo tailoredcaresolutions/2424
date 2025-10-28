@@ -16,21 +16,41 @@ reports/
 playwright-report/
 coverage/
 
-# Documentation (reduce deploy size)
+# Documentation (EXCLUDE ALL - keeps Vercel deployments clean)
 docs/
 *.md
+*_INSTRUCTIONS.md
+*_GUIDE.md
+*_COMPLETE.md
+*_SUMMARY.md
+*_AUDIT*.md
+*_REPORT*.md
+*_CHECKLIST.md
+*_ANALYSIS.md
+*_PLAN.md
+*_CONTEXT.md
+PROJECT_CONTEXT.md
+START_HERE.md
+AI_ASSISTANT_GUIDE.md
+GUARDRAILS.md
+DEPLOYMENT_*.md
+PHIPA_*.md
+V0_*.md
+COMPREHENSIVE_*.md
+# Only README stays for GitHub display
 !README.md
 
 # Development tools
 .tools/
 scripts/bench-*.js
+scripts/dev/
 
 # Mac metadata
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Node modules are handled by Vercel
+# Node modules
 node_modules/
 
 # IDE
