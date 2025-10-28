@@ -94,7 +94,10 @@
       "Bash(git push:*)",
       "Bash(git config:*)",
       "Bash(git remote:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(openssl rand:*)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []
