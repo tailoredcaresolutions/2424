@@ -1206,6 +1206,7 @@ const PSWVoiceReporter = () => {
     const handleClearAll = () => {
       if (confirm('Delete ALL saved sessions? This cannot be undone.')) {
         localStorage.removeItem(STORAGE_KEY);
+        clearCurrentSession();
         setSavedSessions([]);
         setSuccessMessage('🗑️ All sessions cleared');
         setShowSuccessToast(true);
