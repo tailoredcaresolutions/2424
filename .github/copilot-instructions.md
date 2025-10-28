@@ -512,3 +512,478 @@ These files are interconnected - changes ripple:
 6. `comprehensive-audit.js` - validation script
 
 Always test with `node comprehensive-audit.js` after editing any of these.
+
+## Deployment to Vercel (Production)
+
+### Architecture Overview
+
+This is a **hybrid architecture** with PHIPA compliance for Ontario healthcare:
+
+```
+Vercel (Frontend - Public Cloud)
+    ↓ HTTPS
+Cloudflare Tunnel (psw-backend.tailoredcaresolutions.com)
+    ↓ Encrypted Tunnel
+Local Mac (Backend - Ontario, Canada)
+    ↓ localhost:4000
+Express.js Backend + SQLite Database + AI Services
+```
+
+**Key Principle**: All Personal Health Information (PHI) stays on local Mac in Ontario. Vercel only serves the UI.
+
+### Prerequisites
+
+1. **GitHub Repository**: Code must be pushed to GitHub
+2. **Vercel Account**: Sign up at vercel.com
+3. **Cloudflare Account**: For tunnel setup (free)
+4. **Local Mac**: Must be in Ontario, Canada (PHIPA requirement)
+5. **Node.js 22+**: On local Mac for backend
+
+### Step 1: Backend Setup (Local Mac)
+
+**Install Backend Dependencies:**
+```bash
+cd backend
+npm install
+```
+
+**Create Backend Environment File:**
+```bash
+cd backend
+cp .env.example .env
+```
+
+**Edit `backend/.env` with secure values:**
+```bash
+# Database Encryption (CRITICAL - Change from default!)
+DATABASE_ENCRYPTION_KEY=your-secure-256-bit-key-here-use-openssl-rand
+
+# Server Configuration
+PORT=4000
+NODE_ENV=production
+
+# CORS - Add your Vercel domain
+ALLOWED_ORIGINS=http://localhost:3000,https://your-app.vercel.app,https://psw-backend.tailoredcaresolutions.com
+
+# AI Configuration (Local Services)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3.3:70b-instruct-q4_K_M
+WHISPER_EXECUTABLE=/path/to/whisper.cpp/build/bin/whisper-cli
+WHISPER_MODEL=/path/to/models/ggml-large-v3.bin
+XTTS_SERVER_URL=http://localhost:8020
+
+# Security
+SESSION_SECRET=your-nextauth-secret-here-same-as-vercel
+MFA_ISSUER=PSW Voice Documentation
+```
+
+**Generate Secure Keys:**
+```bash
+# Database encryption key (256-bit)
+openssl rand -base64 32
+
+# NextAuth secret (same for backend and Vercel)
+openssl rand -base64 32
+```
+
+**Test Backend Locally:**
+```bash
+cd backend
+npm start
+# Should see: "Backend server running on http://localhost:4000"
+```
+
+### Step 2: Cloudflare Tunnel Setup
+
+**Option A: Web Dashboard (Easiest)**
+
+1. Go to https://one.dash.cloudflare.com
+2. Navigate to **Zero Trust** → **Access** → **Tunnels**
+3. Click **Create a tunnel**
+4. Name: `psw-backend`
+5. Install connector on your Mac (follow instructions)
+6. Configure public hostname:
+   - **Subdomain**: `psw-backend`
+   - **Domain**: `tailoredcaresolutions.com`
+   - **Service**: HTTP `localhost:4000`
+7. Save tunnel
+
+**Option B: CLI (Automated)**
+
+```bash
+# Install cloudflared
+brew install cloudflare/cloudflare/cloudflared
+
+# Run setup script
+./scripts/setup-cloudflare-tunnel.sh
+
+# Follow prompts to authenticate and configure
+```
+
+**Your tunnel URL will be:**
+```
+https://psw-backend.tailoredcaresolutions.com
+```
+
+**Test Tunnel:**
+```bash
+# Start backend first
+cd backend && npm start
+
+# In another terminal, check tunnel
+curl https://psw-backend.tailoredcaresolutions.com/api/health
+# Should return: {"status":"ok","services":{...}}
+```
+
+### Step 3: Vercel Deployment
+
+**A. Connect GitHub Repository**
+
+1. Go to https://vercel.com/new
+2. Import your GitHub repository
+3. Select branch: `phase-1a-ui-merge` (or your production branch)
+4. Framework: **Next.js** (auto-detected)
+5. Root directory: `.` (leave default)
+6. **DON'T deploy yet** - configure environment variables first
+
+**B. Configure Environment Variables**
+
+In Vercel project settings → **Environment Variables**, add these:
+
+**Method 1: Paste this entire block into Vercel's "Paste .env" feature:**
+
+```bash
+# Backend API - Your Cloudflare Tunnel URL
+NEXT_PUBLIC_BACKEND_URL=https://psw-backend.tailoredcaresolutions.com
+
+# NextAuth Configuration
+NEXTAUTH_URL=https://YOUR-APP-NAME.vercel.app
+NEXTAUTH_SECRET=YOUR-GENERATED-SECRET-FROM-OPENSSL
+
+# Application Settings
+NEXT_PUBLIC_APP_NAME=PSW Voice Documentation
+NEXT_PUBLIC_ENVIRONMENT=production
+
+# Feature Flags
+NEXT_PUBLIC_DEBUG_MODE=false
+NEXT_PUBLIC_USE_MOCK_DATA=false
+
+# Regional Settings (Ontario, Canada)
+NEXT_PUBLIC_TIMEZONE=America/Toronto
+NEXT_PUBLIC_LOCALE=en-CA
+```
+
+**IMPORTANT**: Replace these values:
+- `YOUR-APP-NAME.vercel.app` → Your actual Vercel domain
+- `YOUR-GENERATED-SECRET-FROM-OPENSSL` → Output from `openssl rand -base64 32`
+
+**Method 2: Manual entry** (if paste doesn't work):
+
+Add each variable individually:
+- Name: `NEXT_PUBLIC_BACKEND_URL`
+- Value: `https://psw-backend.tailoredcaresolutions.com`
+- Environments: ✅ Production, ✅ Preview
+
+Repeat for all variables above.
+
+**C. Deploy**
+
+Click **Deploy** button. Vercel will:
+1. Clone your repository
+2. Run `npm install` (installs dependencies)
+3. Run `npm run build` (builds Next.js app)
+4. Deploy to your domain
+
+**First deployment takes ~2-3 minutes.**
+
+### Step 4: Start Backend Services
+
+**On your local Mac (must stay running):**
+
+```bash
+# Start all services with one command
+./scripts/start-all-services.sh
+```
+
+This starts:
+1. Ollama (AI model server)
+2. Express backend (port 4000)
+3. Cloudflare tunnel
+
+**Or start individually:**
+```bash
+# Terminal 1: Ollama
+ollama serve
+
+# Terminal 2: Backend
+cd backend && npm start
+
+# Terminal 3: Cloudflare tunnel
+./scripts/start-tunnel.sh
+```
+
+**Verify services are running:**
+```bash
+# Check Ollama
+curl http://localhost:11434/api/tags
+
+# Check backend
+curl http://localhost:4000/api/health
+
+# Check tunnel
+curl https://psw-backend.tailoredcaresolutions.com/api/health
+```
+
+### Step 5: Test End-to-End
+
+**Visit your Vercel URL:**
+```
+https://YOUR-APP-NAME.vercel.app
+```
+
+**Test these features:**
+1. ✅ Page loads with proper styling (gold and navy colors)
+2. ✅ Click "Start Recording" - microphone access works
+3. ✅ Speak or type a message - AI responds
+4. ✅ Generate a report - report appears
+5. ✅ Check browser console - no errors
+6. ✅ Network tab - API calls go to tunnel URL
+
+**Check backend logs:**
+```bash
+# In backend directory
+tail -f logs/server.log
+# Should see incoming API requests from Vercel
+```
+
+### Deployment Files Reference
+
+**Key files for deployment:**
+
+```
+.env.example.frontend           # Frontend env template
+.env.vercel                     # Ready-to-paste Vercel env vars
+backend/.env.example            # Backend env template
+backend/package.json            # Backend dependencies
+backend/server.js               # Express server entry point
+vercel.json                     # Vercel deployment config
+.vercelignore                   # Files to exclude from deployment
+
+docs/DEPLOYMENT_INSTRUCTIONS.md     # Complete step-by-step guide
+docs/CLOUDFLARE_TUNNEL_SETUP.md     # Tunnel setup details
+docs/PHIPA_COMPLIANCE_ONTARIO.md    # PHIPA compliance guide
+DEPLOYMENT_INSTRUCTIONS.md          # Quick deployment reference
+```
+
+### Troubleshooting Deployment
+
+**Problem**: Vercel build fails with "Module not found"
+**Solution**: Check that all required dependencies are in `dependencies`, not `devDependencies`
+```bash
+# Packages needed at build time MUST be in dependencies:
+# - tailwindcss-animate
+# - framer-motion
+# - @types/react, @types/react-dom
+```
+
+**Problem**: Vercel build fails with Node.js version error
+**Solution**: Check `package.json` engines field:
+```json
+"engines": {
+  "node": ">=22.0.0",   // Must be <= Vercel's Node.js version
+  "npm": ">=10.0.0"
+}
+```
+
+**Problem**: Frontend loads but API calls fail (CORS errors)
+**Solution**: Check backend `ALLOWED_ORIGINS` in `backend/.env`:
+```bash
+ALLOWED_ORIGINS=http://localhost:3000,https://your-actual-app.vercel.app,https://psw-backend.tailoredcaresolutions.com
+```
+
+**Problem**: Cloudflare tunnel disconnects
+**Solution**: Restart tunnel with script:
+```bash
+./scripts/stop-all-services.sh
+./scripts/start-all-services.sh
+```
+
+**Problem**: Backend can't connect to Ollama/Whisper
+**Solution**: Verify local AI services are running:
+```bash
+# Check Ollama
+ollama list
+ollama pull llama3.3:70b-instruct-q4_K_M
+
+# Check Whisper
+ls -la /path/to/whisper.cpp/build/bin/whisper-cli
+```
+
+**Problem**: Database encryption warnings in build logs
+**Solution**: This is expected during Vercel build (frontend doesn't need database). Only backend uses database.
+
+**Problem**: Husky pre-commit hook fails on Vercel
+**Solution**: Already fixed in latest code - `prepare` script uses `husky || true`
+
+### PHIPA Compliance Checklist
+
+Before going live with PHI data:
+
+- ✅ Backend server running on Mac in Ontario, Canada
+- ✅ Database encryption key changed from default (256-bit)
+- ✅ All PHI stays on local Mac (never sent to Vercel/Cloudflare)
+- ✅ Cloudflare Tunnel uses encrypted connection
+- ✅ CORS properly configured (only your Vercel domain allowed)
+- ✅ MFA enabled for admin accounts
+- ✅ Audit logging enabled (check `/admin/audit-logs`)
+- ✅ Backup system configured (check `/admin/backups`)
+- ✅ Review `docs/PHIPA_COMPLIANCE_ONTARIO.md` for full requirements
+
+**PHIPA Contact**: Information and Privacy Commissioner of Ontario
+- Phone: 1-800-387-0073
+- Website: https://www.ipc.on.ca
+
+### Continuous Deployment
+
+**Automatic deployments:**
+
+1. Push to GitHub → Vercel auto-deploys
+2. Branch `phase-1a-ui-merge` → Production
+3. Other branches → Preview deployments
+
+**Manual redeployment:**
+```bash
+# Using Vercel CLI
+vercel --prod
+
+# Or trigger from GitHub
+git push origin phase-1a-ui-merge
+```
+
+### Monitoring Production
+
+**Vercel Dashboard:**
+- Deployment logs: Real-time build output
+- Analytics: Page views, performance
+- Logs: Runtime errors and warnings
+
+**Backend Monitoring:**
+```bash
+# Check backend health
+curl https://psw-backend.tailoredcaresolutions.com/api/health
+
+# View logs
+cd backend && tail -f logs/server.log
+
+# Monitor services
+./scripts/check-services.sh  # If you create this script
+```
+
+**Admin Dashboard:**
+- Health: https://your-app.vercel.app/admin/monitoring
+- Logs: https://your-app.vercel.app/admin/audit-logs
+- Backups: https://your-app.vercel.app/admin/backups
+
+### Scaling Considerations
+
+**Frontend (Vercel):**
+- Auto-scales globally
+- No action needed for traffic spikes
+
+**Backend (Local Mac):**
+- Single server = single point of failure
+- For production scale:
+  1. Move backend to Ontario data center
+  2. Use load balancer
+  3. Add Redis for session storage
+  4. Set up database replication
+
+**AI Services:**
+- Ollama: Consider GPU server for faster inference
+- Whisper: Can process ~10 concurrent requests
+- XTTS: Requires GPU for real-time synthesis
+
+### Security Best Practices
+
+1. **Secrets Management:**
+   - Never commit `.env` files
+   - Rotate secrets every 90 days
+   - Use different secrets for dev/staging/prod
+
+2. **Access Control:**
+   - Enable MFA for all admin accounts
+   - Review audit logs weekly
+   - Implement IP allowlisting if needed
+
+3. **Data Protection:**
+   - Regular database backups (automated)
+   - Test backup restoration monthly
+   - Encrypt backups at rest
+
+4. **Monitoring:**
+   - Set up alerts for service downtime
+   - Monitor API response times
+   - Track failed authentication attempts
+
+### Deployment Commands Quick Reference
+
+```bash
+# Backend
+cd backend && npm install        # Install dependencies
+cd backend && npm start          # Start server
+
+# Frontend (local testing)
+npm run build                    # Build production bundle
+npm start                        # Test production build locally
+
+# Services
+./scripts/start-all-services.sh  # Start backend + Ollama + tunnel
+./scripts/stop-all-services.sh   # Stop all services
+
+# Vercel (via CLI)
+vercel                           # Deploy preview
+vercel --prod                    # Deploy to production
+vercel env pull                  # Download env vars locally
+vercel logs                      # View runtime logs
+
+# Git workflow
+git add -A                       # Stage changes
+git commit -m "fix: description" # Commit
+git push origin branch-name      # Push to GitHub → auto-deploys
+```
+
+### Post-Deployment Checklist
+
+After deploying, verify:
+
+- [ ] Frontend loads at Vercel URL
+- [ ] All pages accessible (check navigation)
+- [ ] Brand colors visible (navy #1B365D, gold #D4A574)
+- [ ] Voice recording works
+- [ ] AI responds to messages
+- [ ] Reports generate correctly
+- [ ] DAR JSON displays properly
+- [ ] Backend logs show API requests
+- [ ] No CORS errors in browser console
+- [ ] No 500/404 errors in Vercel logs
+- [ ] Admin pages require authentication
+- [ ] Database encryption enabled
+- [ ] Tunnel connection stable
+
+### Getting Help
+
+**Documentation:**
+- Full guide: `docs/DEPLOYMENT_INSTRUCTIONS.md`
+- Tunnel setup: `docs/CLOUDFLARE_TUNNEL_SETUP.md`
+- PHIPA compliance: `docs/PHIPA_COMPLIANCE_ONTARIO.md`
+- Backend API: `backend/README.md` (if created)
+
+**Support Resources:**
+- Next.js docs: https://nextjs.org/docs
+- Vercel docs: https://vercel.com/docs
+- Cloudflare Tunnel: https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/
+
+**Common Issues:**
+- Check `docs/ISSUES_FOUND_AND_SOLUTIONS.md`
+- Review Vercel deployment logs
+- Check backend logs: `backend/logs/server.log`
