@@ -40,7 +40,9 @@ export async function textToSpeech(request: TTSRequest): Promise<Blob> {
     });
 
     if (!response.ok) {
-      throw new Error(`TTS API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `TTS API error: ${response.status} ${response.statusText}`
+      );
     }
 
     const audioBlob = await response.blob();

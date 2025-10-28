@@ -1,4 +1,4 @@
-```tsx
+
 'use client'
 
 import { useState } from 'react'
@@ -180,4 +180,4 @@ Patient will continue on optimal medical therapy including aspirin, clopidogrel,
     </div>
   )
 }
-```
+

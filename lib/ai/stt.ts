@@ -65,10 +65,13 @@ export async function transcribe(
  */
 export async function healthCheck(): Promise<boolean> {
   try {
-    const response = await fetch(WHISPER_URL.replace('/transcribe', '/health'), {
-      method: 'GET',
-      signal: AbortSignal.timeout(3000),
-    });
+    const response = await fetch(
+      WHISPER_URL.replace('/transcribe', '/health'),
+      {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000),
+      }
+    );
     return response.ok;
   } catch {
     return false;
