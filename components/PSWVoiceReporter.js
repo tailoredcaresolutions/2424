@@ -2,6 +2,22 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
+const blobToBase64 = (blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        const base64 = result.split(',')[1] || '';
+        resolve(base64);
+      } else {
+        reject(new Error('Unable to read audio data'));
+      }
+    };
+    reader.onerror = () => reject(new Error('Unable to read audio data'));
+    reader.readAsDataURL(blob);
+  });
+
 // Phase 1 Q3: Move constants outside component to prevent recreation on every render
 // Tailored Care Solutions brand colors
 const brandColors = {
@@ -203,12 +219,21 @@ const PSWVoiceReporter = () => {
   const [browserSupport, setBrowserSupport] = useState({
     speechRecognition: false,
     speechSynthesis: false,
-    mediaDevices: false
+    mediaDevices: false,
+    audioRecording: false
   });
   const [showTextInput, setShowTextInput] = useState(false);
   const [textInput, setTextInput] = useState('');
   const [isIOS, setIsIOS] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
+  const [recordingError, setRecordingError] = useState('');
+  const [isTranscribing, setIsTranscribing] = useState(false);
+
+  const voiceAvailable = useMemo(
+    () => browserSupport.speechRecognition || browserSupport.audioRecording,
+    [browserSupport]
+  );
+  const isSendDisabled = !textInput.trim() || isProcessing || isTranscribing;
 
   // Phase 1 Q1: Audio level for breathing animation
   const [audioLevel, setAudioLevel] = useState(0);
@@ -244,6 +269,9 @@ const PSWVoiceReporter = () => {
   const recognitionRef = useRef(null);
   const synthRef = useRef(null);
   const conversationEndRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
   const languages = {
     'en-CA': 'English (Canadian)',
@@ -273,15 +301,18 @@ const PSWVoiceReporter = () => {
       
       // Check MediaDevices API
       const mediaDevicesSupported = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
+      const audioRecordingSupported =
+        mediaDevicesSupported && typeof window.MediaRecorder !== 'undefined';
 
       setBrowserSupport({
         speechRecognition: speechRecognitionSupported && !iOS, // iOS Safari has poor support
         speechSynthesis: speechSynthesisSupported,
-        mediaDevices: mediaDevicesSupported
+        mediaDevices: mediaDevicesSupported,
+        audioRecording: audioRecordingSupported
       });
 
       // Only show text input as fallback if voice completely fails
-      if (iOS || !speechRecognitionSupported) {
+      if ((!speechRecognitionSupported || iOS) && !audioRecordingSupported) {
         setShowTextInput(true);
       }
     };
@@ -290,15 +321,20 @@ const PSWVoiceReporter = () => {
   }, []);
 
   useEffect(() => {
-    // Initialize Speech Recognition (for supported browsers)
     if (browserSupport.speechRecognition) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.lang = selectedLanguage;
+      const recognition = new SpeechRecognition();
 
-      recognitionRef.current.onresult = (event) => {
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = selectedLanguage;
+
+      recognition.onstart = () => {
+        setTranscript('Listening...');
+        setRecordingError('');
+      };
+
+      recognition.onresult = (event) => {
         let finalTranscript = '';
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
@@ -306,32 +342,49 @@ const PSWVoiceReporter = () => {
           }
         }
         if (finalTranscript) {
-          setTranscript(finalTranscript);
+          setTranscript('');
           handleSpeechInput(finalTranscript);
         }
       };
 
-      recognitionRef.current.onerror = (event) => {
+      recognition.onerror = (event) => {
         console.error('Speech recognition error:', event.error);
         setIsListening(false);
-        // Only show text input fallback on persistent errors
+        setTranscript('');
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           setShowTextInput(true);
         }
       };
 
-      recognitionRef.current.onend = () => {
+      recognition.onend = () => {
         setIsListening(false);
+        setTranscript('');
       };
+
+      recognitionRef.current = recognition;
+    } else {
+      recognitionRef.current = null;
     }
 
-    // Initialize Speech Synthesis (cross-browser)
     if (browserSupport.speechSynthesis) {
       synthRef.current = window.speechSynthesis;
     }
 
     scrollToBottom();
-  }, [selectedLanguage, browserSupport]);
+
+    return () => {
+      recognitionRef.current?.stop();
+      recognitionRef.current = null;
+      stopMediaStream();
+    };
+  }, [
+    browserSupport.speechRecognition,
+    browserSupport.speechSynthesis,
+    handleSpeechInput,
+    scrollToBottom,
+    selectedLanguage,
+    stopMediaStream
+  ]);
 
   useEffect(() => {
     // Start conversation automatically when component loads
@@ -402,20 +455,24 @@ const PSWVoiceReporter = () => {
   // Phase 1 Q2: Keyboard shortcuts for accessibility
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Space bar: Start recording (push-to-talk)
-      if (e.code === 'Space' && !showTextInput && !isProcessing && !isListening && browserSupport.speechRecognition) {
-        // Only activate if not focused on an input element
+      if (
+        e.code === 'Space' &&
+        voiceAvailable &&
+        !showTextInput &&
+        !isProcessing &&
+        !isTranscribing &&
+        !isListening
+      ) {
         if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
           toggleListening();
         }
       }
 
-      // Escape: Cancel current operation OR close shortcuts overlay
       if (e.code === 'Escape') {
         if (showKeyboardShortcuts) {
           setShowKeyboardShortcuts(false);
-        } else if (isListening) {
+        } else if (isListening && voiceAvailable) {
           toggleListening();
         } else if (report) {
           setReport('');
@@ -423,16 +480,13 @@ const PSWVoiceReporter = () => {
         }
       }
 
-      // Phase 1 Q4: ? key - Show keyboard shortcuts overlay
       if (e.key === '?' && !showTextInput) {
-        // Only activate if not focused on an input element
         if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
           setShowKeyboardShortcuts(prev => !prev);
         }
       }
 
-      // Ctrl/Cmd + Enter: Generate report
       if ((e.ctrlKey || e.metaKey) && e.code === 'Enter') {
         if (conversation.length > 1 && !isReportGenerating) {
           e.preventDefault();
@@ -442,8 +496,13 @@ const PSWVoiceReporter = () => {
     };
 
     const handleKeyUp = (e) => {
-      // Space bar release: Stop recording (push-to-talk)
-      if (e.code === 'Space' && isListening && !showTextInput) {
+      if (
+        e.code === 'Space' &&
+        voiceAvailable &&
+        isListening &&
+        !showTextInput &&
+        !isTranscribing
+      ) {
         if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
           toggleListening();
@@ -458,7 +517,19 @@ const PSWVoiceReporter = () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [isListening, isProcessing, showTextInput, conversation, report, isReportGenerating, browserSupport.speechRecognition]);
+  }, [
+    conversation.length,
+    generateReport,
+    isListening,
+    isProcessing,
+    isReportGenerating,
+    isTranscribing,
+    report,
+    showKeyboardShortcuts,
+    showTextInput,
+    toggleListening,
+    voiceAvailable
+  ]);
 
   const startConversation = () => {
     const welcomeMessage = {
@@ -490,16 +561,49 @@ const PSWVoiceReporter = () => {
       } else {
         await audio.play();
       }
-    } catch (error) {
-      console.error('Audio playback failed:', error);
+  } catch (error) {
+    console.error('Audio playback failed:', error);
+  }
+};
+
+const generateReport = useCallback(async () => {
+  setIsReportGenerating(true);
+  try {
+    const response = await fetch('/api/generate-ai-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation,
+        language: selectedLanguage
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      setReport(data.noteText || data.report);
+      setDarJson(data.dar);
+      setShowReport(true);
+
+      const sections = parseReportIntoSections(data.noteText || data.report);
+      setReportSections(sections);
+      setAllSectionsExpanded(true);
+
+      setSuccessMessage('✅ DAR Report generated successfully!');
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 4000);
     }
-  };
+  } catch (error) {
+    console.error('Error generating report:', error);
+  } finally {
+    setIsReportGenerating(false);
+  }
+}, [conversation, selectedLanguage]);
 
-  const handleSpeechInput = async (text) => {
-    if (!text.trim() || isProcessing) return;
+const handleSpeechInput = async (text) => {
+  if (!text.trim() || isProcessing) return;
 
-    setIsProcessing(true);
-    const userMessage = { type: 'user', content: text.trim(), timestamp: new Date() };
+  setIsProcessing(true);
+  const userMessage = { type: 'user', content: text.trim(), timestamp: new Date() };
     setConversation(prev => [...prev, userMessage]);
 
     // Phase 1 Q2: Reset consecutive AI messages counter on user input
@@ -553,10 +657,123 @@ const PSWVoiceReporter = () => {
       // Phase 1 Q2: Increment consecutive AI messages counter for error messages too
       setConsecutiveAIMessages(prev => prev + 1);
     } finally {
-      setIsProcessing(false);
-      setTranscript('');
+    setIsProcessing(false);
+    setTranscript('');
+  }
+};
+
+const stopMediaStream = useCallback(() => {
+  if (mediaStreamRef.current) {
+    mediaStreamRef.current.getTracks().forEach(track => track.stop());
+    mediaStreamRef.current = null;
+  }
+}, []);
+
+const startFallbackRecording = useCallback(async () => {
+  if (!browserSupport.mediaDevices || typeof window === 'undefined' || typeof window.MediaRecorder === 'undefined') {
+    setRecordingError('Microphone access is not available on this device.');
+    setShowTextInput(true);
+    return;
+  }
+
+  try {
+    setRecordingError('');
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaStreamRef.current = stream;
+
+    let mimeType;
+    if (typeof window.MediaRecorder.isTypeSupported === 'function') {
+      const preferredTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+      mimeType = preferredTypes.find(type => window.MediaRecorder.isTypeSupported(type));
     }
-  };
+
+    const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+    mediaRecorderRef.current = recorder;
+    audioChunksRef.current = [];
+
+    recorder.ondataavailable = (event) => {
+      if (event.data && event.data.size > 0) {
+        audioChunksRef.current.push(event.data);
+      }
+    };
+
+    recorder.onerror = (event) => {
+      console.error('MediaRecorder error:', event.error);
+      setRecordingError(event.error?.message || 'Recording failed.');
+      setIsListening(false);
+      setTranscript('');
+      mediaRecorderRef.current = null;
+      stopMediaStream();
+    };
+
+    recorder.onstop = async () => {
+      try {
+        setIsTranscribing(true);
+        const chunks = audioChunksRef.current;
+        audioChunksRef.current = [];
+        const blob = new Blob(chunks, { type: recorder.mimeType || mimeType || 'audio/webm' });
+
+        if (!blob || blob.size === 0) {
+          throw new Error('No audio captured. Please try again.');
+        }
+
+        setTranscript('Transcribing...');
+        const base64Audio = await blobToBase64(blob);
+
+        const response = await fetch('/api/transcribe-whisper', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            audioData: base64Audio,
+            format: (recorder.mimeType || mimeType || 'audio/webm').split('/')[1] || 'webm',
+            language: selectedLanguage
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.transcript) {
+          setTranscript('');
+          await handleSpeechInput(data.transcript);
+          setRecordingError('');
+        } else {
+          throw new Error(data.error || 'Transcription failed.');
+        }
+      } catch (error) {
+        console.error('Transcription error:', error);
+        setRecordingError(error.message || 'Transcription failed.');
+      } finally {
+        setIsListening(false);
+        setIsTranscribing(false);
+        setTranscript('');
+        mediaRecorderRef.current = null;
+        stopMediaStream();
+      }
+    };
+
+    recorder.start();
+    setTranscript('Listening...');
+    setIsListening(true);
+  } catch (error) {
+    console.error('Microphone access denied or error:', error);
+    setRecordingError(error.message || 'Microphone access denied.');
+    setIsListening(false);
+    setTranscript('');
+    mediaRecorderRef.current = null;
+    stopMediaStream();
+    setShowTextInput(true);
+  }
+}, [browserSupport.mediaDevices, handleSpeechInput, selectedLanguage, stopMediaStream]);
+
+const stopFallbackRecording = useCallback(() => {
+  const recorder = mediaRecorderRef.current;
+  if (recorder && recorder.state !== 'inactive') {
+    recorder.stop();
+  } else {
+    setIsListening(false);
+    stopMediaStream();
+  }
+}, [stopMediaStream]);
 
   const handleTextSubmit = () => {
     if (textInput.trim()) {
@@ -572,30 +789,47 @@ const PSWVoiceReporter = () => {
     }
   };
 
-  const toggleListening = async () => {
-    if (!browserSupport.speechRecognition) {
-      setShowTextInput(true);
+  const toggleListening = useCallback(async () => {
+    if (browserSupport.speechRecognition) {
+      if (isListening) {
+        recognitionRef.current?.stop();
+        setIsListening(false);
+        setTranscript('');
+      } else {
+        try {
+          if (browserSupport.mediaDevices) {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+          }
+          recordingError && setRecordingError('');
+          recognitionRef.current?.start();
+          setIsListening(true);
+        } catch (error) {
+          console.error('Microphone access denied or error:', error);
+          setShowTextInput(true);
+          alert('Microphone access is required for voice input. Please use the text input instead.');
+        }
+      }
       return;
     }
 
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      try {
-        // Request microphone permission first (especially important for iOS)
-        if (browserSupport.mediaDevices) {
-          await navigator.mediaDevices.getUserMedia({ audio: true });
-        }
-        recognitionRef.current?.start();
-        setIsListening(true);
-      } catch (error) {
-        console.error('Microphone access denied or error:', error);
-        setShowTextInput(true);
-        alert('Microphone access is required for voice input. Please use the text input instead.');
+    if (browserSupport.audioRecording) {
+      if (isListening) {
+        stopFallbackRecording();
+      } else {
+        await startFallbackRecording();
       }
+      return;
     }
-  };
+
+    setShowTextInput(true);
+    alert('Voice recording is not supported on this device. Please use the text input instead.');
+  }, [
+    browserSupport,
+    isListening,
+    recordingError,
+    startFallbackRecording,
+    stopFallbackRecording
+  ]);
 
   const generateReport = async () => {
     setIsReportGenerating(true);
@@ -639,7 +873,9 @@ const PSWVoiceReporter = () => {
     setShowReport(false);
     setCurrentResponse('');
     setTextInput('');
-    setShowTextInput(isIOS || !browserSupport.speechRecognition);
+    setTranscript('');
+    setRecordingError('');
+    setShowTextInput(!voiceAvailable);
 
     // Phase 1 Q2: Reset consecutive AI messages counter on new session
     setConsecutiveAIMessages(0);
@@ -1537,7 +1773,7 @@ const PSWVoiceReporter = () => {
 
   // Browser Compatibility Alert (only shows when voice is completely unavailable)
   const BrowserAlert = () => {
-    if (!showTextInput) return null;
+    if (voiceAvailable) return null;
 
     return (
       <div className="max-w-2xl mx-auto mb-6">
@@ -1554,7 +1790,7 @@ const PSWVoiceReporter = () => {
               </h3>
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
-                  Voice recognition is not supported on this device/browser. You can still have a full conversation using text input below.
+                  Voice recording is not supported on this device/browser. You can still have a full conversation using text input below.
                 </p>
               </div>
             </div>
@@ -1763,41 +1999,45 @@ const PSWVoiceReporter = () => {
               
               {/* Voice/Text Controls */}
               <div className="flex items-center space-x-3">
-                {browserSupport.speechRecognition && !showTextInput && (
+                {voiceAvailable && !showTextInput && (
                   <button
                     onClick={toggleListening}
-                    disabled={isProcessing}
+                    disabled={isProcessing || isTranscribing}
                     aria-label={isListening ? "Stop recording" : "Start voice recording"}
                     className={`flex items-center justify-center w-16 h-16 rounded-full text-white font-bold text-lg transition-all transform ${
                       isListening
                         ? 'scale-110 shadow-lg animate-pulse'
                         : 'hover:scale-105'
                     } ${
-                      isProcessing
+                      isProcessing || isTranscribing
                         ? 'bg-gray-400 cursor-not-allowed'
                         : isListening
-                          ? `bg-red-500 hover:bg-red-600`
+                          ? 'bg-red-500 hover:bg-red-600'
                           : 'hover:shadow-lg'
                     }`}
                     style={{
-                      backgroundColor: !isProcessing
-                        ? (isListening ? '#EF4444' : brandColors.blue)
+                      background: !(isProcessing || isTranscribing)
+                        ? (isListening
+                            ? 'linear-gradient(135deg, #EF4444, #DC2626)'
+                            : 'linear-gradient(135deg, #1B365D, #2D4A7C)')
                         : undefined
                     }}
                   >
-                    {isListening ? '⏹️' : '🎤'}
+                    {isTranscribing ? '⌛' : isListening ? '⏹️' : '🎤'}
                   </button>
                 )}
                 
-                {browserSupport.speechRecognition && !isIOS && (
+                {voiceAvailable && (
                   <button
                     onClick={() => setShowTextInput(!showTextInput)}
+                    disabled={isListening || isTranscribing}
                     aria-label={showTextInput ? "Switch to voice input" : "Switch to text input"}
                     className="px-3 py-1 text-sm rounded-lg border-2 transition-colors"
                     style={{
                       borderColor: brandColors.blue,
                       color: showTextInput ? 'white' : brandColors.blue,
-                      backgroundColor: showTextInput ? brandColors.blue : 'transparent'
+                      backgroundColor: showTextInput ? brandColors.blue : 'transparent',
+                      opacity: isListening || isTranscribing ? 0.6 : 1
                     }}
                   >
                     {showTextInput ? 'Voice' : 'Text'}
@@ -1817,11 +2057,11 @@ const PSWVoiceReporter = () => {
                     placeholder="Type your response here... (Press Enter to send, Shift+Enter for new line)"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-base"
                     rows="3"
-                    disabled={isProcessing}
+                    disabled={isProcessing || isTranscribing}
                   />
                   <button
                     onClick={handleTextSubmit}
-                    disabled={!textInput.trim() || isProcessing}
+                    disabled={isSendDisabled}
                     aria-label="Send message"
                     className="px-4 py-2 rounded-lg text-white font-medium transition-colors disabled:bg-gray-400"
                     style={{ backgroundColor: brandColors.blue }}
@@ -1832,9 +2072,15 @@ const PSWVoiceReporter = () => {
               </div>
             )}
 
-            {transcript && !showTextInput && (
+            {transcript && !showTextInput && voiceAvailable && (
               <div className="mb-4 p-3 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg border border-white border-opacity-30">
-                <p className="text-sm text-white">Listening: {transcript}</p>
+                <p className="text-sm text-white">{transcript}</p>
+              </div>
+            )}
+
+            {recordingError && (
+              <div className="mb-4 p-3 bg-red-50 rounded-lg border border-red-200">
+                <p className="text-sm font-medium text-red-700">{recordingError}</p>
               </div>
             )}
 
