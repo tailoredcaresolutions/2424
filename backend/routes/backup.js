@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { getBackupService } from '../lib/backup/backupService.js';
-import { log as logger } from '../lib/logger.js';
+import { getBackupService } from '../lib/backup/backupService.ts';
+import { log as logger } from '../lib/logger.ts';
 
 const router = express.Router();
 

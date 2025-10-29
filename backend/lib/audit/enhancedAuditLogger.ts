@@ -12,8 +12,8 @@
  */
 
 import crypto from 'crypto';
-import { getEncryptedDb } from '../database/encryptedDb';
-import { log as logger } from '../logger';
+import { getEncryptedDb } from '../database/encryptedDb.ts';
+import { log as logger } from '../logger.ts';
 
 interface AuditLogEntry {
   userId: number;

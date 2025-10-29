@@ -16,7 +16,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.ts';
 
 const execAsync = promisify(exec);
 

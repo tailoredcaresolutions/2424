@@ -12,7 +12,7 @@
  */
 
 import Database from 'better-sqlite3-multiple-ciphers';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.ts';
 
 interface PoolConfig {
   maxReadConnections: number;

@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { getSearchEngine } from '../lib/search/advancedSearch.js';
-import { log as logger } from '../lib/logger.js';
+import { getSearchEngine } from '../lib/search/advancedSearch.ts';
+import { log as logger } from '../lib/logger.ts';
 
 const router = express.Router();
 

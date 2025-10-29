@@ -15,6 +15,9 @@ import searchRoutes from './search.js';
 import backupRoutes from './backup.js';
 import monitoringRoutes from './monitoring.js';
 import performanceRoutes from './performance.js';
+import ollamaRoutes from './ollama.js';
+import whisperRoutes from './whisper.js';
+import xttsRoutes from './xtts.js';
 
 // Mount routes
 router.use('/health', healthRoutes);
@@ -24,5 +27,8 @@ router.use('/search', searchRoutes);
 router.use('/backup', backupRoutes);
 router.use('/monitoring', monitoringRoutes);
 router.use('/performance', performanceRoutes);
+router.use('/ollama', ollamaRoutes);
+router.use('/whisper', whisperRoutes);
+router.use('/xtts', xttsRoutes);
 
 export default router;

@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { getHealthMonitor } from '../lib/monitoring/healthMonitor.js';
-import { log as logger } from '../lib/logger.js';
+import { getHealthMonitor } from '../lib/monitoring/healthMonitor.ts';
+import { log as logger } from '../lib/logger.ts';
 
 const router = express.Router();
 

@@ -8,7 +8,7 @@
 
 import express from 'express';
 import { existsSync } from 'fs';
-import { getEncryptedDb } from '../lib/database/encryptedDb.js';
+import { getEncryptedDb } from '../lib/database/encryptedDb.ts';
 
 const router = express.Router();
 

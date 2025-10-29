@@ -1,12 +1,12 @@
 /**
  * Authentication Routes
- * Converted from: app/api/auth/mfa/*/route.ts
+ * Converted from: app/api/auth/mfa/[...]/route.ts
  * MFA enrollment and verification
  */
 
 import express from 'express';
-import { getMFAService } from '../lib/security/mfaService.js';
-import { log as logger } from '../lib/logger.js';
+import { getMFAService } from '../lib/security/mfaService.ts';
+import { log as logger } from '../lib/logger.ts';
 
 const router = express.Router();
 
