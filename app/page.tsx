@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import SimpleChatWrapper from '../components/SimpleChatWrapper';
+import SimpleChatWrapper from '../components/SimpleChatWrapper.js';
 
 // Force dynamic rendering - prevents build-time static generation
 export const dynamic = 'force-dynamic';
