@@ -33,11 +33,10 @@
       ]
     }
   ],
-  "redirects": [
+  "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://psw-backend.tailoredcaresolutions.com/api/:path*",
-      "permanent": false
+      "destination": "https://psw-backend.tailoredcaresolutions.com/api/:path*"
     }
   ],
   "env": {
