@@ -93,3 +93,20 @@ app/api/ai/
 app/api/monitoring/
 app/api/health/
 lib/search/
+
+# Backend-only files (use SQLite - local Mac only)
+lib/database/**/*
+lib/monitoring/**/*
+lib/search/**/*
+lib/cache/**/*
+lib/security/mfaService.ts
+lib/performance/performanceOptimizer.ts
+
+# Backend-only API routes (cannot run on Vercel serverless)
+app/api/ai/**/*
+app/api/monitoring/**/*
+app/api/health/**/*
+app/api/performance/**/*
+app/api/backup/**/*
+app/api/search/**/*
+app/api/auth/mfa/**/*
