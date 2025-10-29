@@ -1,295 +1,420 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import GoldOrb3D from './GoldOrb3D';
 
 const SimplePSWChat = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [hasVoiceSupport, setHasVoiceSupport] = useState(false);
-  const messagesEndRef = useRef(null);
+  const [conversation, setConversation] = useState([]);
+  const [currentTranscript, setCurrentTranscript] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [shiftData, setShiftData] = useState({
+    client_name: '',
+    psw_name: '',
+    observations: [],
+    care_activities: [],
+    client_responses: []
+  });
+
   const recognitionRef = useRef(null);
+  const synthRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  // Initialize speech recognition and synthesis
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (typeof window !== 'undefined') {
+      // Speech Recognition setup
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-CA';
 
-  // Check for voice support
-  useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (SpeechRecognition && window.speechSynthesis) {
-      setHasVoiceSupport(true);
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.lang = 'en-CA';
+        recognitionRef.current.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+          setCurrentTranscript(transcript);
 
-      recognitionRef.current.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInput(transcript);
-        setIsListening(false);
-      };
+          // If final result, process it
+          if (event.results[event.results.length - 1].isFinal) {
+            handleVoiceInput(transcript);
+            setCurrentTranscript('');
+          }
+        };
 
-      recognitionRef.current.onerror = () => {
-        setIsListening(false);
-      };
+        recognitionRef.current.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          setIsListening(false);
+        };
 
-      recognitionRef.current.onend = () => {
-        setIsListening(false);
-      };
+        recognitionRef.current.onend = () => {
+          if (isListening) {
+            try {
+              recognitionRef.current.start(); // Restart if still listening
+            } catch(err) {
+              console.log('Recognition restart skipped');
+            }
+          }
+        };
+      }
+
+      // Speech Synthesis setup
+      synthRef.current = window.speechSynthesis;
     }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
   }, []);
 
+  // Auto-scroll to bottom
   useEffect(() => {
-    if (messages.length === 0) {
-      const welcomeMsg = {
-        role: 'assistant',
-        content: "Hi! I'm here to help you document your PSW shift. What's your name?",
-        timestamp: new Date()
-      };
-      setMessages([welcomeMsg]);
-      // Speak welcome message
-      speakMessage(welcomeMsg.content);
-    }
-  }, [messages.length]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversation]);
 
-  const speakMessage = (text) => {
-    if (!window.speechSynthesis) return;
+  // Start session
+  const handleStart = () => {
+    setIsStarted(true);
+    const welcomeMsg = "Hello! I'm your PSW documentation assistant. Tell me about your shift. What's the client's name?";
     
-    // Cancel any ongoing speech
-    window.speechSynthesis.cancel();
+    setConversation([{
+      role: 'assistant',
+      content: welcomeMsg,
+      timestamp: new Date().toISOString()
+    }]);
+
+    // Speak welcome message
+    speakMessage(welcomeMsg);
     
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-CA';
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    
-    window.speechSynthesis.speak(utterance);
+    // Auto-start listening after welcome
+    setTimeout(() => {
+      startListening();
+    }, 4000);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || isProcessing) return;
+  // Start listening
+  const startListening = () => {
+    if (recognitionRef.current && !isListening) {
+      try {
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (err) {
+        console.error('Error starting recognition:', err);
+      }
+    }
+  };
 
-    const userMessage = {
+  // Stop listening
+  const stopListening = () => {
+    if (recognitionRef.current && isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  };
+
+  // Speak message
+  const speakMessage = (text) => {
+    if (synthRef.current) {
+      synthRef.current.cancel(); // Cancel any ongoing speech
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.95;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      
+      synthRef.current.speak(utterance);
+    }
+  };
+
+  // Stop speaking
+  const stopSpeaking = () => {
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      setIsSpeaking(false);
+    }
+  };
+
+  // Handle voice input
+  const handleVoiceInput = async (text) => {
+    if (!text.trim()) return;
+
+    // Add user message
+    const userMsg = {
       role: 'user',
-      content: input.trim(),
-      timestamp: new Date()
+      content: text,
+      timestamp: new Date().toISOString()
     };
+    setConversation(prev => [...prev, userMsg]);
 
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+    // Process with AI
     setIsProcessing(true);
-
     try {
       const response = await fetch('/api/process-conversation-ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userInput: userMessage.content,
-          conversationHistory: [...messages, userMessage],
+          input: text,
+          context: 'conversation',
+          shiftData,
+          conversation: [...conversation, userMsg],
           language: 'en-CA'
         })
       });
 
       const data = await response.json();
-      
-      if (data.success) {
-        const aiMessage = {
-          role: 'assistant',
-          content: data.response,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, aiMessage]);
-        
-        // Speak AI response
-        speakMessage(data.response);
+
+      // Add AI response
+      const aiMsg = {
+        role: 'assistant',
+        content: data.response || data.noteText || "I'm listening. Please continue.",
+        timestamp: new Date().toISOString()
+      };
+      setConversation(prev => [...prev, aiMsg]);
+
+      // Update shift data if extracted
+      if (data.updatedShiftData) {
+        setShiftData(data.updatedShiftData);
       }
+
+      // Speak response
+      speakMessage(aiMsg.content);
+
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error processing input:', error);
       const errorMsg = {
         role: 'assistant',
-        content: 'Sorry, something went wrong. Please try again.',
-        timestamp: new Date()
+        content: "I'm having trouble processing that. Could you repeat?",
+        timestamp: new Date().toISOString()
       };
-      setMessages(prev => [...prev, errorMsg]);
+      setConversation(prev => [...prev, errorMsg]);
       speakMessage(errorMsg.content);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const generateReport = async () => {
+  // Generate report
+  const handleGenerateReport = async () => {
     setIsProcessing(true);
+    stopListening();
+    stopSpeaking();
+
     try {
       const response = await fetch('/api/generate-ai-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          conversation: messages,
-          language: 'en-CA'
+          shiftData,
+          conversation
         })
       });
 
       const data = await response.json();
-      if (data.success) {
-        const reportMsg = {
-          role: 'assistant',
-          content: `✅ **Report Generated**\n\n${data.noteText || data.report}`,
-          timestamp: new Date(),
-          isReport: true
-        };
-        setMessages(prev => [...prev, reportMsg]);
-        speakMessage('Your report has been generated successfully.');
-      }
+
+      // Add report to conversation
+      const reportMsg = {
+        role: 'assistant',
+        content: `📋 **Report Generated**\n\n${data.report}\n\n✅ DAR documentation complete!`,
+        timestamp: new Date().toISOString(),
+        isReport: true
+      };
+      setConversation(prev => [...prev, reportMsg]);
+
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error generating report:', error);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const toggleVoice = () => {
-    if (!hasVoiceSupport) return;
-
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      recognitionRef.current?.start();
-      setIsListening(true);
-    }
-  };
-
-  const toggleSpeech = () => {
-    if (isSpeaking) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
-  };
-
-  return (
-    <div className="flex flex-col h-screen bg-white">
-      <div className="border-b border-gray-200 px-4 py-3 flex items-center justify-between bg-white">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold">
-            TC
-          </div>
-          <div>
-            <h1 className="text-sm font-semibold text-gray-900">PSW Documentation</h1>
-            <p className="text-xs text-gray-500">Tailored Care Solutions {isSpeaking && '🔊 Speaking...'}</p>
-          </div>
-        </div>
+  // If not started, show welcome screen
+  if (!isStarted) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4"
+        style={{
+          background: 'linear-gradient(135deg, #0E1535 0%, #1B365D 100%)'
+        }}>
         
-        <div className="flex items-center gap-2">
-          {isSpeaking && (
+        {/* Logo/Branding */}
+        <div className="text-center mb-8">
+          <div className="mb-4">
+            <GoldOrb3D size={120} isActive={false} />
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">
+            PSW Voice Documentation
+          </h1>
+          <p className="text-lg text-white/70 mb-1">
+            Tailored Care Solutions
+          </p>
+          <p className="text-sm text-white/50 max-w-md mx-auto">
+            Document your shift naturally with voice. PHIPA-compliant for Ontario healthcare.
+          </p>
+        </div>
+
+        {/* Start Button */}
+        <button
+          onClick={handleStart}
+          className="group relative px-12 py-6 rounded-full text-xl font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl"
+          style={{
+            background: 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
+            color: '#0E1535'
+          }}>
+          <span className="flex items-center gap-3">
+            <span className="text-2xl">🎤</span>
+            <span>Start Documentation</span>
+          </span>
+          <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </button>
+
+        {/* Info */}
+        <div className="mt-8 text-center text-white/60 text-sm max-w-md">
+          <p className="mb-2">✓ Voice-powered conversation</p>
+          <p className="mb-2">✓ Automatic DAR formatting</p>
+          <p className="mb-2">✓ Multi-language support</p>
+          <p>✓ 100% local AI processing</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Main conversation interface
+  return (
+    <div className="min-h-screen flex flex-col"
+      style={{
+        background: 'linear-gradient(135deg, #0E1535 0%, #1B365D 100%)'
+      }}>
+      
+      {/* Header */}
+      <div className="sticky top-0 z-10 backdrop-blur-lg border-b"
+        style={{
+          background: 'rgba(14, 21, 53, 0.9)',
+          borderColor: 'rgba(227, 162, 72, 0.2)'
+        }}>
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12">
+              <GoldOrb3D size={48} isActive={isListening || isSpeaking} />
+            </div>
+            <div>
+              <h2 className="text-white font-semibold text-sm">PSW Documentation</h2>
+              <p className="text-white/60 text-xs">
+                {isListening ? '🎤 Listening...' : isSpeaking ? '🔊 Speaking...' : isProcessing ? '⏳ Processing...' : '✓ Ready'}
+              </p>
+            </div>
+          </div>
+          
+          {conversation.length > 2 && (
             <button
-              onClick={toggleSpeech}
-              className="px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors"
-            >
-              🔇 Stop
-            </button>
-          )}
-          {messages.length > 2 && (
-            <button
-              onClick={generateReport}
+              onClick={handleGenerateReport}
               disabled={isProcessing}
-              className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50"
-            >
+              className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
+                color: '#0E1535'
+              }}>
               Generate Report
             </button>
           )}
         </div>
       </div>
 
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  message.role === 'user'
-                    ? 'bg-amber-500 text-white'
-                    : message.isReport
-                    ? 'bg-green-50 border border-green-200 text-gray-900'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                <p className="text-sm whitespace-pre-wrap leading-relaxed">
-                  {message.content}
-                </p>
-                <p className={`text-xs mt-2 ${
-                  message.role === 'user' ? 'text-amber-100' : 'text-gray-500'
+        <div className="max-w-4xl mx-auto space-y-4">
+          {conversation.map((msg, idx) => (
+            <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                msg.role === 'user'
+                  ? 'bg-gradient-to-r from-[#E3A248] to-[#D4A574] text-[#0E1535]'
+                  : msg.isReport
+                    ? 'bg-white text-gray-900'
+                    : 'bg-white/10 text-white border border-white/20'
+              }`}>
+                <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                <p className={`text-xs mt-1 ${
+                  msg.role === 'user' ? 'text-[#0E1535]/60' : 'text-white/40'
                 }`}>
-                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(msg.timestamp).toLocaleTimeString()}
                 </p>
               </div>
             </div>
           ))}
-
-          {isProcessing && (
-            <div className="flex justify-start">
-              <div className="bg-gray-100 rounded-2xl px-4 py-3">
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                </div>
+          
+          {/* Current transcript preview */}
+          {currentTranscript && (
+            <div className="flex justify-end">
+              <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-gradient-to-r from-[#E3A248]/50 to-[#D4A574]/50 text-white border-2 border-dashed border-[#E3A248]">
+                <p className="text-sm italic">{currentTranscript}</p>
+                <p className="text-xs mt-1 text-white/60">Transcribing...</p>
               </div>
             </div>
           )}
-
+          
           <div ref={messagesEndRef} />
         </div>
       </div>
 
-      <div className="border-t border-gray-200 bg-white px-4 py-4">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-          <div className="flex gap-3">
-            {hasVoiceSupport && (
+      {/* Controls */}
+      <div className="sticky bottom-0 backdrop-blur-lg border-t"
+        style={{
+          background: 'rgba(14, 21, 53, 0.9)',
+          borderColor: 'rgba(227, 162, 72, 0.2)'
+        }}>
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-center gap-4">
+            
+            {/* Microphone Button */}
+            <button
+              onClick={isListening ? stopListening : startListening}
+              disabled={isProcessing}
+              className={`relative w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all transform ${
+                isListening 
+                  ? 'scale-110 shadow-lg' 
+                  : 'hover:scale-105'
+              }`}
+              style={{
+                background: isListening 
+                  ? 'linear-gradient(135deg, #ff4444 0%, #ff6666 100%)'
+                  : 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
+                boxShadow: isListening ? '0 0 30px rgba(255, 68, 68, 0.6)' : '0 4px 12px rgba(227, 162, 72, 0.3)'
+              }}>
+              <span>{isListening ? '⏸️' : '🎤'}</span>
+              {isListening && (
+                <span className="absolute inset-0 rounded-full animate-ping"
+                  style={{
+                    background: 'rgba(255, 68, 68, 0.4)'
+                  }}></span>
+              )}
+            </button>
+
+            {/* Stop Speaking Button */}
+            {isSpeaking && (
               <button
-                type="button"
-                onClick={toggleVoice}
-                disabled={isProcessing || isSpeaking}
-                className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                  isListening 
-                    ? 'bg-red-500 hover:bg-red-600 text-white animate-pulse' 
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                } disabled:opacity-50`}
-              >
-                {isListening ? '⏹️' : '🎤'}
+                onClick={stopSpeaking}
+                className="w-20 h-20 rounded-full flex items-center justify-center text-3xl transition-all transform hover:scale-105"
+                style={{
+                  background: 'linear-gradient(135deg, #666 0%, #888 100%)'
+                }}>
+                <span>🔇</span>
               </button>
             )}
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={hasVoiceSupport ? "Type or click 🎤 to speak..." : "Type your message..."}
-              disabled={isProcessing || isListening || isSpeaking}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-50 text-sm"
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isProcessing || isListening || isSpeaking}
-              className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition-colors disabled:opacity-50"
-            >
-              Send
-            </button>
           </div>
-        </form>
+          
+          <p className="text-center text-white/50 text-xs mt-3">
+            {isListening ? 'Tap to pause • Speaking continuously' : 'Tap microphone to start speaking'}
+          </p>
+        </div>
       </div>
     </div>
   );
