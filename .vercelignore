@@ -105,11 +105,18 @@ lib/performance/
 lib/backup/
 lib/logger.ts
 
-# Backend-only API routes (cannot run on Vercel serverless)
-app/api/ai/**/*
-app/api/monitoring/**/*
-app/api/health/**/*
-app/api/performance/**/*
-app/api/backup/**/*
-app/api/search/**/*
-app/api/auth/mfa/**/*
+# Backend-only API routes (ALL proxied via Cloudflare Tunnel)
+# These run on local Mac, NOT on Vercel
+app/api/ai/
+app/api/monitoring/
+app/api/health/
+app/api/performance/
+app/api/backup/
+app/api/search/
+app/api/auth/
+app/api/generate-ai-report/
+app/api/process-conversation-ai/
+app/api/translate-report/
+app/api/text-to-speech/
+app/api/synthesize-xtts/
+app/api/transcribe-whisper/
