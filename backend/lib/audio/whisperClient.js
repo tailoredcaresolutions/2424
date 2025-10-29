@@ -29,7 +29,7 @@ export class WhisperClient {
     this.model = process.env.WHISPER_MODEL || options.model || 'small';
     this.device = process.env.WHISPER_DEVICE || options.device || 'mps'; // Metal acceleration
     this.language = process.env.WHISPER_LANGUAGE || options.language || 'en';
-    this.modelPath = process.env.WHISPER_PATH || '/Volumes/AI/models/whisper';
+    this.modelPath = process.env.WHISPER_PATH || '/Volumes/AI/Models/whisper';
     this.cachePath = '/Volumes/AI/cache/audio';
     
     // PSW-specific settings (conversational speech optimization)
