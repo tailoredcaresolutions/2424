@@ -94,7 +94,7 @@ app/api/monitoring/
 app/api/health/
 lib/search/
 
-# Backend-only files (use SQLite - local Mac only)
+# Backend-only files (use SQLite/Redis - local Mac only)
 lib/database/
 lib/monitoring/
 lib/search/
@@ -103,12 +103,6 @@ lib/audit/
 lib/security/
 lib/performance/
 lib/backup/
-lib/actions/
-lib/ai/
-lib/audio/
-lib/hooks/
-lib/middleware/
-lib/mocks/
 lib/logger.ts
 
 # Backend-only API routes (cannot run on Vercel serverless)
