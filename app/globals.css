@@ -21,6 +21,7 @@ body {
     radial-gradient(circle at 80% 0%, rgba(253, 214, 146, 0.1), transparent 40%),
     linear-gradient(180deg, var(--tcs-navy) 0%, var(--tcs-midnight) 55%, var(--tcs-midnight-soft) 100%);
   color: #fdf7ee;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
 }
 
 /* Premium Custom Animations for PSW Voice Documentation System */
