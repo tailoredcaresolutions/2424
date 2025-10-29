@@ -8,6 +8,12 @@ const nextConfig = {
   serverExternalPackages: [
     'better-sqlite3',
     'better-sqlite3-multiple-ciphers',
+    'pino',
+    'pino-pretty',
+    'ioredis',
+    'otplib',
+    'qrcode',
+    'next-rate-limit',
   ],
 
   // CRITICAL FIX #2: Exclude backend files from deployment bundle
