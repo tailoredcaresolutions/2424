@@ -78,6 +78,16 @@ This script starts:
 
 ⚠️ **Important**: `start-everything.sh` is for **local development only**, NOT for Vercel deployment.
 
+**What happens if run in CI/Vercel?**
+- The script will fail (no local services available)
+- Vercel doesn't execute shell scripts during deployment
+- Vercel only builds and deploys the frontend Next.js app
+
+**Production startup process:**
+- Backend runs on your local Mac (not Vercel)
+- Cloudflare Tunnel must be running to connect Vercel to backend
+- Frontend is automatically deployed and started by Vercel
+
 ### Backend Dependencies
 
 Backend has its own `package.json` with:
@@ -108,7 +118,7 @@ Custom CSS classes for iOS 26-style glass morphism:
 - `.liquid-glass-dark` - Deep layer glass
 - `.liquid-glass-card` - Content container glass
 
-**Note**: Tailwind v4 doesn't support `@apply` with custom classes, so we use standard CSS.
+**Note**: Tailwind v4 `@apply` directive works with Tailwind utilities, but cannot be used with non-utility custom CSS classes like `.liquid-glass`. We use standard CSS for these custom design system classes instead.
 
 ### Touch Targets (iOS HIG Compliance)
 
@@ -185,7 +195,25 @@ NODE_ENV=production
 
 **Problem**: `Cannot apply unknown utility class liquid-glass`
 
-**Solution**: Don't use `@apply` with custom classes in Tailwind v4. Use standard CSS instead.
+**Solution**: The `@apply` directive in Tailwind can only be used with Tailwind utility classes, not with custom CSS classes. 
+
+Change this:
+```css
+.glass {
+  @apply liquid-glass;  /* ❌ Won't work - liquid-glass is not a Tailwind utility */
+}
+```
+
+To this:
+```css
+.glass {
+  /* ✅ Use standard CSS properties instead */
+  background: var(--glass-blue-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-blue);
+}
+```
 
 ### TypeScript Errors for Backend Files
 
@@ -205,16 +233,17 @@ NODE_ENV=production
 
 ## Deployment Checklist
 
-- [ ] Backend running on local Mac in Ontario
-- [ ] Cloudflare Tunnel connected and tested
-- [ ] Vercel environment variables set
-- [ ] Backend ALLOWED_ORIGINS includes Vercel URL
-- [ ] Database encryption key changed from default
-- [ ] Build succeeds locally (`npm run build`)
-- [ ] No backend dependencies in main `dependencies`
-- [ ] `.vercelignore` excludes backend files
-- [ ] Touch targets meet 44px minimum
-- [ ] Brand colors (#1B365D, #D4A574) consistent
+- [ ] Backend server running on local Mac in Ontario (verify with `curl http://localhost:4000/health`)
+- [ ] Backend server accessible and responding to health checks
+- [ ] Cloudflare Tunnel connected and tested (verify tunnel URL responds)
+- [ ] Vercel environment variables set (check Vercel dashboard)
+- [ ] Backend ALLOWED_ORIGINS includes Vercel URL (in backend/.env)
+- [ ] Database encryption key changed from default (never use default in production!)
+- [ ] Build succeeds locally (`npm run build` completes without errors)
+- [ ] No backend dependencies in main `dependencies` section of package.json
+- [ ] `.vercelignore` excludes all backend files and directories
+- [ ] Touch targets meet 44px minimum (verify in browser dev tools)
+- [ ] Brand colors (#1B365D, #D4A574) consistent across UI
 
 ## Support
 
