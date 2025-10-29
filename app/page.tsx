@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import PSWClientWrapper from '../components/PSWClientWrapper';
+import SimpleChatWrapper from '../components/SimpleChatWrapper';
 
 // Force dynamic rendering - prevents build-time static generation
 export const dynamic = 'force-dynamic';
@@ -8,5 +8,5 @@ export const revalidate = 0;
 
 export default function Home() {
   headers(); // mark route dynamic at build time
-  return <PSWClientWrapper />;
+  return <SimpleChatWrapper />;
 }
