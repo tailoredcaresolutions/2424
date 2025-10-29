@@ -105,7 +105,15 @@
       "Bash(vercel --token BOuckoBWbQc7lE74YGe2bTld --yes:*)",
       "Bash(vercel:*)",
       "Bash(tee:*)",
-      "Read(//private/tmp/**)"
+      "Read(//private/tmp/**)",
+      "Bash(cloudflared tunnel list:*)",
+      "Bash(cloudflared tunnel login)",
+      "Bash(sudo launchctl:*)",
+      "Bash(cloudflared tunnel route dns:*)",
+      "Read(//Users/server/.cloudflared/**)",
+      "Bash(nslookup psw-backend.tailoredcaresolutions.com)",
+      "Bash(dig:*)",
+      "Bash(host:*)"
     ],
     "deny": [],
     "ask": []

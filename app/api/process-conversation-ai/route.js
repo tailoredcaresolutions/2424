@@ -293,27 +293,28 @@ export async function POST(request) {
     }
 
     // ================================
-    // C) Call local Ollama model with DAR prompt
+    // C) Call backend Ollama service
     // ================================
     const sys = SYSTEM_PROMPT_DAR
       + `\n\nContext: ${context || 'none'}\nClient: ${shiftData.client_name || 'unknown'}\nPSW: ${shiftData.psw_name || 'unknown'}\nDetected Lang (hint): ${language}\n`;
 
-    // Use Ollama Client for local AI inference (Qwen3 14B primary)
-    const completion = await ollamaClient.chat([
-      {
-        role: 'system',
-        content: sys
-      },
-      {
-        role: 'user',
-        content: String(input || '')
-      }
-    ], {
-      temperature: 0.3,
-      top_p: 0.9,
-      max_tokens: 800,
-      quality: 'speed' // Use Qwen3 14B for conversations (fast)
+    // Proxy to backend server (works on Vercel + local)
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+    const ollamaResponse = await fetch(`${backendUrl}/api/ollama/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: String(input || '') }
+        ],
+        temperature: 0.3,
+        max_tokens: 800,
+        quality: 'speed'
+      })
     });
+
+    const completion = await ollamaResponse.json();
 
     if (!completion.success) {
       throw new Error(completion.error || 'Ollama chat failed');

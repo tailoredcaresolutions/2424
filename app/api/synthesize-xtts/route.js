@@ -67,50 +67,27 @@ export async function POST(request) {
       timestamp: new Date().toISOString()
     });
     
-    // Check if XTTS is available
-    const xttsAvailable = await xttsClient.isAvailable();
-    
-    if (!xttsAvailable && !isLocalMode) {
-      // Fall back to browser Speech Synthesis API
-      return NextResponse.json({
-        success: false,
-        error: 'XTTS not available',
-        fallback: 'browser',
-        message: 'Please use browser Speech Synthesis API'
-      });
+    // Proxy to backend server for XTTS synthesis
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+
+    const response = await fetch(`${backendUrl}/api/xtts/synthesize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text,
+        voice: voice || 'supportive',
+        language: language || 'en',
+        speed: speed || 1.0
+      })
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.error || 'XTTS synthesis failed');
     }
-    
-    // Synthesize speech using XTTS
-    const result = await xttsClient.synthesize(text, {
-      voice: voice || 'supportive',
-      language: language || 'en',
-      speed: speed || 1.0
-    });
-    
-    // Calculate API overhead
-    const apiDuration = (Date.now() - startTime) / 1000;
-    
-    // Log result
-    console.log('[Synthesize API] Success:', {
-      textLength: text.length,
-      audioDuration: result.duration,
-      synthesisTime: result.synthesisTime,
-      apiOverhead: apiDuration - (result.synthesisTime || 0),
-      voice: result.voice
-    });
-    
-    // Return result
-    return NextResponse.json({
-      success: result.success,
-      audioData: result.audioData || '',
-      format: result.format || 'wav',
-      sampleRate: result.sampleRate || 24000,
-      duration: result.duration || 0,
-      synthesisTime: result.synthesisTime || 0,
-      voice: result.voice || voice || 'supportive',
-      text: result.text,
-      timestamp: result.timestamp
-    });
+
+    return NextResponse.json(result);
     
   } catch (error) {
     console.error('[Synthesize API] Error:', error);

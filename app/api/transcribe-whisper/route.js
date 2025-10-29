@@ -56,65 +56,42 @@ export async function POST(request) {
       timestamp: new Date().toISOString()
     });
     
-    // Convert base64 to buffer if needed
-    const audioBuffer = typeof audioData === 'string' 
-      ? Buffer.from(audioData, 'base64')
-      : audioData;
-    
-    // Check if Whisper is available
-    const whisperAvailable = await whisperClient.isAvailable();
-    
-    if (!whisperAvailable && !isLocalMode) {
-      // Fall back to browser Web Speech API
+    // Proxy to backend server for Whisper transcription
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+
+    try {
+      const response = await fetch(`${backendUrl}/api/whisper/transcribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audioData,
+          format,
+          language: language || 'en'
+        })
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Whisper transcription failed');
+      }
+
+      return NextResponse.json(result);
+    } catch (error) {
       return NextResponse.json({
         success: false,
-        error: 'Whisper not available',
-        fallback: 'browser',
-        message: 'Please use browser Web Speech API'
-      });
+        error: error.message,
+        fallback: 'browser'
+      }, { status: 500 });
     }
-    
-    // Transcribe audio using Whisper
-    const result = await whisperClient.transcribe(audioBuffer, {
-      language: language || 'en'
-    });
-    
-    // Calculate API overhead
-    const apiDuration = (Date.now() - startTime) / 1000;
-    
-    // Log result
-    console.log('[Transcribe API] Success:', {
-      transcriptLength: result.transcript?.length || 0,
-      confidence: result.confidence,
-      duration: result.duration,
-      apiOverhead: apiDuration - (result.duration || 0),
-      model: result.model
-    });
-    
-    // Return result
-    return NextResponse.json({
-      success: result.success,
-      transcript: result.transcript || '',
-      segments: result.segments || [],
-      confidence: result.confidence || 0,
-      language: result.language || language || 'en',
-      duration: result.duration || 0,
-      model: result.model || 'whisper-small',
-      timestamp: result.timestamp
-    });
-    
   } catch (error) {
     console.error('[Transcribe API] Error:', error);
-    
-    return NextResponse.json(
-      {
-        success: false,
-        error: error.message || 'Transcription failed',
-        fallback: 'browser',
-        timestamp: new Date().toISOString()
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: error.message || 'Transcription failed',
+      fallback: 'browser',
+      timestamp: new Date().toISOString()
+    }, { status: 500 });
   }
 }
 
