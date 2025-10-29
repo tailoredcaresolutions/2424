@@ -397,6 +397,48 @@ See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for testing scenarios
 
 ---
 
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
+
+### Getting Started
+
+1. **Read the Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
+2. **Check Existing Issues**: Browse [open issues](https://github.com/tailoredcaresolutions/2424/issues)
+3. **Fork & Clone**: Fork the repo and clone to your machine
+4. **Create Branch**: Use descriptive branch names (`feature/`, `fix/`, `docs/`)
+5. **Make Changes**: Follow our coding standards and guidelines
+6. **Test Thoroughly**: Run tests and verify your changes
+7. **Submit PR**: Use our [PR template](.github/pull_request_template.md)
+
+### Contribution Guidelines
+
+- ✅ **PHIPA Compliant**: All changes must maintain Ontario healthcare compliance
+- ✅ **Accessible**: Follow WCAG 2.1 AA standards for UI changes
+- ✅ **Tested**: Include tests for new features and bug fixes
+- ✅ **Documented**: Update documentation for user-facing changes
+- ✅ **Secure**: No secrets in code, proper input validation
+- ✅ **Brand Consistent**: Use correct colors and "Tailored Care Solutions" branding
+
+### Templates Available
+
+- **Pull Request**: [.github/pull_request_template.md](.github/pull_request_template.md)
+- **Bug Report**: [.github/ISSUE_TEMPLATE/bug_report.md](.github/ISSUE_TEMPLATE/bug_report.md)
+- **Feature Request**: [.github/ISSUE_TEMPLATE/feature_request.md](.github/ISSUE_TEMPLATE/feature_request.md)
+- **Documentation**: [.github/ISSUE_TEMPLATE/documentation.md](.github/ISSUE_TEMPLATE/documentation.md)
+- **Security Issue**: [.github/ISSUE_TEMPLATE/security.md](.github/ISSUE_TEMPLATE/security.md)
+
+### Resources for Contributors
+
+- **Contributing Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Project Context**: [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
+- **PHIPA Compliance**: [docs/PHIPA_COMPLIANCE_ONTARIO.md](docs/PHIPA_COMPLIANCE_ONTARIO.md)
+- **PSW Standards**: [PSW_ONTARIO_STANDARDS_RESEARCH.md](PSW_ONTARIO_STANDARDS_RESEARCH.md)
+
+**Questions?** Open a [GitHub Discussion](https://github.com/tailoredcaresolutions/2424/discussions) or comment on an existing issue.
+
+---
+
 ## 🎯 Roadmap
 
 ### Phase 1: Complete ✅
