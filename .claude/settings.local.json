@@ -97,7 +97,15 @@
       "Bash(npm run lint:*)",
       "Bash(openssl rand:*)",
       "Bash(git pull:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(vercel --version:*)",
+      "Bash(vercel ls:*)",
+      "Bash(vercel login:*)",
+      "Bash(vercel inspect:*)",
+      "Bash(vercel --token BOuckoBWbQc7lE74YGe2bTld --yes:*)",
+      "Bash(vercel:*)",
+      "Bash(tee:*)",
+      "Read(//private/tmp/**)"
     ],
     "deny": [],
     "ask": []
