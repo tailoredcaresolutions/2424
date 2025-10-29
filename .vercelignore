@@ -105,6 +105,9 @@ lib/performance/
 lib/backup/
 lib/logger.ts
 
+# Backend-only pages (use server actions)
+app/auth/
+
 # Backend-only API routes (ALL proxied via Cloudflare Tunnel)
 # These run on local Mac, NOT on Vercel
 app/api/ai/
