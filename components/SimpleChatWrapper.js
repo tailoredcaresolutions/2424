@@ -80,7 +80,7 @@ export default function SimpleChatWrapper() {
                     secondaryColor="#d4b078"
                     glowIntensity={0.22}
                     enableHover={true}
-                    avatarUrl="/companion-avatar.png"
+                    avatarUrl="/companion-avatar-hd.png"
                   />
                 </motion.div>
               </div>
