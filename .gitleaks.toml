@@ -1,0 +1,21 @@
+title = "PSW Voice Documentation - Secret Detection"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "v0-api-key"
+description = "Vercel v0 API Key"
+regex = '''v1:team_[a-zA-Z0-9]+:[a-zA-Z0-9]+'''
+tags = ["key", "v0"]
+
+[[rules]]
+id = "openai-api-key"
+description = "OpenAI API Key"
+regex = '''sk-proj-[a-zA-Z0-9]{43,}'''
+tags = ["key", "openai"]
+
+[allowlist]
+description = "Allowlisted files"
+paths = [".env.example", "**/README.md", "**/SECURITY_SECRET_MANAGEMENT.md"]
+regexes = ["your_.*_key_here", "sk-proj-YOUR_KEY_HERE"]

@@ -1,0 +1,131 @@
+# Backend server (runs locally, not on Vercel)
+backend/
+
+# Local data
+data/
+backups/
+
+# Environment files
+.env.local
+.env.*.local
+
+# Test files
+tests/
+test-results/
+reports/
+playwright-report/
+coverage/
+vitest.config.ts
+playwright.config.ts
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Documentation (EXCLUDE ALL - keeps Vercel deployments clean)
+docs/
+*.md
+*_INSTRUCTIONS.md
+*_GUIDE.md
+*_COMPLETE.md
+*_SUMMARY.md
+*_AUDIT*.md
+*_REPORT*.md
+*_CHECKLIST.md
+*_ANALYSIS.md
+*_PLAN.md
+*_CONTEXT.md
+PROJECT_CONTEXT.md
+START_HERE.md
+AI_ASSISTANT_GUIDE.md
+GUARDRAILS.md
+DEPLOYMENT_*.md
+PHIPA_*.md
+V0_*.md
+COMPREHENSIVE_*.md
+# Only README stays for GitHub display
+!README.md
+
+# Development tools
+.tools/
+scripts/bench-*.js
+scripts/dev/
+
+# Mac metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node modules
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+.turbo/
+dist/
+build/
+out/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# Backup files
+*.backup
+*.bak
+*.bak2
+*.bak3
+# Monitoring files (use SQLite - backend only)
+lib/monitoring/
+lib/database/
+
+# API routes that use SQLite (backend only)
+app/api/ai/
+app/api/monitoring/
+app/api/health/
+lib/search/
+
+# Backend-only files (use SQLite/Redis - local Mac only)
+lib/database/
+lib/monitoring/
+lib/search/
+lib/cache/
+lib/audit/
+lib/security/
+lib/performance/
+lib/backup/
+lib/logger.ts
+
+# Backend-only pages (use server actions)
+app/auth/
+
+# Backend-only API routes (ALL proxied via Cloudflare Tunnel)
+# These run on local Mac, NOT on Vercel
+app/api/ai/
+app/api/monitoring/
+app/api/health/
+app/api/performance/
+app/api/backup/
+app/api/search/
+app/api/auth/
+app/api/generate-ai-report/
+app/api/process-conversation-ai/
+app/api/translate-report/
+app/api/text-to-speech/
+app/api/synthesize-xtts/
+app/api/transcribe-whisper/

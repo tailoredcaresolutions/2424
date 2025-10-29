@@ -1,0 +1,2 @@
+#!/bin/sh
+npm run precommit:guard || { echo "❌ Cloud AI guard failed. Commit blocked."; exit 1; }

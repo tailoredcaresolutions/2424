@@ -1,0 +1,59 @@
+# PSW VOICE DOCUMENTATION SYSTEM - BLACKBOX AI RULES
+
+## READ THIS FIRST
+📖 **Full Context**: See PROJECT_CONTEXT.md for complete project documentation
+
+## PROJECT TYPE
+Healthcare documentation system for Ontario PSWs (Personal Support Workers)
+- Next.js 16 + React 19 + TypeScript + Tailwind CSS
+- Voice + AI-powered documentation
+- Generates DAR (Data-Action-Response) JSON
+- HIPAA-compliant, Ontario PSW standards
+
+## CRITICAL RULES
+
+### 1. BRAND COLORS (USE EVERYWHERE)
+- Navy Blue: #1B365D (primary)
+- Gold: #D4A574 (accent)
+- Light BG: #E8F0F5
+- NEVER use random colors
+
+### 2. VARIABLE NAMES (WILL CRASH IF WRONG)
+✅ CORRECT: report (state variable)
+❌ WRONG: generatedReport (does NOT exist - causes ReferenceError)
+
+Main component: components/PSWVoiceReporter.js
+State: const [report, setReport] = useState('')
+
+### 3. ONTARIO PSW SCOPE (CRITICAL)
+PSWs can only OBSERVE and DOCUMENT. They CANNOT:
+- ❌ Make medical diagnoses
+- ❌ Do clinical assessments
+- ❌ Prescribe or recommend treatments
+- ❌ Use terms: diagnose, assess, prescribe, treatment plan
+
+✅ They CAN:
+- Observe and record facts
+- Document care activities (ADLs)
+- Record client quotes
+- Note vital signs if observed
+- Write "Notify supervisor/RN" for concerns
+
+## AUTONOMY RULES
+✅ Work autonomously
+✅ Fix errors yourself
+✅ Test before committing
+✅ Read PROJECT_CONTEXT.md for details
+❌ Don't break existing features
+❌ Don't use non-brand colors
+❌ Don't create clinical content
+
+## STATUS
+- Grade: 9.5/10
+- Completion: 95%
+- All pages: ✅ Working
+- DAR JSON: ✅ Implemented
+- Tests: ✅ Passing
+
+**Full documentation**: PROJECT_CONTEXT.md
+**Quick start**: START_HERE.md
