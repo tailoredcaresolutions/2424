@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { mockProcessConversation, isLocalMode } from '@/lib/mocks/mockAI';
-import ollamaClient from '@/lib/ai/ollamaClient';
 import Ajv from 'ajv';
 
 // ================================

@@ -1,7 +1,21 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import GoldOrb3D from './GoldOrb3D';
+
+const blobToBase64 = (blob) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const result = reader.result;
+    if (typeof result === 'string') {
+      const base64 = result.split(',')[1];
+      resolve(base64 || '');
+    } else {
+      reject(new Error('Unable to read audio data'));
+    }
+  };
+  reader.onerror = () => reject(new Error('Unable to read audio data'));
+  reader.readAsDataURL(blob);
+});
 
 // Phase 1 Q3: Move constants outside component to prevent recreation on every render
 // Tailored Care Solutions brand colors
@@ -209,16 +223,14 @@ const PSWVoiceReporter = () => {
   const [browserSupport, setBrowserSupport] = useState({
     speechRecognition: false,
     speechSynthesis: false,
-    mediaDevices: false
+    mediaDevices: false,
+    audioRecording: false
   });
   const [showTextInput, setShowTextInput] = useState(false);
   const [textInput, setTextInput] = useState('');
   const isSendDisabled = !textInput.trim() || isProcessing;
   const [isIOS, setIsIOS] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
-
-  // Phase 1 Q1: Audio level for breathing animation
-  const [audioLevel, setAudioLevel] = useState(0);
 
   // Phase 1 Q2: Turn-taking enforcement
   const [consecutiveAIMessages, setConsecutiveAIMessages] = useState(0);
@@ -236,6 +248,8 @@ const PSWVoiceReporter = () => {
   // Phase 2 Q1: Progressive disclosure - Report sections
   const [reportSections, setReportSections] = useState([]);
   const [allSectionsExpanded, setAllSectionsExpanded] = useState(true);
+  const [recordingError, setRecordingError] = useState('');
+  const [isTranscribing, setIsTranscribing] = useState(false);
 
   // Phase 2 Q2: Conversation history - Session management
   const [showSessionsModal, setShowSessionsModal] = useState(false);
@@ -247,10 +261,17 @@ const PSWVoiceReporter = () => {
   // DAR JSON Integration: Store structured DAR data
   const [darJson, setDarJson] = useState(null);
   const [showDarJson, setShowDarJson] = useState(false);
+  const voiceAvailable = useMemo(
+    () => browserSupport.speechRecognition || browserSupport.audioRecording,
+    [browserSupport]
+  );
 
   const recognitionRef = useRef(null);
   const synthRef = useRef(null);
   const conversationEndRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const mediaStreamRef = useRef(null);
+  const audioChunksRef = useRef([]);
 
   const languages = {
     'en-CA': 'English (Canadian)',
@@ -302,30 +323,269 @@ const PSWVoiceReporter = () => {
     }
   }, [isIOS]);
 
-  const toggleListening = useCallback(async () => {
-    if (!browserSupport.speechRecognition) {
+const stopMediaStream = useCallback(() => {
+  if (mediaStreamRef.current) {
+    mediaStreamRef.current.getTracks().forEach(track => track.stop());
+    mediaStreamRef.current = null;
+  }
+}, []);
+
+const generateReport = useCallback(async () => {
+  setIsReportGenerating(true);
+  try {
+    const response = await fetch('/api/generate-ai-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        conversation,
+        language: selectedLanguage
+      })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      // DAR JSON Integration: Store both paragraph and structured data
+      setReport(data.noteText || data.report);
+      setDarJson(data.dar);
+      setShowReport(true);
+
+      // Phase 2 Q1: Parse report into collapsible sections (use noteText)
+      const sections = parseReportIntoSections(data.noteText || data.report);
+      setReportSections(sections);
+      setAllSectionsExpanded(true); // All expanded by default
+
+      // Phase 1 Q4: Show success toast
+      setSuccessMessage('✅ DAR Report generated successfully!');
+      setShowSuccessToast(true);
+      setTimeout(() => setShowSuccessToast(false), 4000);
+
+      // Phase 2 Q2: Save current session immediately when report generated
+      saveCurrentSession(conversation, data.noteText || data.report, parseReportIntoSections(data.noteText || data.report));
+
+      // Phase 1 Q4: Trigger celebratory animation
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 4000);
+    } else {
+      setSuccessMessage('⚠️ Failed to generate DAR report. Please try again.');
+      setShowSuccessToast(false);
+      setShowCelebration(false);
+    }
+  } catch (error) {
+    console.error('Error generating report:', error);
+    setSuccessMessage('⚠️ DAR report generation failed. Check console for details.');
+    setShowSuccessToast(false);
+    setShowCelebration(false);
+  } finally {
+    setIsReportGenerating(false);
+  }
+}, [conversation, selectedLanguage]);
+
+const handleSpeechInput = useCallback(async (text) => {
+  if (!text.trim() || isProcessing) return;
+
+  const sanitized = text.trim();
+  setIsProcessing(true);
+  const userMessage = { type: 'user', content: sanitized, timestamp: new Date() };
+  setConversation(prev => [...prev, userMessage]);
+
+  setConsecutiveAIMessages(0);
+
+  try {
+    const response = await fetch('/api/process-conversation-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        input: sanitized,
+        conversation: [...conversation, { role: 'user', content: sanitized }],
+        language: selectedLanguage,
+        context: null,
+        shiftData: {},
+        consecutiveAIMessages
+      })
+    });
+
+    const data = await response.json();
+    
+    if (data.success !== false) {
+      const aiMessage = {
+        type: 'ai',
+        content: data.response,
+        timestamp: new Date(),
+        audioUrl: data.audioUrl
+      };
+      setConversation(prev => [...prev, aiMessage]);
+      setConsecutiveAIMessages(prev => prev + 1);
+
+      if (data.audioUrl) {
+        await playAudio(data.audioUrl);
+      }
+
+      if (data.documentationComplete) {
+        setTimeout(() => generateReport(), 2000);
+      }
+    } else {
+      const errorMessage = {
+        type: 'ai',
+        content: data.error || 'Sorry, I encountered an error. Please try again.',
+        timestamp: new Date()
+      };
+      setConversation(prev => [...prev, errorMessage]);
+      setConsecutiveAIMessages(prev => prev + 1);
+    }
+  } catch (error) {
+    console.error('Error processing conversation:', error);
+    const errorMessage = {
+      type: 'ai',
+      content: 'Sorry, I encountered an error. Please try again.',
+      timestamp: new Date()
+    };
+    setConversation(prev => [...prev, errorMessage]);
+    setConsecutiveAIMessages(prev => prev + 1);
+  } finally {
+    setIsProcessing(false);
+    setTranscript('');
+  }
+}, [consecutiveAIMessages, conversation, generateReport, isProcessing, playAudio, selectedLanguage]);
+
+const startFallbackRecording = useCallback(async () => {
+    if (!browserSupport.mediaDevices || typeof window === 'undefined' || typeof window.MediaRecorder === 'undefined') {
+      setRecordingError('Microphone access is not available on this device.');
       setShowTextInput(true);
       return;
     }
 
-    if (isListening) {
-      recognitionRef.current?.stop();
-      setIsListening(false);
-    } else {
-      try {
-        // Request microphone permission first (especially important for iOS)
-        if (browserSupport.mediaDevices) {
-          await navigator.mediaDevices.getUserMedia({ audio: true });
-        }
-        recognitionRef.current?.start();
-        setIsListening(true);
-      } catch (error) {
-        console.error('Microphone access denied or error:', error);
-        setShowTextInput(true);
-        alert('Microphone access is required for voice input. Please use the text input instead.');
+    try {
+      setRecordingError('');
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+
+      let mimeType;
+      if (window.MediaRecorder && typeof window.MediaRecorder.isTypeSupported === 'function') {
+        const preferredTypes = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+        mimeType = preferredTypes.find(type => window.MediaRecorder.isTypeSupported(type));
       }
+
+      const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      audioChunksRef.current = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onerror = (event) => {
+        console.error('MediaRecorder error:', event.error);
+        setRecordingError(event.error?.message || 'Recording failed.');
+        setIsListening(false);
+        setTranscript('');
+        mediaRecorderRef.current = null;
+        stopMediaStream();
+      };
+
+      recorder.onstop = async () => {
+        try {
+          setIsTranscribing(true);
+          const chunks = audioChunksRef.current;
+          audioChunksRef.current = [];
+          const blob = new Blob(chunks, { type: recorder.mimeType || mimeType || 'audio/webm' });
+
+          if (!blob || blob.size === 0) {
+            throw new Error('No audio captured. Please try again.');
+          }
+
+          setTranscript('Transcribing...');
+          const base64Audio = await blobToBase64(blob);
+
+          const response = await fetch('/api/transcribe-whisper', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              audioData: base64Audio,
+              format: (recorder.mimeType || mimeType || 'audio/webm').split('/')[1] || 'webm',
+              language: selectedLanguage
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.success && data.transcript) {
+            setTranscript('');
+            await handleSpeechInput(data.transcript);
+            setRecordingError('');
+          } else {
+            throw new Error(data.error || 'Transcription failed.');
+          }
+        } catch (error) {
+          console.error('Transcription error:', error);
+          setRecordingError(error.message || 'Transcription failed.');
+        } finally {
+          setIsListening(false);
+          setIsTranscribing(false);
+          setTranscript('');
+          mediaRecorderRef.current = null;
+          stopMediaStream();
+        }
+      };
+
+      recorder.start();
+      setTranscript('Listening...');
+      setIsListening(true);
+    } catch (error) {
+      console.error('Microphone access denied or error:', error);
+      setRecordingError(error.message || 'Microphone access denied.');
+      setIsListening(false);
+      setTranscript('');
+      mediaRecorderRef.current = null;
+      stopMediaStream();
+      setShowTextInput(true);
     }
-  }, [browserSupport, isListening]);
+  }, [browserSupport.mediaDevices, handleSpeechInput, selectedLanguage, stopMediaStream]);
+
+  const stopFallbackRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder && recorder.state !== 'inactive') {
+      recorder.stop();
+    } else {
+      setIsListening(false);
+      stopMediaStream();
+    }
+  }, [stopMediaStream]);
+
+  const toggleListening = useCallback(async () => {
+    if (browserSupport.speechRecognition) {
+      if (isListening) {
+        recognitionRef.current?.stop();
+        setIsListening(false);
+      } else {
+        try {
+          if (browserSupport.mediaDevices) {
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+          }
+          recognitionRef.current?.start();
+          setIsListening(true);
+        } catch (error) {
+          console.error('Microphone access denied or error:', error);
+          setShowTextInput(true);
+          alert('Microphone access is required for voice input. Please use the text input instead.');
+        }
+      }
+      return;
+    }
+
+    if (browserSupport.audioRecording) {
+      if (isListening) {
+        stopFallbackRecording();
+      } else {
+        await startFallbackRecording();
+      }
+      return;
+    }
+
+    setShowTextInput(true);
+    alert('Voice recording is not supported on this device. Please use the text input instead.');
+  }, [browserSupport, isListening, startFallbackRecording, stopFallbackRecording]);
 
   const generateReport = useCallback(async () => {
     setIsReportGenerating(true);
@@ -462,14 +722,17 @@ const PSWVoiceReporter = () => {
       // Check MediaDevices API
       const mediaDevicesSupported = 'mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices;
 
+      const audioRecordingSupported = mediaDevicesSupported && typeof window !== 'undefined' && typeof window.MediaRecorder !== 'undefined';
+
       setBrowserSupport({
         speechRecognition: speechRecognitionSupported && !iOS, // iOS Safari has poor support
         speechSynthesis: speechSynthesisSupported,
-        mediaDevices: mediaDevicesSupported
+        mediaDevices: mediaDevicesSupported,
+        audioRecording: audioRecordingSupported
       });
 
       // Only show text input as fallback if voice completely fails
-      if (iOS || !speechRecognitionSupported) {
+      if ((!speechRecognitionSupported || iOS) && !audioRecordingSupported) {
         setShowTextInput(true);
       }
     };
@@ -485,6 +748,10 @@ const PSWVoiceReporter = () => {
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = selectedLanguage;
+
+      recognitionRef.current.onstart = () => {
+        setTranscript('Listening...');
+      };
 
       recognitionRef.current.onresult = (event) => {
         let finalTranscript = '';
@@ -510,6 +777,7 @@ const PSWVoiceReporter = () => {
 
       recognitionRef.current.onend = () => {
         setIsListening(false);
+        setTranscript('');
       };
     }
 
@@ -520,6 +788,19 @@ const PSWVoiceReporter = () => {
 
     scrollToBottom();
   }, [selectedLanguage, browserSupport, handleSpeechInput, scrollToBottom]);
+
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.stop();
+
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== 'inactive') {
+        recorder.stop();
+      }
+      mediaRecorderRef.current = null;
+      stopMediaStream();
+    };
+  }, [stopMediaStream]);
 
   useEffect(() => {
     // Start conversation automatically when component loads or resets
@@ -560,34 +841,11 @@ const PSWVoiceReporter = () => {
     }
   }, []);
 
-  // Phase 1 Q1: Audio level detection for breathing animation
-  // Phase 1 Q3: Optimized with requestAnimationFrame for 60fps performance
-  useEffect(() => {
-    if (isProcessing || isReportGenerating) {
-      let frameId;
-      let lastUpdate = 0;
-      const updateInterval = 150; // Update every 150ms (smoother than 100ms, less CPU)
-
-      const updateAudioLevel = (timestamp) => {
-        if (timestamp - lastUpdate >= updateInterval) {
-          setAudioLevel(Math.random() * 0.5 + 0.5);
-          lastUpdate = timestamp;
-        }
-        frameId = requestAnimationFrame(updateAudioLevel);
-      };
-
-      frameId = requestAnimationFrame(updateAudioLevel);
-      return () => cancelAnimationFrame(frameId);
-    } else {
-      setAudioLevel(0);
-    }
-  }, [isProcessing, isReportGenerating]);
-
   // Phase 1 Q2: Keyboard shortcuts for accessibility
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Space bar: Start recording (push-to-talk)
-      if (e.code === 'Space' && !showTextInput && !isProcessing && !isListening && browserSupport.speechRecognition) {
+      if (e.code === 'Space' && !showTextInput && !isProcessing && !isListening && voiceAvailable) {
         // Only activate if not focused on an input element
         if (document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
@@ -650,7 +908,7 @@ const PSWVoiceReporter = () => {
     conversation,
     report,
     isReportGenerating,
-    browserSupport.speechRecognition,
+    voiceAvailable,
     toggleListening,
     generateReport
   ]);
@@ -675,7 +933,7 @@ const PSWVoiceReporter = () => {
     setShowReport(false);
     setCurrentResponse('');
     setTextInput('');
-    setShowTextInput(isIOS || !browserSupport.speechRecognition);
+    setShowTextInput(!voiceAvailable);
 
     // Phase 1 Q2: Reset consecutive AI messages counter on new session
     setConsecutiveAIMessages(0);
@@ -832,37 +1090,6 @@ const PSWVoiceReporter = () => {
       </div>
     );
   };
-
-  const HeroMockup = () => (
-    <div className="flex justify-center px-4 mb-10">
-      <div className="relative w-full max-w-[420px] aspect-[9/19.5]">
-        <div className="absolute inset-0 rounded-[36px] border-[10px] border-black bg-[#0d0d0d] shadow-[0_40px_120px_rgba(50,32,12,0.45)]" />
-        <div className="absolute inset-[10px] rounded-[30px] bg-gradient-to-b from-[#2d2d2d] to-[#0d0d0d]" />
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 rounded-full bg-black/80 flex items-center justify-center">
-          <div className="w-12 h-2 rounded-full bg-[#1a1a1a]" />
-        </div>
-        <div className="absolute inset-[20px] rounded-[24px] bg-white overflow-hidden flex flex-col items-center justify-between py-10 shadow-inner">
-          <div className="absolute inset-0" style={{
-            background: 'radial-gradient(circle at 50% 20%, rgba(255,213,140,0.35), transparent 55%)'
-          }} />
-          <div className="relative w-full flex-1 flex items-center justify-center">
-            <GoldOrb3D
-              isListening={isListening}
-              isProcessing={isProcessing || isReportGenerating}
-              audioLevel={audioLevel}
-              size="clamp(220px, 40vw, 320px)"
-              showStatusLabel={false}
-              variant="amoeba"
-            />
-          </div>
-          <div className="relative flex flex-col items-center w-full pb-4 text-[#C57A1F]">
-            <span className="tracking-[0.45em] text-xs font-semibold">TAILORED CARE</span>
-            <div className="mt-6 h-1.5 w-28 rounded-full bg-[#E5C18F]" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   // Phase 1 Q1: Typing Indicator Component
   const TypingIndicator = () => {
@@ -1412,7 +1639,7 @@ const PSWVoiceReporter = () => {
 
   // Browser Compatibility Alert (only shows when voice is completely unavailable)
   const BrowserAlert = () => {
-    if (!showTextInput) return null;
+    if (voiceAvailable) return null;
 
     return (
       <div className="max-w-2xl mx-auto mb-6">
@@ -1589,45 +1816,41 @@ const PSWVoiceReporter = () => {
         <span className="animate-pulse">?</span>
       </button>
 
-      <section className="relative overflow-hidden pb-24 pt-24">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#031139] via-[#050c24] to-[#01040f]" />
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[#6fd4ff33] to-transparent blur-[160px]" />
-        <div className="relative max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-10">
-          <TailoredCareLogo orientation="stacked" />
-          <p className="text-lg text-white/80 max-w-2xl">
-            Conversational reporting distilled to a single glowing moment—golden, calm, and obsessively on-brand.
-          </p>
-          <HeroMockup />
-          <div className="text-xs uppercase tracking-[0.6em] text-white/60">
-            Voice · Care · Precision
-          </div>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="#conversation"
-              className="px-8 py-3 rounded-full text-base font-semibold transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #FCE3BA, #F1A852)',
-                boxShadow: '0 25px 45px rgba(249, 210, 149, 0.35)',
-                color: '#2c1704'
-              }}
-            >
-              Start Documentation
-            </a>
-            <button
-              onClick={handleOpenSessions}
-              className="px-8 py-3 rounded-full border border-white/25 text-base font-semibold text-white/80 hover:text-white"
-            >
-              Resume Session
-            </button>
-          </div>
-        </div>
-      </section>
-
       <section
         id="conversation"
-        className="relative bg-[#fff9f2] text-[#1F1B16] rounded-t-[48px] -mt-16 pt-20 pb-16 px-4" 
+        className="relative bg-[#fff9f2] text-[#1F1B16] pt-20 pb-16 px-4"
       >
         <div className="max-w-4xl mx-auto">
+          <div className="flex flex-col items-center text-center gap-4 mb-10">
+            <TailoredCareLogo orientation="stacked" />
+            <p className="text-base text-[#6b5b4c] max-w-2xl">
+              Start a new documentation session or continue below. Voice tools automatically activate when supported.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button
+                onClick={startNewSession}
+                className="px-6 py-2 rounded-full text-sm font-semibold transition-all"
+                style={{
+                  background: 'linear-gradient(135deg, #FFE4C0, #F3A54E)',
+                  color: '#2C1301',
+                  boxShadow: '0 12px 24px rgba(227, 162, 72, 0.35)'
+                }}
+              >
+                Start New Session
+              </button>
+              <button
+                onClick={handleOpenSessions}
+                className="px-6 py-2 rounded-full border text-sm font-semibold transition-all"
+                style={{
+                  borderColor: 'rgba(194,122,31,0.35)',
+                  color: brandColors.textGold
+                }}
+              >
+                Load Saved Session
+              </button>
+            </div>
+          </div>
+
           <BrowserAlert />
 
           {/* Language Selector */}
@@ -1663,20 +1886,20 @@ const PSWVoiceReporter = () => {
               
               {/* Voice/Text Controls */}
               <div className="flex items-center space-x-3">
-                {browserSupport.speechRecognition && !showTextInput && (
+                {voiceAvailable && !showTextInput && (
                   <button
                     onClick={toggleListening}
-                    disabled={isProcessing}
+                    disabled={isProcessing || isTranscribing}
                     aria-label={isListening ? "Stop recording" : "Start voice recording"}
                     className={`flex items-center justify-center w-32 h-32 rounded-full font-bold text-6xl active:scale-95 transition-all transform ${
                       isListening
                         ? 'scale-110 shadow-lg animate-pulse'
                         : 'hover:scale-105 shadow-lg'
                     } ${
-                      isProcessing ? 'bg-gray-400 cursor-not-allowed text-white' : ''
+                      isProcessing || isTranscribing ? 'bg-gray-400 cursor-not-allowed text-white' : ''
                     }`}
                     style={{
-                      background: !isProcessing
+                      background: !(isProcessing || isTranscribing)
                         ? (isListening
                             ? 'linear-gradient(135deg, #EF4444, #DC2626)'
                             : 'linear-gradient(135deg, #FFE6C5, #F2A043)')
@@ -1684,19 +1907,21 @@ const PSWVoiceReporter = () => {
                       color: '#FFFFFF'
                     }}
                   >
-                    {isListening ? '⏹️' : '🎤'}
+                    {isTranscribing ? '⌛' : (isListening ? '⏹️' : '🎤')}
                   </button>
                 )}
-                
-                {browserSupport.speechRecognition && !isIOS && (
+
+                {voiceAvailable && (
                   <button
                     onClick={() => setShowTextInput(!showTextInput)}
+                    disabled={isListening || isTranscribing}
                     aria-label={showTextInput ? "Switch to voice input" : "Switch to text input"}
                     className="px-3 py-1 text-sm rounded-full border transition-colors"
                     style={{
                       borderColor: 'rgba(194,122,31,0.35)',
                       color: showTextInput ? '#FFFFFF' : brandColors.textGold,
-                      backgroundColor: showTextInput ? brandColors.textGold : 'rgba(255,255,255,0.7)'
+                      backgroundColor: showTextInput ? brandColors.textGold : 'rgba(255,255,255,0.7)',
+                      opacity: isListening || isTranscribing ? 0.6 : 1
                     }}
                   >
                     {showTextInput ? 'Voice' : 'Text'}
@@ -1743,6 +1968,12 @@ const PSWVoiceReporter = () => {
             {transcript && !showTextInput && (
               <div className="mb-4 p-3 bg-[#FFF5E6] rounded-3xl border border-[#F1E0CC]">
                 <p className="text-sm" style={{ color: brandColors.darkBlue }}>Listening: {transcript}</p>
+              </div>
+            )}
+
+            {recordingError && (
+              <div className="mb-4 p-3 bg-red-50 rounded-3xl border border-red-200">
+                <p className="text-sm font-medium text-red-700">{recordingError}</p>
               </div>
             )}
 

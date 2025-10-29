@@ -5,7 +5,7 @@
  * Supports quarterly review requirements and continuous quality assurance
  */
 
-import { log as logger } from '../logger.ts';
+import { log as logger } from '../logger';
 import Database from 'better-sqlite3';
 import path from 'path';
 

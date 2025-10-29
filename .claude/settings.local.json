@@ -113,7 +113,11 @@
       "Read(//Users/server/.cloudflared/**)",
       "Bash(nslookup psw-backend.tailoredcaresolutions.com)",
       "Bash(dig:*)",
-      "Bash(host:*)"
+      "Bash(host:*)",
+      "Bash(gh run list:*)",
+      "Bash(nslookup:*)",
+      "Bash(dscacheutil:*)",
+      "Bash(sudo killall:*)"
     ],
     "deny": [],
     "ask": []

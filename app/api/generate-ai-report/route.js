@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { mockGenerateReport, isLocalMode } from '@/lib/mocks/mockAI';
-import ollamaClient from '@/lib/ai/ollamaClient';
 import Ajv from 'ajv';
 
 // Initialize AJV for JSON schema validation
@@ -227,8 +226,7 @@ export async function POST(request) {
   try {
     // 🏠 LOCAL MODE - Use mock report generation
     // Check both NEXT_PUBLIC and regular env vars for server-side
-    const localMode = process.env.NEXT_PUBLIC_ENVIRONMENT === 'local' ||
-                     process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true' ||
+    const localMode = isLocalMode() ||
                      !process.env.OPENAI_API_KEY ||
                      process.env.OPENAI_API_KEY === 'local_development_mode_no_key_needed';
 
@@ -311,27 +309,40 @@ ${shiftData.communications?.join('\n') || 'None recorded'}
 
 Remember: Output (A) brief paragraph first, then (B) valid JSON. Use plain language, no medical jargon.`;
 
-    // Call Ollama Client with Qwen3 30B (quality tier for final reports)
-    const completion = await ollamaClient.chat([
-      {
-        role: 'system',
-        content: SYSTEM_PROMPT_DAR
-      },
-      {
-        role: 'user',
-        content: userPrompt
-      }
-    ], {
-      temperature: 0.3,
-      max_tokens: 2500,
-      quality: 'balanced' // Use Qwen3 30B for report generation (higher quality)
+    // Call backend Ollama chat endpoint (supports Vercel + local Cloudflare tunnel)
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || 'http://localhost:4000';
+    const ollamaResponse = await fetch(`${backendUrl}/api/ollama/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT_DAR },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 2500,
+        quality: 'balanced'
+      })
     });
+
+    const ollamaPayload = await ollamaResponse.text();
+
+    if (!ollamaResponse.ok) {
+      throw new Error(`Ollama chat request failed: ${ollamaResponse.status} ${ollamaResponse.statusText} - ${ollamaPayload}`);
+    }
+
+    let completion;
+    try {
+      completion = JSON.parse(ollamaPayload);
+    } catch (parseError) {
+      throw new Error(`Failed to parse Ollama response: ${(parseError instanceof Error && parseError.message) || 'Unknown error'} - ${ollamaPayload}`);
+    }
 
     if (!completion.success) {
       throw new Error(completion.error || 'Ollama chat failed');
     }
 
-    const llmText = completion.message?.content || '';
+    const llmText = completion.message?.content || completion.response || '';
 
     // Extract paragraph (everything before JSON)
     const paragraph = llmText.split("{")[0].trim();

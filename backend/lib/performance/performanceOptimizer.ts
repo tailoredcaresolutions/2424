@@ -16,9 +16,9 @@
  * - Cache hit rate > 80%
  */
 
-import { getConnectionPool } from '../database/connectionPool.ts';
-import { getRedisCache } from '../cache/redisCache.ts';
-import { log as logger } from '../logger.ts';
+import { getConnectionPool } from '../database/connectionPool';
+import { getRedisCache } from '../cache/redisCache';
+import { log as logger } from '../logger';
 
 interface QueryAnalysis {
   sql: string;
