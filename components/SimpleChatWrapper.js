@@ -92,26 +92,26 @@ export default function SimpleChatWrapper() {
           <div className="grid grid-cols-2 gap-3">
             <motion.button
               onClick={handleChatsClick}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:bg-white/20 transition-all"
+              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border border-[#2a3544] rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:border-[#3a4554] transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
                 <MessageCircle className="w-6 h-6 text-white" />
               </div>
-              <span className="text-white text-base">Chats</span>
+              <span className="text-[#E3A248] text-base font-medium">Chats</span>
             </motion.button>
             
             <motion.button
               onClick={handleMemoriesClick}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:bg-white/20 transition-all"
+              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border border-[#2a3544] rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:border-[#3a4554] transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
                 <Camera className="w-6 h-6 text-white" />
               </div>
-              <span className="text-white text-base">Memories</span>
+              <span className="text-[#E3A248] text-base font-medium">Memories</span>
             </motion.button>
           </div>
         </motion.div>
