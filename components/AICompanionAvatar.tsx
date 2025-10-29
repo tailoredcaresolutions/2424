@@ -52,7 +52,34 @@ export type AIState =
   | "happy" 
   | "concerned" 
   | "celebrating" 
-  | "sleeping";
+  | "sleeping"
+  // Advanced expressive animations
+  | "nodding"        // Agreement, vertical head movement
+  | "shaking"        // Disagreement, horizontal head movement  
+  | "surprised"      // Eyes wide, eyebrows raised, jump back
+  | "confused"       // Head tilt, questioning look
+  | "relieved"       // Exhale, shoulders drop, relaxed
+  | "encouraging"    // Forward lean, supportive gesture
+  | "proud"          // Chest out, accomplished smile
+  | "tired"          // Yawning, eyes half-closed
+  | "laughing"       // Bouncing, joyful expression
+  | "comforting"     // Gentle sway, warm presence
+  | "focused"        // Intense gaze, minimal movement
+  | "welcoming"      // Open gesture, inviting smile
+  | "reassuring"     // Gentle nod, calm expression
+  | "playful"        // Teasing smile, light bounce
+  | "meditative"     // Slow breathing, peaceful
+  // Additional dramatic animations
+  | "excited"        // Rapid bouncing, high energy
+  | "worried"        // Tense, small movements
+  | "loving"         // Warm glow, gentle sway
+  | "determined"     // Forward lean, strong presence
+  | "sad"            // Downward movement, low energy
+  | "amazed"         // Wide eyes, slow zoom
+  | "grateful"       // Gentle bow, warm glow
+  | "curious"        // Head tilt, forward lean
+  | "confident"      // Tall posture, steady
+  | "sympathetic";   // Gentle movements, soft glow
 
 export type Expression =
   | "neutral"
@@ -184,42 +211,42 @@ const CINEMATIC_EASINGS = {
 
 const STATE_ANIMATIONS = {
   idle: {
-    scale: { min: 1.0, max: 1.02 },
-    scaleY: { min: 1.0, max: 1.015 },
-    y: { min: 0, max: -3 },
-    rotation: { min: -1.5, max: 1.5 },
-    rotationY: { min: -2.5, max: 2.5 },
-    glowOpacity: 0.06,
-    breathDuration: { inhale: 4.2, exhale: 4.8 },
-    brightness: 1.02,
-    particleCount: 0,
-    ringCount: 0,
+    scale: { min: 1.0, max: 1.05 },
+    scaleY: { min: 1.0, max: 1.04 },
+    y: { min: 0, max: -8 },
+    rotation: { min: -4, max: 4 },
+    rotationY: { min: -6, max: 6 },
+    glowOpacity: 0.12,
+    breathDuration: { inhale: 3.0, exhale: 3.5 },
+    brightness: 1.05,
+    particleCount: 3,
+    ringCount: 1,
     anticipation: 0.35,
   },
   listening: {
-    scale: { min: 1.0, max: 1.06 },
-    scaleY: { min: 0.995, max: 1.04 },
-    y: { min: 0, max: -2 },
-    rotation: { min: -1.0, max: 1.0 },
-    rotationY: { min: -3.5, max: 3.5 },
-    glowOpacity: 0.10,
-    breathDuration: { inhale: 1.5, exhale: 1.5 },
-    brightness: 1.04,
-    particleCount: 0,
-    ringCount: 2,
+    scale: { min: 1.0, max: 1.12 },
+    scaleY: { min: 0.98, max: 1.10 },
+    y: { min: 0, max: -6 },
+    rotation: { min: -3, max: 3 },
+    rotationY: { min: -8, max: 8 },
+    glowOpacity: 0.20,
+    breathDuration: { inhale: 1.2, exhale: 1.2 },
+    brightness: 1.08,
+    particleCount: 5,
+    ringCount: 3,
     anticipation: 0.22,
   },
   speaking: {
-    scale: { min: 1.02, max: 1.12 },
-    scaleY: { min: 0.98, max: 1.10 },
-    y: { min: -2, max: -7 },
-    rotation: { min: -2.2, max: 2.2 },
-    rotationY: { min: -5, max: 5 },
-    glowOpacity: 0.15,
-    breathDuration: { inhale: 0.45, exhale: 0.38 },
-    brightness: 1.08,
-    particleCount: 10,
-    ringCount: 3,
+    scale: { min: 1.05, max: 1.25 },
+    scaleY: { min: 0.95, max: 1.22 },
+    y: { min: -5, max: -18 },
+    rotation: { min: -6, max: 6 },
+    rotationY: { min: -12, max: 12 },
+    glowOpacity: 0.30,
+    breathDuration: { inhale: 0.35, exhale: 0.30 },
+    brightness: 1.18,
+    particleCount: 25,
+    ringCount: 5,
     anticipation: 0.14,
   },
   thinking: {
@@ -236,16 +263,16 @@ const STATE_ANIMATIONS = {
     anticipation: 0.45,
   },
   happy: {
-    scale: { min: 1.05, max: 1.16 },
-    scaleY: { min: 0.95, max: 1.14 },
-    y: { min: -5, max: -12 },
-    rotation: { min: -3.0, max: 3.0 },
-    rotationY: { min: -4, max: 4 },
-    glowOpacity: 0.18,
-    breathDuration: { inhale: 0.65, exhale: 0.55 },
-    brightness: 1.10,
-    particleCount: 14,
-    ringCount: 4,
+    scale: { min: 1.10, max: 1.30 },
+    scaleY: { min: 0.90, max: 1.28 },
+    y: { min: -12, max: -25 },
+    rotation: { min: -8, max: 8 },
+    rotationY: { min: -10, max: 10 },
+    glowOpacity: 0.35,
+    breathDuration: { inhale: 0.50, exhale: 0.45 },
+    brightness: 1.22,
+    particleCount: 30,
+    ringCount: 6,
     anticipation: 0.18,
   },
   concerned: {
@@ -262,16 +289,16 @@ const STATE_ANIMATIONS = {
     anticipation: 0.55,
   },
   celebrating: {
-    scale: { min: 1.08, max: 1.22 },
-    scaleY: { min: 0.92, max: 1.18 },
-    y: { min: -8, max: -16 },
-    rotation: { min: -5, max: 5 },
-    rotationY: { min: -7, max: 7 },
-    glowOpacity: 0.22,
-    breathDuration: { inhale: 0.32, exhale: 0.32 },
-    brightness: 1.14,
-    particleCount: 20,
-    ringCount: 5,
+    scale: { min: 1.15, max: 1.40 },
+    scaleY: { min: 0.85, max: 1.35 },
+    y: { min: -18, max: -35 },
+    rotation: { min: -12, max: 12 },
+    rotationY: { min: -15, max: 15 },
+    glowOpacity: 0.45,
+    breathDuration: { inhale: 0.25, exhale: 0.25 },
+    brightness: 1.28,
+    particleCount: 40,
+    ringCount: 7,
     anticipation: 0.12,
   },
   sleeping: {
@@ -286,6 +313,333 @@ const STATE_ANIMATIONS = {
     particleCount: 0,
     ringCount: 0,
     anticipation: 0.85,
+  },
+  // ========== NEW ADVANCED ANIMATIONS ==========
+  nodding: {
+    scale: { min: 1.0, max: 1.10 },
+    scaleY: { min: 0.95, max: 1.15 }, // DRAMATIC vertical stretch for nod
+    y: { min: -10, max: 10 }, // BIG up and down movement
+    rotation: { min: -18, max: 18 }, // STRONG forward/back tilt
+    rotationY: { min: -3, max: 3 },
+    glowOpacity: 0.18,
+    breathDuration: { inhale: 0.5, exhale: 0.5 }, // Quick rhythm matching nod
+    brightness: 1.12,
+    particleCount: 10,
+    ringCount: 3,
+    anticipation: 0.18,
+  },
+  shaking: {
+    scale: { min: 1.0, max: 1.08 },
+    scaleY: { min: 1.0, max: 1.06 },
+    y: { min: -3, max: 3 },
+    rotation: { min: -5, max: 5 },
+    rotationY: { min: -25, max: 25 }, // VERY STRONG horizontal rotation
+    glowOpacity: 0.16,
+    breathDuration: { inhale: 0.4, exhale: 0.4 }, // Quick rhythm
+    brightness: 1.10,
+    particleCount: 8,
+    ringCount: 3,
+    anticipation: 0.15,
+  },
+  surprised: {
+    scale: { min: 1.15, max: 1.35 }, // HUGE jump back effect
+    scaleY: { min: 0.88, max: 1.30 }, // DRAMATIC squash and stretch
+    y: { min: -20, max: -40 }, // MASSIVE jump
+    rotation: { min: -12, max: 12 },
+    rotationY: { min: -18, max: 18 },
+    glowOpacity: 0.40,
+    breathDuration: { inhale: 0.20, exhale: 0.30 }, // Sharp inhale
+    brightness: 1.30,
+    particleCount: 35,
+    ringCount: 6,
+    anticipation: 0.08,
+  },
+  confused: {
+    scale: { min: 1.0, max: 1.05 },
+    scaleY: { min: 1.0, max: 1.03 },
+    y: { min: -2, max: 2 },
+    rotation: { min: -10, max: 10 }, // Strong head tilt
+    rotationY: { min: -6, max: 6 },
+    glowOpacity: 0.07,
+    breathDuration: { inhale: 3.0, exhale: 3.5 }, // Uncertain rhythm
+    brightness: 1.02,
+    particleCount: 2,
+    ringCount: 1,
+    anticipation: 0.42, // Hesitant
+  },
+  relieved: {
+    scale: { min: 0.98, max: 1.02 }, // Relaxing, settling
+    scaleY: { min: 1.0, max: 1.04 }, // Exhale expansion
+    y: { min: 2, max: 6 }, // Settling down
+    rotation: { min: -1.5, max: 1.5 },
+    rotationY: { min: -2, max: 2 },
+    glowOpacity: 0.12,
+    breathDuration: { inhale: 2.5, exhale: 5.5 }, // Long exhale
+    brightness: 1.06,
+    particleCount: 6,
+    ringCount: 2,
+    anticipation: 0.65, // Slow, relaxed
+  },
+  encouraging: {
+    scale: { min: 1.04, max: 1.10 }, // Leaning forward
+    scaleY: { min: 0.98, max: 1.08 },
+    y: { min: -6, max: -10 }, // Forward movement
+    rotation: { min: -4, max: 4 },
+    rotationY: { min: -5, max: 5 },
+    glowOpacity: 0.14,
+    breathDuration: { inhale: 1.2, exhale: 1.0 }, // Energetic
+    brightness: 1.09,
+    particleCount: 10,
+    ringCount: 3,
+    anticipation: 0.20, // Supportive, active
+  },
+  proud: {
+    scale: { min: 1.06, max: 1.12 }, // Chest out
+    scaleY: { min: 0.96, max: 1.10 }, // Standing tall
+    y: { min: -8, max: -12 }, // Lifted posture
+    rotation: { min: -3, max: 3 },
+    rotationY: { min: -4, max: 4 },
+    glowOpacity: 0.17,
+    breathDuration: { inhale: 2.0, exhale: 1.8 }, // Confident breathing
+    brightness: 1.12,
+    particleCount: 12,
+    ringCount: 4,
+    anticipation: 0.25, // Confident
+  },
+  tired: {
+    scale: { min: 0.96, max: 1.0 }, // Slumped
+    scaleY: { min: 1.0, max: 1.02 },
+    y: { min: 3, max: 6 }, // Sagging
+    rotation: { min: -2, max: 2 },
+    rotationY: { min: -3, max: 3 },
+    glowOpacity: 0.04,
+    breathDuration: { inhale: 5.5, exhale: 6.5 }, // Slow, heavy breathing
+    brightness: 0.96,
+    particleCount: 0,
+    ringCount: 0,
+    anticipation: 0.75, // Very slow
+  },
+  laughing: {
+    scale: { min: 1.12, max: 1.32 },
+    scaleY: { min: 0.88, max: 1.28 }, // DRAMATIC bouncing squash/stretch
+    y: { min: -15, max: -28 }, // BIG joyful bouncing
+    rotation: { min: -10, max: 10 },
+    rotationY: { min: -14, max: 14 },
+    glowOpacity: 0.32,
+    breathDuration: { inhale: 0.28, exhale: 0.28 }, // Rapid joyful breathing
+    brightness: 1.24,
+    particleCount: 32,
+    ringCount: 6,
+    anticipation: 0.12,
+  },
+  comforting: {
+    scale: { min: 1.0, max: 1.04 }, // Gentle presence
+    scaleY: { min: 1.0, max: 1.03 },
+    y: { min: -2, max: 2 }, // Soft swaying
+    rotation: { min: -2.5, max: 2.5 }, // Gentle rocking
+    rotationY: { min: -3, max: 3 },
+    glowOpacity: 0.11,
+    breathDuration: { inhale: 3.8, exhale: 4.2 }, // Calm, steady
+    brightness: 1.06,
+    particleCount: 5,
+    ringCount: 2,
+    anticipation: 0.48, // Gentle, patient
+  },
+  focused: {
+    scale: { min: 1.0, max: 1.015 }, // Minimal movement
+    scaleY: { min: 1.0, max: 1.01 },
+    y: { min: 0, max: -1 }, // Very still
+    rotation: { min: -0.8, max: 0.8 },
+    rotationY: { min: -1.5, max: 1.5 },
+    glowOpacity: 0.10,
+    breathDuration: { inhale: 3.5, exhale: 3.5 }, // Controlled breathing
+    brightness: 1.04,
+    particleCount: 1,
+    ringCount: 1,
+    anticipation: 0.55, // Deliberate
+  },
+  welcoming: {
+    scale: { min: 1.04, max: 1.12 }, // Opening gesture
+    scaleY: { min: 0.98, max: 1.10 },
+    y: { min: -5, max: -9 }, // Slight lift
+    rotation: { min: -4, max: 4 },
+    rotationY: { min: -6, max: 6 }, // Open rotation
+    glowOpacity: 0.15,
+    breathDuration: { inhale: 1.5, exhale: 1.3 }, // Warm, inviting
+    brightness: 1.10,
+    particleCount: 12,
+    ringCount: 3,
+    anticipation: 0.22, // Inviting
+  },
+  reassuring: {
+    scale: { min: 1.0, max: 1.05 }, // Steady presence
+    scaleY: { min: 1.0, max: 1.04 },
+    y: { min: -2, max: 2 }, // Gentle nod
+    rotation: { min: -3, max: 3 },
+    rotationY: { min: -2, max: 2 },
+    glowOpacity: 0.12,
+    breathDuration: { inhale: 3.2, exhale: 3.8 }, // Calm, steady
+    brightness: 1.07,
+    particleCount: 6,
+    ringCount: 2,
+    anticipation: 0.40, // Patient, stable
+  },
+  playful: {
+    scale: { min: 1.04, max: 1.14 }, // Light bouncing
+    scaleY: { min: 0.96, max: 1.12 },
+    y: { min: -6, max: -12 }, // Bouncy movement
+    rotation: { min: -5, max: 5 },
+    rotationY: { min: -7, max: 7 }, // Playful rotation
+    glowOpacity: 0.16,
+    breathDuration: { inhale: 0.8, exhale: 0.7 }, // Energetic
+    brightness: 1.11,
+    particleCount: 14,
+    ringCount: 4,
+    anticipation: 0.16, // Quick, fun
+  },
+  meditative: {
+    scale: { min: 1.0, max: 1.018 }, // Very minimal
+    scaleY: { min: 1.0, max: 1.012 },
+    y: { min: 0, max: -2 }, // Almost still
+    rotation: { min: -0.5, max: 0.5 },
+    rotationY: { min: -1, max: 1 },
+    glowOpacity: 0.08,
+    breathDuration: { inhale: 5.0, exhale: 6.0 }, // Deep, slow breathing
+    brightness: 1.03,
+    particleCount: 3,
+    ringCount: 1,
+    anticipation: 0.70, // Very slow, peaceful
+  },
+  // ========== ADDITIONAL DRAMATIC ANIMATIONS ==========
+  excited: {
+    scale: { min: 1.12, max: 1.35 }, // RAPID bouncing
+    scaleY: { min: 0.88, max: 1.32 }, // Energetic squash/stretch
+    y: { min: -16, max: -32 }, // HIGH energy bouncing
+    rotation: { min: -10, max: 10 },
+    rotationY: { min: -12, max: 12 },
+    glowOpacity: 0.38,
+    breathDuration: { inhale: 0.22, exhale: 0.22 }, // Very rapid breathing
+    brightness: 1.26,
+    particleCount: 36,
+    ringCount: 6,
+    anticipation: 0.10, // Quick, energetic
+  },
+  worried: {
+    scale: { min: 0.96, max: 1.02 }, // Tense, small
+    scaleY: { min: 0.98, max: 1.01 },
+    y: { min: 0, max: 2 }, // Slight downward
+    rotation: { min: -2, max: 2 }, // Nervous movement
+    rotationY: { min: -3, max: 3 },
+    glowOpacity: 0.07,
+    breathDuration: { inhale: 2.2, exhale: 2.8 }, // Anxious breathing
+    brightness: 0.96,
+    particleCount: 2,
+    ringCount: 1,
+    anticipation: 0.60, // Hesitant
+  },
+  loving: {
+    scale: { min: 1.04, max: 1.12 }, // Warm expansion
+    scaleY: { min: 1.0, max: 1.10 },
+    y: { min: -4, max: -8 }, // Gentle lift
+    rotation: { min: -3, max: 3 },
+    rotationY: { min: -4, max: 4 },
+    glowOpacity: 0.28,
+    breathDuration: { inhale: 2.8, exhale: 3.2 }, // Warm, steady
+    brightness: 1.16,
+    particleCount: 20,
+    ringCount: 4,
+    anticipation: 0.32, // Gentle, caring
+  },
+  determined: {
+    scale: { min: 1.06, max: 1.14 }, // Strong presence
+    scaleY: { min: 1.02, max: 1.12 }, // Standing tall
+    y: { min: -6, max: -10 }, // Forward lean
+    rotation: { min: -4, max: 4 },
+    rotationY: { min: -6, max: 6 },
+    glowOpacity: 0.22,
+    breathDuration: { inhale: 1.8, exhale: 1.6 }, // Focused breathing
+    brightness: 1.14,
+    particleCount: 15,
+    ringCount: 4,
+    anticipation: 0.20, // Purposeful
+  },
+  sad: {
+    scale: { min: 0.94, max: 0.98 }, // Smaller, withdrawn
+    scaleY: { min: 0.96, max: 1.0 },
+    y: { min: 3, max: 8 }, // Downward movement
+    rotation: { min: -1.5, max: 1.5 },
+    rotationY: { min: -2, max: 2 },
+    glowOpacity: 0.04,
+    breathDuration: { inhale: 5.5, exhale: 6.5 }, // Heavy, slow
+    brightness: 0.92,
+    particleCount: 0,
+    ringCount: 0,
+    anticipation: 0.75, // Slow, heavy
+  },
+  amazed: {
+    scale: { min: 1.08, max: 1.22 }, // Slow zoom in
+    scaleY: { min: 1.04, max: 1.18 },
+    y: { min: -8, max: -14 }, // Slight lift
+    rotation: { min: -5, max: 5 },
+    rotationY: { min: -7, max: 7 },
+    glowOpacity: 0.26,
+    breathDuration: { inhale: 1.2, exhale: 1.8 }, // Held breath
+    brightness: 1.18,
+    particleCount: 22,
+    ringCount: 5,
+    anticipation: 0.25, // Wonder
+  },
+  grateful: {
+    scale: { min: 1.02, max: 1.10 }, // Gentle bow
+    scaleY: { min: 1.0, max: 1.08 },
+    y: { min: -3, max: -6 }, // Slight forward
+    rotation: { min: -6, max: 6 }, // Bowing motion
+    rotationY: { min: -3, max: 3 },
+    glowOpacity: 0.20,
+    breathDuration: { inhale: 2.5, exhale: 3.0 }, // Thankful exhale
+    brightness: 1.12,
+    particleCount: 16,
+    ringCount: 3,
+    anticipation: 0.35, // Humble
+  },
+  curious: {
+    scale: { min: 1.04, max: 1.14 }, // Forward lean
+    scaleY: { min: 1.0, max: 1.10 },
+    y: { min: -5, max: -10 }, // Leaning in
+    rotation: { min: -8, max: 8 }, // Head tilt
+    rotationY: { min: -10, max: 10 },
+    glowOpacity: 0.18,
+    breathDuration: { inhale: 1.6, exhale: 1.4 }, // Interested
+    brightness: 1.10,
+    particleCount: 12,
+    ringCount: 3,
+    anticipation: 0.22, // Inquisitive
+  },
+  confident: {
+    scale: { min: 1.06, max: 1.16 }, // Tall posture
+    scaleY: { min: 1.04, max: 1.14 }, // Standing proud
+    y: { min: -6, max: -12 }, // Elevated
+    rotation: { min: -3, max: 3 },
+    rotationY: { min: -4, max: 4 },
+    glowOpacity: 0.24,
+    breathDuration: { inhale: 2.2, exhale: 2.4 }, // Steady, controlled
+    brightness: 1.16,
+    particleCount: 18,
+    ringCount: 4,
+    anticipation: 0.28, // Assured
+  },
+  sympathetic: {
+    scale: { min: 1.02, max: 1.08 }, // Gentle movements
+    scaleY: { min: 1.0, max: 1.06 },
+    y: { min: -3, max: -6 }, // Soft sway
+    rotation: { min: -4, max: 4 },
+    rotationY: { min: -5, max: 5 },
+    glowOpacity: 0.16,
+    breathDuration: { inhale: 3.0, exhale: 3.4 }, // Caring, calm
+    brightness: 1.08,
+    particleCount: 10,
+    ringCount: 3,
+    anticipation: 0.40, // Understanding
   },
 };
 
@@ -351,7 +705,7 @@ const EXPRESSION_EFFECTS = {
 export default function AICompanionAvatar({
   state = "idle",
   expression = "neutral",
-  avatarUrl = "/companion-avatar.png",
+  avatarUrl,
   size = "lg",
   primaryColor = "#c9a063",
   secondaryColor = "#d4b078",
@@ -370,6 +724,10 @@ export default function AICompanionAvatar({
   // ============================================================================
   // STATE & REFS
   // ============================================================================
+  
+  // Use HD avatar on high-resolution displays (iPhone 17, Retina displays, etc.)
+  const isHighRes = typeof window !== 'undefined' && window.devicePixelRatio >= 2;
+  const finalAvatarUrl = avatarUrl || (isHighRes ? "/companion-avatar-hd.png" : "/companion-avatar.png");
   
   const controls = useAnimationControls();
   const expressionControls = useAnimationControls();
@@ -789,7 +1147,7 @@ export default function AICompanionAvatar({
           }}
         >
           <motion.img
-            src={avatarUrl}
+            src={finalAvatarUrl}
             alt="AI Companion"
             className="w-full h-full object-contain relative z-10 rounded-full"
             style={{
