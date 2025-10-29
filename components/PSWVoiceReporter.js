@@ -564,9 +564,9 @@ const PSWVoiceReporter = () => {
   } catch (error) {
     console.error('Audio playback failed:', error);
   }
-};
+  };
 
-const generateReport = useCallback(async () => {
+  const generateReport = useCallback(async () => {
   setIsReportGenerating(true);
   try {
     const response = await fetch('/api/generate-ai-report', {
@@ -597,79 +597,81 @@ const generateReport = useCallback(async () => {
   } finally {
     setIsReportGenerating(false);
   }
-}, [conversation, selectedLanguage]);
+  }, [conversation, selectedLanguage]);
 
-const handleSpeechInput = async (text) => {
-  if (!text.trim() || isProcessing) return;
+  const handleSpeechInput = useCallback(async (text) => {
+  const sanitized = text.trim();
+  if (!sanitized || isProcessing) return;
 
   setIsProcessing(true);
-  const userMessage = { type: 'user', content: text.trim(), timestamp: new Date() };
-    setConversation(prev => [...prev, userMessage]);
+  const userMessage = { type: 'user', content: sanitized, timestamp: new Date() };
+  setConversation(prev => [...prev, userMessage]);
 
-    // Phase 1 Q2: Reset consecutive AI messages counter on user input
-    setConsecutiveAIMessages(0);
+  setConsecutiveAIMessages(0);
 
-    try {
-      const response = await fetch('/api/process-conversation-ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userInput: text.trim(),
-          conversationHistory: conversation,
-          language: selectedLanguage,
-          // Phase 1 Q2: Pass consecutive AI messages count for turn-taking awareness
-          consecutiveAIMessages: consecutiveAIMessages
-        })
-      });
+  try {
+    const response = await fetch('/api/process-conversation-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userInput: sanitized,
+        conversationHistory: [...conversation, userMessage],
+        language: selectedLanguage,
+        consecutiveAIMessages
+      })
+    });
 
-      const data = await response.json();
-      
-      if (data.success) {
-        const aiMessage = {
-          type: 'ai',
-          content: data.response,
-          timestamp: new Date(),
-          audioUrl: data.audioUrl
-        };
-        setConversation(prev => [...prev, aiMessage]);
+    const data = await response.json();
+    
+    if (data.success) {
+      const aiMessage = {
+        type: 'ai',
+        content: data.response,
+        timestamp: new Date(),
+        audioUrl: data.audioUrl
+      };
+      setConversation(prev => [...prev, aiMessage]);
+      setConsecutiveAIMessages(prev => prev + 1);
 
-        // Phase 1 Q2: Increment consecutive AI messages counter
-        setConsecutiveAIMessages(prev => prev + 1);
-
-        // Enhanced audio playback
-        if (data.audioUrl) {
-          await playAudio(data.audioUrl);
-        }
-
-        if (data.documentationComplete) {
-          setTimeout(() => generateReport(), 2000);
-        }
+      if (data.audioUrl) {
+        await playAudio(data.audioUrl);
       }
-    } catch (error) {
-      console.error('Error processing conversation:', error);
+
+      if (data.documentationComplete) {
+        setTimeout(() => generateReport(), 2000);
+      }
+    } else {
       const errorMessage = {
         type: 'ai',
-        content: 'Sorry, I encountered an error. Please try again.',
+        content: data.error || 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date()
       };
       setConversation(prev => [...prev, errorMessage]);
-
-      // Phase 1 Q2: Increment consecutive AI messages counter for error messages too
       setConsecutiveAIMessages(prev => prev + 1);
-    } finally {
+    }
+  } catch (error) {
+    console.error('Error processing conversation:', error);
+    const errorMessage = {
+      type: 'ai',
+      content: 'Sorry, I encountered an error. Please try again.',
+      timestamp: new Date()
+    };
+    setConversation(prev => [...prev, errorMessage]);
+    setConsecutiveAIMessages(prev => prev + 1);
+  } finally {
     setIsProcessing(false);
     setTranscript('');
   }
-};
+  }, [consecutiveAIMessages, conversation, generateReport, isProcessing, playAudio, selectedLanguage]);
 
-const stopMediaStream = useCallback(() => {
+  const stopMediaStream = useCallback(() => {
   if (mediaStreamRef.current) {
     mediaStreamRef.current.getTracks().forEach(track => track.stop());
     mediaStreamRef.current = null;
   }
-}, []);
+  }, []);
 
-const startFallbackRecording = useCallback(async () => {
+  const startFallbackRecording = useCallback(async () => {
   if (!browserSupport.mediaDevices || typeof window === 'undefined' || typeof window.MediaRecorder === 'undefined') {
     setRecordingError('Microphone access is not available on this device.');
     setShowTextInput(true);
@@ -763,9 +765,9 @@ const startFallbackRecording = useCallback(async () => {
     stopMediaStream();
     setShowTextInput(true);
   }
-}, [browserSupport.mediaDevices, handleSpeechInput, selectedLanguage, stopMediaStream]);
+  }, [browserSupport.mediaDevices, handleSpeechInput, selectedLanguage, stopMediaStream]);
 
-const stopFallbackRecording = useCallback(() => {
+  const stopFallbackRecording = useCallback(() => {
   const recorder = mediaRecorderRef.current;
   if (recorder && recorder.state !== 'inactive') {
     recorder.stop();
@@ -773,7 +775,7 @@ const stopFallbackRecording = useCallback(() => {
     setIsListening(false);
     stopMediaStream();
   }
-}, [stopMediaStream]);
+  }, [stopMediaStream]);
 
   const handleTextSubmit = () => {
     if (textInput.trim()) {
@@ -830,42 +832,6 @@ const stopFallbackRecording = useCallback(() => {
     startFallbackRecording,
     stopFallbackRecording
   ]);
-
-  const generateReport = async () => {
-    setIsReportGenerating(true);
-    try {
-      const response = await fetch('/api/generate-ai-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          conversation,
-          language: selectedLanguage
-        })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        // DAR JSON Integration: Store both paragraph and structured data
-        setReport(data.noteText || data.report);
-        setDarJson(data.dar);
-        setShowReport(true);
-
-        // Phase 2 Q1: Parse report into collapsible sections (use noteText)
-        const sections = parseReportIntoSections(data.noteText || data.report);
-        setReportSections(sections);
-        setAllSectionsExpanded(true); // All expanded by default
-
-        // Phase 1 Q4: Show success toast
-        setSuccessMessage('✅ DAR Report generated successfully!');
-        setShowSuccessToast(true);
-        setTimeout(() => setShowSuccessToast(false), 4000);
-      }
-    } catch (error) {
-      console.error('Error generating report:', error);
-    } finally {
-      setIsReportGenerating(false);
-    }
-  };
 
   const startNewSession = () => {
     setConversation([]);
