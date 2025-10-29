@@ -65,53 +65,53 @@ export default function SimpleChatWrapper() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-gray-800 text-lg font-bold">
+          <p className="text-gray-800 text-2xl font-bold">
             Hello! I'm here to help you today. How are you feeling?
           </p>
         </motion.div>
 
-        {/* Microphone Button - Now matches Quick Access button thickness */}
+        {/* Microphone Button - MASSIVE text and icon */}
         <motion.button
           onClick={handleMicClick}
-          className="w-full bg-[#c9a063] hover:bg-[#b89053] text-white rounded-2xl p-8 min-h-[100px] shadow-xl flex items-center justify-center gap-3 transition-all"
+          className="w-full bg-[#c9a063] hover:bg-[#b89053] text-white rounded-3xl p-8 min-h-[140px] shadow-xl flex items-center justify-center gap-4 transition-all"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <Mic className="w-7 h-7" />
-          <span className="text-lg font-bold">Tap the microphone to talk</span>
+          <Mic className="w-16 h-16" strokeWidth={2.5} />
+          <span className="text-3xl font-black leading-tight">Tap the microphone to talk</span>
         </motion.button>
 
         {/* Quick Access */}
         <motion.div 
-          className="space-y-3"
+          className="space-y-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <h3 className="text-white text-sm font-bold px-2">Quick Access</h3>
-          <div className="grid grid-cols-2 gap-3">
+          <h3 className="text-white text-lg font-bold px-2">Quick Access</h3>
+          <div className="grid grid-cols-2 gap-4">
             <motion.button
               onClick={handleChatsClick}
-              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border border-[#2a3544] rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:border-[#3a4554] transition-all shadow-lg"
+              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border-2 border-[#2a3544] rounded-3xl p-8 min-h-[180px] flex flex-col items-center justify-center gap-4 hover:border-[#3a4554] transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
-                <MessageCircle className="w-6 h-6 text-white" />
+              <div className="w-24 h-24 bg-[#c9a063] rounded-full flex items-center justify-center">
+                <MessageCircle className="w-14 h-14 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-[#E3A248] text-lg font-bold">Chats</span>
+              <span className="text-[#E3A248] text-3xl font-black">Chats</span>
             </motion.button>
             
             <motion.button
               onClick={handleMemoriesClick}
-              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border border-[#2a3544] rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:border-[#3a4554] transition-all shadow-lg"
+              className="bg-gradient-to-br from-[#1a2332] to-[#0d1521] border-2 border-[#2a3544] rounded-3xl p-8 min-h-[180px] flex flex-col items-center justify-center gap-4 hover:border-[#3a4554] transition-all shadow-lg"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
-                <Camera className="w-6 h-6 text-white" />
+              <div className="w-24 h-24 bg-[#c9a063] rounded-full flex items-center justify-center">
+                <Camera className="w-14 h-14 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-[#E3A248] text-lg font-bold">Memories</span>
+              <span className="text-[#E3A248] text-3xl font-black">Memories</span>
             </motion.button>
           </div>
         </motion.div>
