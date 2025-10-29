@@ -15,6 +15,12 @@ test-results/
 reports/
 playwright-report/
 coverage/
+vitest.config.ts
+playwright.config.ts
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
 
 # Documentation (EXCLUDE ALL - keeps Vercel deployments clean)
 docs/
