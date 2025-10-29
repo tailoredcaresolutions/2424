@@ -15,7 +15,7 @@
  */
 
 import Redis, { RedisOptions } from 'ioredis';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.js';
 
 interface CacheOptions {
   ttl?: number; // Time to live in seconds

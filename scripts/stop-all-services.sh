@@ -1,53 +1,51 @@
 #!/bin/bash
-#
-# Stop All Local Services
-# Usage: ./scripts/stop-all-services.sh
-#
+# Stop All Services - Clean Shutdown
 
-echo "🛑 Stopping All PSW Services..."
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[ lion'
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+echo "🛑 Stopping All PSW Reporting Services..."
 echo ""
 
 # Stop backend
 echo "1️⃣  Stopping Backend Server..."
-if lsof -Pi :4000 -sTCP:LISTEN -t >/dev/null 2>&1; then
-    kill $(lsof -t -i:4000) 2>/dev/null || true
-    echo "   ✅ Backend stopped"
-else
-    echo "   ℹ️  Backend not running"
+if [ -f "$PROJECT_ROOT/logs/service-pids.txt" ]; then
+    BACKEND_PID=$(grep "BACKEND_PID=" "$PROJECT_ROOT/logs/service-pids.txt" | cut -d'=' -f2)
+    if [ -n "$BACKEND_PID" ] && kill -0 "$BACKEND_PID" 2>/dev/null; then
+        kill "$BACKEND_PID"
+        echo -e "   ${GREEN}✅ Backend stopped (PID: $BACKEND_PID)${NC}"
+    fi
 fi
 
-# Stop Cloudflare Tunnel
+# Also try to find and kill by process
+if lsof -ti:4000 > /dev/null 2>&1; then
+    kill $(lsof -ti:4000) 2>/dev/null
+    echo -e "   ${GREEN}✅ Backend on port 4000 stopped${NC}"
+fi
+
+# Stop tunnel
 echo ""
 echo "2️⃣  Stopping Cloudflare Tunnel..."
+if [ -f "$PID_FILE" ]; then
+    TUNNEL_PID=$(grep "TUNNEL_PID=" "$PID_FILE" | cut -d'=' -f2)
+    if [ -n "$TUNNEL_PID" ] && kill -0 "$TUNNEL_PID" 2>/dev/null; then
+        kill "$TUNNEL_PID"
+        echo -e "   ${GREEN}✅ Tunnel stopped (PID: $TUNNEL_PID)${NC}"
+    fi
+fi
+
+# Also try to find and kill cloudflared processes
 if pgrep -f cloudflared > /dev/null; then
     pkill -f cloudflared
-    echo "   ✅ Tunnel stopped"
-else
-    echo "   ℹ️  Tunnel not running"
+    echo -e "   ${GREEN}✅ All cloudflared processes stopped${NC}"
 fi
 
-# Stop Ollama (optional - comment out if you want Ollama to keep running)
 echo ""
-echo "3️⃣  Stopping Ollama..."
-if pgrep -x "ollama" > /dev/null; then
-    echo "   ⚠️  Keep Ollama running? (y/n)"
-    read -r response
-    if [ "$response" != "y" ]; then
-        pkill -x ollama
-        echo "   ✅ Ollama stopped"
-    else
-        echo "   ℹ️  Keeping Ollama running"
-    fi
-else
-    echo "   ℹ️  Ollama not running"
-fi
-
-# Note about Whisper and XTTS
+echo -e "${GREEN}✅ All services stopped${NC}"
 echo ""
-echo "4️⃣  Whisper.cpp and XTTS"
-echo "   ℹ️  Stop these manually if needed"
-
-echo ""
-echo "✅ Services stopped!"
-echo ""
-echo "To restart: ./scripts/start-all-services.sh"

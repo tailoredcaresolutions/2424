@@ -62,7 +62,7 @@ export default function Navigation({ user }: NavigationProps) {
   const isActive = (href: string) => pathname === href;
 
   return (
-    <nav className="bg-[rgba(3,8,23,0.9)] backdrop-blur-xl border-b border-white/10 shadow-[0_10px_30px_rgba(2,5,12,0.6)] sticky top-0 z-40">
+    <nav className="liquid-glass sticky top-0 z-40 border-b border-tcs-blue-light/30 shadow-[0_8px_32px_rgba(0,0,0,0.4)] safe-area-top">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and brand */}
@@ -84,10 +84,10 @@ export default function Navigation({ user }: NavigationProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  className={`touch-target px-4 py-2 rounded-full text-sm font-semibold transition-all button-press ${
                     isActive(item.href)
-                      ? 'bg-white text-[#2C1301] shadow-[0_12px_25px_rgba(255,255,255,0.25)]'
-                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                      ? 'liquid-glass-light text-tcs-blue-dark shadow-[0_12px_25px_rgba(255,255,255,0.25)] font-bold'
+                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
                   }`}
                 >
                   <span className="mr-1">{item.icon}</span>
@@ -102,7 +102,7 @@ export default function Navigation({ user }: NavigationProps) {
               <div className="relative">
                 <button
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium text-white/80 hover:bg-white/10 transition-colors"
+                  className="touch-target flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium text-white/80 hover:bg-white/10 hover:liquid-glass-vibrant transition-all button-press"
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] flex items-center justify-center text-[#2C1301] font-bold">
                     {user.name.charAt(0).toUpperCase()}
@@ -115,7 +115,7 @@ export default function Navigation({ user }: NavigationProps) {
 
                 {/* Profile dropdown */}
                 {profileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-[#F1E0CC] py-1 z-50">
+                  <div className="liquid-glass-card absolute right-0 mt-2 w-56 rounded-glass shadow-2xl py-1 z-50 animate-scale-in">
                     <div className="px-4 py-3 border-b border-[#F1E0CC]">
                       <p className="text-sm font-medium text-[#1F1B16]">{user.name}</p>
                       <p className="text-xs text-gray-500">{user.email}</p>
@@ -143,7 +143,7 @@ export default function Navigation({ user }: NavigationProps) {
             ) : (
               <Link
                 href="/login"
-                className="px-6 py-2 rounded-full font-semibold text-[#2C1301] bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] shadow-[0_12px_30px_rgba(227,162,72,0.35)]"
+                className="touch-target px-6 py-2 rounded-full font-semibold text-[#2C1301] liquid-glass-gold shadow-[0_12px_30px_rgba(212,165,116,0.4)] button-press"
               >
                 Login
               </Link>
@@ -170,7 +170,7 @@ export default function Navigation({ user }: NavigationProps) {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-white/10 bg-[rgba(3,8,23,0.95)] backdrop-blur-xl">
+        <div className="md:hidden border-t border-tcs-blue-light/20 liquid-glass-dark">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation
               .filter(item => !item.adminOnly || user?.role === 'admin')
@@ -179,10 +179,10 @@ export default function Navigation({ user }: NavigationProps) {
                   key={item.name}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-3 rounded-xl text-base font-medium ${
+                  className={`touch-target block px-4 py-3 rounded-xl text-base font-medium button-press ${
                     isActive(item.href)
-                      ? 'bg-white text-[#2C1301]'
-                      : 'text-white/75 hover:text-white hover:bg-white/10'
+                      ? 'liquid-glass-light text-tcs-blue-dark font-bold'
+                      : 'text-white/75 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
                   }`}
                 >
                   <span className="mr-2">{item.icon}</span>

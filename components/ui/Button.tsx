@@ -25,21 +25,21 @@ export default function Button({
   type = 'button',
   icon
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-2xl transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--tcs-gold)] focus-visible:ring-offset-[#080d1e]';
+  const baseClasses = 'touch-target inline-flex items-center justify-center font-semibold rounded-glass transition-all button-press focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--tcs-gold)] focus-visible:ring-offset-[#080d1e]';
 
   const variantClasses = {
     primary:
-      'bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] text-[#2C1301] shadow-[0_18px_35px_rgba(227,162,72,0.35)] hover:-translate-y-0.5',
+      'liquid-glass-gold text-[#2C1301] shadow-[0_18px_35px_rgba(212,165,116,0.4)] hover:-translate-y-0.5 hover:shadow-[0_22px_40px_rgba(212,165,116,0.5)]',
     secondary:
-      'bg-white/90 text-[#1F1B16] border border-[rgba(3,8,23,0.12)] shadow-[0_8px_24px_rgba(12,8,4,0.08)] hover:bg-white',
+      'liquid-glass-light text-tcs-blue-dark border border-tcs-blue-light/30 shadow-[0_8px_24px_rgba(0,0,0,0.25)] hover:bg-white/20',
     success:
-      'bg-[#E6F4EA] text-[#1C5C2A] border border-[#CDE8D6] shadow-[0_12px_24px_rgba(28,92,42,0.12)]',
+      'liquid-glass-light text-[#1C5C2A] border border-[#CDE8D6]/30 shadow-[0_12px_24px_rgba(28,92,42,0.2)] bg-[rgba(230,244,234,0.2)]',
     danger:
-      'bg-[#3B0F0F] text-[#FDE3D8] hover:bg-[#4b1212] shadow-[0_12px_28px_rgba(59,15,15,0.4)]',
+      'bg-[rgba(59,15,15,0.8)] text-[#FDE3D8] hover:bg-[rgba(75,18,18,0.9)] shadow-[0_12px_28px_rgba(59,15,15,0.5)] backdrop-blur-glass',
     warning:
-      'bg-[#FFF4C7] text-[#7A4B00] border border-[#F6D98B] shadow-[0_12px_28px_rgba(244,196,86,0.35)]',
+      'liquid-glass-light text-[#7A4B00] border border-[#F6D98B]/40 shadow-[0_12px_28px_rgba(244,196,86,0.3)] bg-[rgba(255,244,199,0.2)]',
     ghost:
-      'bg-transparent text-[var(--tcs-light-gold)] border border-[rgba(252,227,186,0.4)] hover:bg-[rgba(252,227,186,0.1)]'
+      'bg-transparent text-[var(--tcs-light-gold)] border border-[rgba(252,227,186,0.4)] hover:liquid-glass-vibrant hover:bg-[rgba(252,227,186,0.1)]'
   };
 
   const sizeClasses = {

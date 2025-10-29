@@ -7,7 +7,7 @@
 
 import Database from 'better-sqlite3';
 import path from 'path';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.js';
 
 export interface SearchFilters {
   query?: string;

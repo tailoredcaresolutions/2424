@@ -2,26 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   iOS 26 LIQUID GLASS DESIGN SYSTEM
+   Companion Plus & Tailored Care Solutions
+   Blue & Gold Color Palette
+   ============================================ */
+
 :root {
-  --tcs-navy: #1A1F2E;
-  --tcs-midnight: #151A26;
-  --tcs-midnight-soft: #242936;
+  /* Brand Colors - Blue Primary, Gold Accent */
+  --tcs-blue-primary: #1B365D;
+  --tcs-blue-dark: #0F1E3A;
+  --tcs-blue-deep: #030817;
+  --tcs-blue-mid: #122853;
+  --tcs-blue-light: #4A6FA5;
+  --tcs-blue-lighter: #6B8FC7;
+  
   --tcs-gold: #D4A574;
   --tcs-light-gold: #E3B888;
   --tcs-deep-gold: #C9A86A;
+  --tcs-gold-pale: #F5E8D8;
+  
+  /* Legacy compatibility */
+  --tcs-navy: #1A1F2E;
+  --tcs-midnight: #151A26;
+  --tcs-midnight-soft: #242936;
   --tcs-champagne: #F5E8D8;
   --tcs-ivory: #FFF9F1;
   --tcs-sand: #E8D5C4;
+  
+  /* Liquid Glass Design Tokens */
+  --glass-blur: 20px;
+  --glass-saturate: 180%;
+  --glass-light-bg: rgba(255, 255, 255, 0.15);
+  --glass-dark-bg: rgba(27, 54, 93, 0.7);
+  --glass-blue-bg: rgba(27, 54, 93, 0.6);
+  --glass-gold-bg: rgba(212, 165, 116, 0.2);
+  --glass-border-light: rgba(255, 255, 255, 0.2);
+  --glass-border-blue: rgba(75, 111, 165, 0.3);
+  --glass-border-gold: rgba(212, 165, 116, 0.4);
+  
+  /* iOS HIG Minimum Touch Targets */
+  --touch-target-min: 44px;
+  --spacing-unit: 8px;
 }
 
 html,
 body {
   min-height: 100%;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 231, 198, 0.15), transparent 45%),
-    radial-gradient(circle at 80% 0%, rgba(253, 214, 146, 0.1), transparent 40%),
-    linear-gradient(180deg, var(--tcs-navy) 0%, var(--tcs-midnight) 55%, var(--tcs-midnight-soft) 100%);
+  /* iOS 26 Liquid Glass Background - Dynamic Blue Gradients */
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(75, 111, 165, 0.2), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(212, 165, 116, 0.15), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(27, 54, 93, 0.25), transparent 50%),
+    linear-gradient(180deg, var(--tcs-blue-deep) 0%, var(--tcs-blue-dark) 40%, var(--tcs-blue-primary) 100%);
   color: #fdf7ee;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Premium Custom Animations for PSW Voice Documentation System */
@@ -846,29 +883,103 @@ button[aria-label*="Expand all"]:hover {
   }
 }
 
-/* Companion Plus Liquid Glass Morphism */
-.glass {
-  background: rgba(32, 35, 50, 0.7);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(201, 160, 99, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+/* ============================================
+   iOS 26 LIQUID GLASS MATERIAL SYSTEM
+   Primary glass materials for navigation and floating elements
+   ============================================ */
+
+/* Standard Liquid Glass - Blue Theme */
+.liquid-glass {
+  background: var(--glass-blue-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-blue);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
-.glass-light {
+/* Light Liquid Glass - For lighter backgrounds */
+.liquid-glass-light {
+  background: var(--glass-light-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-light);
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Gold Accent Liquid Glass */
+.liquid-glass-gold {
+  background: var(--glass-gold-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border-gold);
+  box-shadow: 
+    0 8px 32px 0 rgba(212, 165, 116, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Dark Liquid Glass - For deeper UI layers */
+.liquid-glass-dark {
+  background: var(--glass-dark-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid rgba(15, 30, 58, 0.5);
+    box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Liquid Glass Card - For content containers */
+.liquid-glass-card {
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 12px 40px 0 rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
 }
 
-.glass-gold {
-  background: rgba(201, 160, 99, 0.15);
+/* Dynamic Reflection Effect */
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+/* Vibrancy Effect - iOS-style content fill */
+.liquid-glass-vibrant {
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(201, 160, 99, 0.3);
-  box-shadow: 0 8px 32px 0 rgba(201, 160, 99, 0.2);
+  mix-blend-mode: overlay;
+}
+
+/* Legacy compatibility */
+.glass {
+  @apply liquid-glass;
+}
+.glass-light {
+  @apply liquid-glass-light;
+}
+.glass-gold {
+  @apply liquid-glass-gold;
 }
 
 .animate-gentle-float {
@@ -883,17 +994,48 @@ button[aria-label*="Expand all"]:hover {
   animation: scale-in 0.3s ease-out;
 }
 
-/* Touch feedback for mobile */
+/* ============================================
+   iOS HIG COMPLIANCE - TOUCH TARGETS
+   Minimum 44pt (44px) for all interactive elements
+   ============================================ */
+
+.touch-target {
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touch-target-sm {
+  min-width: calc(var(--touch-target-min) * 0.9); /* 40px - still accessible */
+  min-height: calc(var(--touch-target-min) * 0.9);
+}
+
+/* Touch feedback for mobile - iOS-style haptic response */
 .touch-feedback {
-  transition: transform 0.1s ease, opacity 0.1s ease;
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .touch-feedback:active {
-  transform: scale(0.97);
-  opacity: 0.8;
+  transform: scale(0.96);
+  opacity: 0.85;
 }
 
-/* Safe area for iPhone */
+/* iOS-style button press animation */
+.button-press {
+  transition: transform 0.1s cubic-bezier(0.3, 0, 0.2, 1),
+              box-shadow 0.1s cubic-bezier(0.3, 0, 0.2, 1);
+}
+
+.button-press:active {
+  transform: scale(0.98) translateY(1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Safe area for iPhone - iOS notch and home indicator */
 .safe-area-top {
   padding-top: env(safe-area-inset-top);
 }
@@ -901,3 +1043,17 @@ button[aria-label*="Expand all"]:hover {
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+.safe-area-left {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* iOS-style spacing units (8pt grid) */
+.space-ios-1 { gap: calc(var(--spacing-unit) * 1); }
+.space-ios-2 { gap: calc(var(--spacing-unit) * 2); }
+.space-ios-3 { gap: calc(var(--spacing-unit) * 3); }
+.space-ios-4 { gap: calc(var(--spacing-unit) * 4); }

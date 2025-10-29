@@ -17,11 +17,11 @@ export default function SplashPage() {
 
   return (
     <main
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#0E1F3D] via-[#122853] to-[#0E1F3D] p-6"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-6"
       aria-label="Tailored Care Solutions loading screen"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,165,116,0.15),transparent_45%),radial-gradient(circle_at_80%_0,rgba(212,165,116,0.12),transparent_40%)]" />
-      <div className="absolute inset-8 rounded-[32px] border border-white/15 bg-white/5 backdrop-blur-2xl shadow-[0_40px_80px_rgba(10,20,40,0.45)]" />
+      <div className="absolute inset-8 rounded-glass-lg border border-white/20 liquid-glass-card shadow-[0_40px_80px_rgba(0,0,0,0.4)]" />
 
       <section className="relative z-10 flex flex-col items-center gap-10 text-center text-white" role="status">
         <div className="relative flex h-40 w-40 items-center justify-center">

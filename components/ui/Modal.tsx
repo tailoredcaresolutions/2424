@@ -57,18 +57,18 @@ export default function Modal({
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-[#030817]/80 backdrop-blur-xl transition-opacity"
+        className="fixed inset-0 bg-[#030817]/80 backdrop-blur-glass-heavy transition-opacity"
         onClick={closeOnBackdropClick ? onClose : undefined}
       />
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative bg-white/95 backdrop-blur rounded-[32px] border border-[#F1E0CC] shadow-[0_40px_120px_rgba(12,8,4,0.45)] ${sizeClasses[size]} w-full transform transition-all`}
+          className={`relative liquid-glass-card ${sizeClasses[size]} w-full transform transition-all animate-scale-in`}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#F1E0CC]">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/20">
             <h3 className="text-xl font-bold text-[#1F1B16]">{title}</h3>
             {showCloseButton && (
               <button
@@ -99,7 +99,7 @@ interface ModalFooterProps {
 
 export function ModalFooter({ children, className = '' }: ModalFooterProps) {
   return (
-    <div className={`px-6 py-4 border-t border-[#F1E0CC] flex items-center justify-end space-x-3 ${className}`}>
+    <div className={`px-6 py-4 border-t border-white/20 flex items-center justify-end space-x-3 ${className}`}>
       {children}
     </div>
   );

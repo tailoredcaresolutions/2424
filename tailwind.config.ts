@@ -13,7 +13,6 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
-    },
       colors: {
             "border": "hsl(var(--border))",
             "input": "hsl(var(--input))",
@@ -47,12 +46,36 @@ const config: Config = {
             "card": {
               "DEFAULT": "hsl(var(--card))",
               "foreground": "hsl(var(--card-foreground))"
+            },
+            // Liquid Glass Blue & Gold Palette
+            "tcs-blue": {
+              "primary": "#1B365D",
+              "dark": "#0F1E3A",
+              "deep": "#030817",
+              "mid": "#122853",
+              "light": "#4A6FA5",
+              "lighter": "#6B8FC7",
+            },
+            "tcs-gold": {
+              "DEFAULT": "#D4A574",
+              "light": "#E3B888",
+              "deep": "#C9A86A",
+              "pale": "#F5E8D8",
             }
           },
       borderRadius: {
             "lg": "var(--radius)",
             "md": "calc(var(--radius) - 2px)",
-            "sm": "calc(var(--radius) - 4px)"
+            "sm": "calc(var(--radius) - 4px)",
+            // iOS 26 Liquid Glass rounded corners
+            "glass": "20px",
+            "glass-lg": "24px",
+            "glass-sm": "16px",
+          },
+      backdropBlur: {
+            "glass": "20px",
+            "glass-light": "12px",
+            "glass-heavy": "32px",
           },
       keyframes: {
             "accordion-down": {
@@ -72,7 +95,8 @@ const config: Config = {
               }
             }
           }
-},
+      }
+    },
   plugins: [require("tailwindcss-animate")],
 };
 export default config;

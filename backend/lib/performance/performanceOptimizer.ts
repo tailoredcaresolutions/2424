@@ -18,7 +18,7 @@
 
 import { getConnectionPool } from '../database/connectionPool';
 import { getRedisCache } from '../cache/redisCache';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.js';
 
 interface QueryAnalysis {
   sql: string;

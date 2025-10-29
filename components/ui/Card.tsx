@@ -22,7 +22,7 @@ export default function Card({ children, className = '', padding = 'md', hover =
   return (
     <div
       onClick={onClick}
-      className={`bg-white/95 backdrop-blur rounded-3xl border border-[#F1E0CC] shadow-[0_25px_60px_rgba(12,8,4,0.08)] ${paddingClasses[padding]} ${hoverClass} ${clickableClass} ${className}`}
+      className={`liquid-glass-card ${paddingClasses[padding]} ${hoverClass} ${clickableClass} ${className}`}
     >
       {children}
     </div>

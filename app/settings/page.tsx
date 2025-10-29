@@ -98,7 +98,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1B365D] p-4">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4">
       <div className="mx-auto max-w-2xl">
         <header className="mb-8">
           <h1 className="text-white text-3xl font-bold">
@@ -110,7 +110,7 @@ export default function SettingsPage() {
         </header>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+          <section className="liquid-glass-card rounded-glass-lg p-6">
             <fieldset>
               <legend className="text-white mb-4 text-lg font-semibold">
                 Language Preferences
@@ -142,7 +142,7 @@ export default function SettingsPage() {
             </fieldset>
           </section>
 
-          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+          <section className="liquid-glass-card rounded-glass-lg p-6">
             <fieldset>
               <legend className="text-white mb-4 text-lg font-semibold">
                 Privacy Settings
@@ -173,7 +173,7 @@ export default function SettingsPage() {
             </fieldset>
           </section>
 
-          <section className="bg-white/10 rounded-lg p-6 backdrop-blur-sm">
+          <section className="liquid-glass-card rounded-glass-lg p-6">
             <fieldset>
               <legend className="text-white mb-4 text-lg font-semibold">
                 Accessibility Options
@@ -208,7 +208,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleSave}
-              className="text-white rounded-lg bg-[#D4A574] px-6 py-3 font-semibold transition-colors hover:bg-[#C19660] focus:outline-none focus:ring-2 focus:ring-[#D4A574] focus:ring-offset-2 focus:ring-offset-[#1B365D]"
+              className="touch-target liquid-glass-gold text-[#2C1301] rounded-glass px-6 py-3 font-semibold transition-all button-press shadow-[0_12px_30px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] focus:outline-none focus:ring-2 focus:ring-tcs-gold focus:ring-offset-2"
             >
               Save Preferences
             </button>

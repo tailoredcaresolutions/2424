@@ -15,8 +15,8 @@
 import { authenticator } from 'otplib';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
-import { getEncryptedDb } from '../database/encryptedDb';
-import { log as logger } from '../logger';
+import { getEncryptedDb } from '../database/encryptedDb.js';
+import { log as logger } from '../logger.js';
 
 // Configure OTP settings (OWASP recommendations)
 authenticator.options = {

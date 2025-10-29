@@ -15,7 +15,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import { log as logger } from '../logger';
+import { log as logger } from '../logger.js';
 
 // Encryption configuration (OWASP 2025 recommendations)
 const ALGORITHM = 'aes-256-gcm';
