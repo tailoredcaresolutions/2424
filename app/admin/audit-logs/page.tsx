@@ -299,7 +299,7 @@ export default function AuditLogsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary">
       <Navigation
         user={{
           name: 'Admin User',

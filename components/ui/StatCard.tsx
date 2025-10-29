@@ -66,7 +66,7 @@ export default function StatCard({
     <Card
       hover={!!onClick}
       onClick={onClick}
-      className={`relative overflow-hidden border border-white/20 bg-gradient-to-br from-white/90 to-white/70`}>
+      className={`relative overflow-hidden liquid-glass-card`}>
       <div
         className={`absolute inset-0 opacity-50 blur-2xl bg-gradient-to-br ${colors.accent}`}
         aria-hidden
@@ -90,7 +90,7 @@ export default function StatCard({
         </div>
 
         {icon && (
-          <div className="w-12 h-12 rounded-2xl bg-white/80 shadow-[0_12px_20px_rgba(12,8,4,0.1)] flex items-center justify-center text-2xl">
+          <div className="w-12 h-12 rounded-glass-lg liquid-glass-light flex items-center justify-center text-2xl">
             {icon}
           </div>
         )}

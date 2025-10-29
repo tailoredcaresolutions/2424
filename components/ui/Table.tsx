@@ -38,7 +38,7 @@ export default function Table({
 
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12 bg-white/5 rounded-2xl border border-white/10">
+      <div className="flex items-center justify-center py-12 liquid-glass-card rounded-glass-lg">
         <div className="text-center">
           <p className="text-xl text-white/60">📭</p>
           <p className="text-white/60 mt-2">{emptyMessage}</p>
@@ -48,9 +48,9 @@ export default function Table({
   }
 
   return (
-    <div className={`overflow-x-auto rounded-3xl border border-[#F1E0CC] shadow-[0_30px_80px_rgba(12,8,4,0.08)] bg-white/95 backdrop-blur ${className}`}>
+    <div className={`overflow-x-auto rounded-glass-lg liquid-glass-card ${className}`}>
       <table className="min-w-full divide-y divide-[#F1E0CC]">
-        <thead className="bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)]">
+        <thead className="liquid-glass-gold">
           <tr>
             {columns.map((column) => (
               <th

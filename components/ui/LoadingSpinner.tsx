@@ -32,10 +32,10 @@ export default function LoadingSpinner({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-90">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#1B365D] border-t-transparent"></div>
-          {text && <p className="text-lg text-gray-700 font-medium">{text}</p>}
+      <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-glass-heavy liquid-glass-dark">
+        <div className="flex flex-col items-center space-y-4 liquid-glass-card rounded-glass-lg p-8">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-tcs-blue-primary border-t-transparent"></div>
+          {text && <p className="text-lg text-tcs-blue-dark font-medium">{text}</p>}
         </div>
       </div>
     );

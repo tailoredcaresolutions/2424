@@ -131,10 +131,10 @@ export default function ReviewPage() {
   );
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-[#0A1426] via-[#0E1F3D] to-[#0A1426] p-6 text-white">
+    <main className="relative min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-6 text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,165,116,0.18),transparent_35%),radial-gradient(circle_at_bottom,rgba(212,165,116,0.1),transparent_40%)]" />
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl shadow-[0_35px_80px_rgba(5,12,24,0.65)]">
+        <header className="rounded-glass-lg liquid-glass-card p-8">
           <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-[#E6C5A1]">
@@ -153,7 +153,7 @@ export default function ReviewPage() {
           </div>
         </header>
 
-        <section className="rounded-3xl border border-white/12 bg-white/[0.07] p-6 backdrop-blur-2xl shadow-[0_25px_60px_rgba(8,16,34,0.55)]">
+        <section className="rounded-glass-lg liquid-glass-card p-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
             <nav className="flex gap-2" role="tablist" aria-label="Report format tabs">
               <TabButton

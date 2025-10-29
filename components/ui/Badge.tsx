@@ -24,7 +24,7 @@ export default function Badge({ children, variant = 'default', size = 'md', clas
 
   return (
     <span
-      className={`inline-flex items-center font-medium rounded-full border ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center font-medium rounded-full border ${variantClasses[variant]} ${sizeClasses[size]} backdrop-blur-glass ${className}`}
     >
       {children}
     </span>

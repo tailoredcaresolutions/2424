@@ -116,7 +116,7 @@ export default function SessionPage() {
   };
 
   return (
-    <div className="text-white min-h-screen bg-[#1B365D] p-4">
+    <div className="text-white min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4">
       <div className="mx-auto max-w-4xl">
         <header className="mb-8">
           <h1 className="mb-6 text-center text-3xl font-bold">
@@ -181,8 +181,8 @@ export default function SessionPage() {
             <button
               ref={recordButtonRef}
               onClick={toggleRecording}
-              className={`rounded-full h-32 w-32 bg-[#D4A574] transition-all duration-200 hover:bg-[#C19660] focus:outline-none focus:ring-4 focus:ring-[#D4A574]/50 ${
-                isRecording ? 'animate-pulse shadow-lg shadow-[#D4A574]/50' : ''
+              className={`touch-target rounded-full h-32 w-32 liquid-glass-gold button-press transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-tcs-gold/50 ${
+                isRecording ? 'animate-pulse shadow-lg shadow-tcs-gold/50' : ''
               }`}
               aria-label={
                 isRecording ? 'Stop voice recording' : 'Start voice recording'
