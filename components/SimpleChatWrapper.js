@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mic, MessageCircle, Camera } from 'lucide-react';
 import AICompanionAvatar from './AICompanionAvatar';
 
 export default function SimpleChatWrapper() {
+  const router = useRouter();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceLevel, setVoiceLevel] = useState(0);
@@ -22,6 +24,14 @@ export default function SimpleChatWrapper() {
     }, 2000);
   };
 
+  const handleChatsClick = () => {
+    router.push('/session');
+  };
+
+  const handleMemoriesClick = () => {
+    router.push('/review');
+  };
+
   const getAvatarState = () => {
     if (isSpeaking) return "speaking";
     if (isListening) return "listening";
@@ -29,41 +39,83 @@ export default function SimpleChatWrapper() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a2332] via-[#1e2838] to-[#1a2332] flex items-center justify-center p-5">
-      <div className="w-full max-w-xl space-y-6">
-        <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.7 }} className="mx-4">
-          <div className="p-10 glass-gold border-2 border-[#c9a063]/30 shadow-2xl rounded-3xl">
-            <div className="space-y-8">
-              <div className="flex justify-center">
-                <AICompanionAvatar state={getAvatarState()} size="lg" primaryColor="#c9a063" secondaryColor="#d4b078" glowIntensity={0.22} enableHover={true} avatarUrl="/companion-avatar-realistic.png" />
-              </div>
-              <motion.div className="glass-light rounded-3xl p-6 border border-[#c9a063]/25 shadow-lg" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-                <p className="text-xl text-center text-gray-100 leading-relaxed font-medium">Hello! I'm here to help you today. How are you feeling?</p>
-              </motion.div>
-              <motion.button onClick={handleMicClick} disabled={isListening} className="w-full bg-gradient-to-br from-[#c9a063] to-[#d4b078] hover:from-[#d4b078] hover:to-[#e0c088] text-[#1a2332] font-bold py-5 px-6 rounded-3xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3 text-xl min-h-[56px]" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Mic className={`w-7 h-7 ${isListening ? 'animate-pulse' : ''}`} />
-                <span>{isListening ? 'Listening...' : 'Tap the microphone to talk'}</span>
-              </motion.button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-[#0A0F1E] to-[#1B365D] flex items-center justify-center p-4">
+      <div className="max-w-xl w-full mx-4 space-y-6">
+        
+        {/* Avatar */}
+        <motion.div 
+          className="flex justify-center"
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <AICompanionAvatar 
+            state={getAvatarState()}
+            expression={isListening ? "curiosity" : isSpeaking ? "excitement" : "joy"}
+            avatarUrl="/companion-avatar-realistic.png"
+            size="lg"
+            primaryColor="#c9a063"
+          />
         </motion.div>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mx-4">
-          <h3 className="text-lg font-bold text-[#c9a063] text-center mb-4">Quick Access</h3>
+
+        {/* Speech Bubble */}
+        <motion.div 
+          className="bg-white rounded-3xl p-6 shadow-lg"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <p className="text-gray-800 text-base">
+            Hello! I'm here to help you today. How are you feeling?
+          </p>
+        </motion.div>
+
+        {/* Microphone Button */}
+        <motion.button
+          onClick={handleMicClick}
+          className="w-full bg-[#c9a063] hover:bg-[#b89053] text-white rounded-2xl p-6 shadow-xl flex items-center justify-center gap-3 transition-all"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <Mic className="w-6 h-6" />
+          <span className="text-base font-medium">Tap the microphone to talk</span>
+        </motion.button>
+
+        {/* Quick Access */}
+        <motion.div 
+          className="space-y-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h3 className="text-white text-sm font-medium px-2">Quick Access</h3>
           <div className="grid grid-cols-2 gap-3">
-            <motion.button className="glass-light border border-[#c9a063]/20 rounded-2xl p-6 flex flex-col items-center gap-2 hover:border-[#c9a063]/40 transition-all min-h-[120px]" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c9a063] to-[#d4b078] flex items-center justify-center shadow-md">
-                <MessageCircle className="w-6 h-6 text-[#1a2332]" />
+            <motion.button
+              onClick={handleChatsClick}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:bg-white/20 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
+                <MessageCircle className="w-6 h-6 text-white" />
               </div>
-              <span className="text-base font-bold text-gray-100">Chats</span>
+              <span className="text-white text-base">Chats</span>
             </motion.button>
-            <motion.button className="glass-light border border-[#c9a063]/20 rounded-2xl p-6 flex flex-col items-center gap-2 hover:border-[#c9a063]/40 transition-all min-h-[120px]" whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#c9a063] to-[#d4b078] flex items-center justify-center shadow-md">
-                <Camera className="w-6 h-6 text-[#1a2332]" />
+            
+            <motion.button
+              onClick={handleMemoriesClick}
+              className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 min-h-[120px] flex flex-col items-center justify-center gap-3 hover:bg-white/20 transition-all"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="w-12 h-12 bg-[#c9a063] rounded-full flex items-center justify-center">
+                <Camera className="w-6 h-6 text-white" />
               </div>
-              <span className="text-base font-bold text-gray-100">Memories</span>
+              <span className="text-white text-base">Memories</span>
             </motion.button>
           </div>
         </motion.div>
+
       </div>
     </div>
   );
