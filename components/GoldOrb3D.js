@@ -76,7 +76,7 @@ export default function GoldOrb3D({
         <div
           className="absolute inset-0 rounded-full blur-[120px] opacity-70"
           style={{
-            background: 'radial-gradient(circle, rgba(255,214,153,0.55), rgba(255,214,153,0))',
+            background: 'radial-gradient(circle, rgba(212,165,116,0.55), rgba(212,165,116,0))',
             transform: `scale(${1.2 + audioLevel * 0.2})`
           }}
         />
@@ -85,7 +85,7 @@ export default function GoldOrb3D({
         <div
           className="absolute inset-[8%] rounded-full blur-[80px] opacity-70"
           style={{
-            background: 'radial-gradient(circle, rgba(255,198,110,0.4), rgba(255,159,64,0.05))'
+            background: 'radial-gradient(circle, rgba(201,168,106,0.4), rgba(201,168,106,0.05))'
           }}
         />
 
@@ -99,8 +99,8 @@ export default function GoldOrb3D({
               height: `${sparkle.size}px`,
               left: `${sparkle.x}px`,
               top: `${sparkle.y}px`,
-              background: 'radial-gradient(circle, rgba(255,214,149,0.9), rgba(255,214,149,0))',
-              boxShadow: '0 0 10px rgba(255,214,149,0.7)',
+              background: 'radial-gradient(circle, rgba(212,165,116,0.9), rgba(212,165,116,0))',
+              boxShadow: '0 0 10px rgba(212,165,116,0.7)',
               opacity: sparkle.opacity,
               animationDelay: `${sparkle.delay}s`,
               animationDuration: `${sparkle.duration + 2}s`
@@ -111,10 +111,10 @@ export default function GoldOrb3D({
         <svg viewBox="0 0 400 400" className="relative z-10 w-full h-full">
           <defs>
             <radialGradient id={ids.gradient} cx="30%" cy="20%" r="80%">
-              <stop offset="0%" stopColor="#FFF8E3" />
-              <stop offset="35%" stopColor="#FFD892" />
-              <stop offset="65%" stopColor="#E39A3D" />
-              <stop offset="100%" stopColor="#B56A1A" />
+              <stop offset="0%" stopColor="#F5E8D8" />
+              <stop offset="35%" stopColor="#E3B888" />
+              <stop offset="65%" stopColor="#D4A574" />
+              <stop offset="100%" stopColor="#C9A86A" />
             </radialGradient>
             <radialGradient id={ids.glow} cx="30%" cy="25%" r="60%">
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
@@ -126,7 +126,7 @@ export default function GoldOrb3D({
               <stop offset="100%" stopColor="rgba(255,255,255,0)" />
             </linearGradient>
             <filter id={ids.shadow} x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="25" stdDeviation="20" floodColor="rgba(181,106,20,0.35)" />
+              <feDropShadow dx="0" dy="25" stdDeviation="20" floodColor="rgba(201,168,106,0.35)" />
               <feGaussianBlur stdDeviation="6" result="blur" />
             </filter>
           </defs>

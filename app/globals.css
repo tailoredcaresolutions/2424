@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --tcs-navy: #030817;
-  --tcs-midnight: #070f21;
-  --tcs-midnight-soft: #0d1830;
-  --tcs-gold: #F1A852;
-  --tcs-light-gold: #FCE3BA;
-  --tcs-deep-gold: #C9822D;
-  --tcs-champagne: #FFF5E6;
+  --tcs-navy: #1A1F2E;
+  --tcs-midnight: #151A26;
+  --tcs-midnight-soft: #242936;
+  --tcs-gold: #D4A574;
+  --tcs-light-gold: #E3B888;
+  --tcs-deep-gold: #C9A86A;
+  --tcs-champagne: #F5E8D8;
   --tcs-ivory: #FFF9F1;
-  --tcs-sand: #F5E3CB;
+  --tcs-sand: #E8D5C4;
 }
 
 html,

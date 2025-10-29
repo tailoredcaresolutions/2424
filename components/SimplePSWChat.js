@@ -243,7 +243,7 @@ const SimplePSWChat = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4"
         style={{
-          background: 'linear-gradient(135deg, #0E1535 0%, #1B365D 100%)'
+          background: 'linear-gradient(135deg, #1A1F2E 0%, #242936 100%)'
         }}>
         
         {/* Logo/Branding */}
@@ -267,8 +267,8 @@ const SimplePSWChat = () => {
           onClick={handleStart}
           className="group relative px-12 py-6 rounded-full text-xl font-bold transition-all transform hover:scale-105 active:scale-95 shadow-2xl"
           style={{
-            background: 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
-            color: '#0E1535'
+            background: 'linear-gradient(135deg, #D4A574 0%, #C9A86A 100%)',
+            color: '#1A1F2E'
           }}>
           <span className="flex items-center gap-3">
             <span className="text-2xl">🎤</span>
@@ -292,7 +292,7 @@ const SimplePSWChat = () => {
   return (
     <div className="min-h-screen flex flex-col"
       style={{
-        background: 'linear-gradient(135deg, #0E1535 0%, #1B365D 100%)'
+        background: 'linear-gradient(135deg, #1A1F2E 0%, #242936 100%)'
       }}>
       
       {/* Header */}
@@ -320,8 +320,8 @@ const SimplePSWChat = () => {
               disabled={isProcessing}
               className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
               style={{
-                background: 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
-                color: '#0E1535'
+                background: 'linear-gradient(135deg, #D4A574 0%, #C9A86A 100%)',
+                color: '#1A1F2E'
               }}>
               Generate Report
             </button>
@@ -336,14 +336,14 @@ const SimplePSWChat = () => {
             <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                 msg.role === 'user'
-                  ? 'bg-gradient-to-r from-[#E3A248] to-[#D4A574] text-[#0E1535]'
+                  ? 'bg-gradient-to-r from-[#D4A574] to-[#D4A574] text-[#1A1F2E]'
                   : msg.isReport
                     ? 'bg-white text-gray-900'
                     : 'bg-white/10 text-white border border-white/20'
               }`}>
                 <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                 <p className={`text-xs mt-1 ${
-                  msg.role === 'user' ? 'text-[#0E1535]/60' : 'text-white/40'
+                  msg.role === 'user' ? 'text-[#1A1F2E]/60' : 'text-white/40'
                 }`}>
                   {new Date(msg.timestamp).toLocaleTimeString()}
                 </p>
@@ -354,7 +354,7 @@ const SimplePSWChat = () => {
           {/* Current transcript preview */}
           {currentTranscript && (
             <div className="flex justify-end">
-              <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-gradient-to-r from-[#E3A248]/50 to-[#D4A574]/50 text-white border-2 border-dashed border-[#E3A248]">
+              <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-gradient-to-r from-[#D4A574]/50 to-[#D4A574]/50 text-white border-2 border-dashed border-[#D4A574]">
                 <p className="text-sm italic">{currentTranscript}</p>
                 <p className="text-xs mt-1 text-white/60">Transcribing...</p>
               </div>
@@ -386,7 +386,7 @@ const SimplePSWChat = () => {
               style={{
                 background: isListening 
                   ? 'linear-gradient(135deg, #ff4444 0%, #ff6666 100%)'
-                  : 'linear-gradient(135deg, #E3A248 0%, #D4A574 100%)',
+                  : 'linear-gradient(135deg, #D4A574 0%, #C9A86A 100%)',
                 boxShadow: isListening ? '0 0 30px rgba(255, 68, 68, 0.6)' : '0 4px 12px rgba(227, 162, 72, 0.3)'
               }}>
               <span>{isListening ? '⏸️' : '🎤'}</span>
