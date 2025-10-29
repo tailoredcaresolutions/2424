@@ -921,7 +921,7 @@ const PSWVoiceReporter = () => {
         {/* Modal */}
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all"
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full pointer-events-auto transform transition-all"
             style={{
               animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
@@ -1124,7 +1124,7 @@ const PSWVoiceReporter = () => {
         {/* Modal */}
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full pointer-events-auto"
+            className="bg-white rounded-3xl shadow-2xl max-w-md w-full pointer-events-auto"
             style={{ animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
           >
             {/* Header */}
@@ -1226,7 +1226,7 @@ const PSWVoiceReporter = () => {
         {/* Modal */}
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full pointer-events-auto max-h-[80vh] flex flex-col"
+            className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full pointer-events-auto max-h-[80vh] flex flex-col"
             style={{ animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
           >
             {/* Header */}
@@ -1454,7 +1454,7 @@ const PSWVoiceReporter = () => {
                 {/* Phase 2 Q1: Expand/Collapse All button */}
                 <button
                   onClick={toggleAllSections}
-                  className="px-4 py-2 rounded-full font-semibold text-sm text-[#2F1F0B]"
+                  className="px-4 py-2 rounded-3xl font-semibold text-sm text-[#2F1F0B]"
                   style={{
                     backgroundColor: brandColors.lightGold,
                     border: '1px solid rgba(194,122,31,0.25)'
@@ -1469,7 +1469,7 @@ const PSWVoiceReporter = () => {
                   <>
                     <button
                       onClick={() => setShowDarJson(!showDarJson)}
-                      className="px-4 py-2 rounded-full font-semibold text-sm text-[#2F1F0B]"
+                      className="px-4 py-2 rounded-3xl font-semibold text-sm text-[#2F1F0B]"
                       style={{
                         backgroundColor: brandColors.sand
                       }}
@@ -1492,7 +1492,7 @@ const PSWVoiceReporter = () => {
                         setShowSuccessToast(true);
                         setTimeout(() => setShowSuccessToast(false), 3000);
                       }}
-                      className="px-4 py-2 rounded-full font-semibold text-sm text-[#1C5C2A] bg-[#E6F4EA]"
+                      className="px-4 py-2 rounded-3xl font-semibold text-sm text-[#1C5C2A] bg-[#E6F4EA]"
                       aria-label="Export DAR JSON"
                     >
                       📥 Export JSON
@@ -1515,7 +1515,7 @@ const PSWVoiceReporter = () => {
 
             {/* DAR JSON Integration: Show DAR JSON when toggled */}
             {showDarJson && darJson && (
-              <div className="mt-6 bg-[#FFF7EB] rounded-2xl p-6 border border-[#F2DFC5]">
+              <div className="mt-6 bg-[#FFF7EB] rounded-3xl p-6 border border-[#F2DFC5]">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-semibold" style={{ color: brandColors.darkBlue }}>
                     DAR JSON (Ontario PSW Standard)
@@ -1532,7 +1532,7 @@ const PSWVoiceReporter = () => {
                     📋 Copy JSON
                   </button>
                 </div>
-                <pre className="bg-white p-4 rounded-2xl border border-[#F1E0CC] overflow-x-auto text-sm">
+                <pre className="bg-white p-4 rounded-3xl border border-[#F1E0CC] overflow-x-auto text-sm">
                   {JSON.stringify(darJson, null, 2)}
                 </pre>
                 {darJson.errors_or_gaps && darJson.errors_or_gaps.length > 0 && (
@@ -1632,7 +1632,7 @@ const PSWVoiceReporter = () => {
 
           {/* Language Selector */}
           <div className="max-w-2xl mx-auto mb-6">
-            <div className="bg-white rounded-2xl shadow-lg p-4 border border-[#F0E0CC]">
+            <div className="bg-white rounded-3xl shadow-lg p-4 border border-white/20">
               <div className="flex items-center justify-between">
                 <label className="text-sm font-medium text-[#6b5b4c]">
                   Language
@@ -1640,7 +1640,7 @@ const PSWVoiceReporter = () => {
                 <select
                   value={selectedLanguage}
                   onChange={(e) => setSelectedLanguage(e.target.value)}
-                  className="px-3 py-2 border border-[#E4D6C4] rounded-xl focus:outline-none focus:ring-2 text-base bg-white"
+                  className="px-3 py-2 border-2 border-[rgba(241,168,82,0.3)] active:scale-98 transition-all rounded-xl focus:outline-none focus:ring-2 text-base bg-white"
                 >
                   {Object.entries(languages).map(([code, name]) => (
                     <option key={code} value={code}>{name}</option>
@@ -1655,7 +1655,7 @@ const PSWVoiceReporter = () => {
 
           {/* Main Conversation Interface */}
           <div className="max-w-2xl mx-auto">
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_25px_65px_rgba(32,21,5,0.06)] p-6 border border-[#F0E0CC]">
+            <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-6 border border-white/20">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold" style={{ color: brandColors.darkBlue }}>
                 Conversational Documentation
@@ -1668,7 +1668,7 @@ const PSWVoiceReporter = () => {
                     onClick={toggleListening}
                     disabled={isProcessing}
                     aria-label={isListening ? "Stop recording" : "Start voice recording"}
-                    className={`flex items-center justify-center w-16 h-16 rounded-full font-bold text-lg transition-all transform ${
+                    className={`flex items-center justify-center w-32 h-32 rounded-full font-bold text-6xl active:scale-95 transition-all transform ${
                       isListening
                         ? 'scale-110 shadow-lg animate-pulse'
                         : 'hover:scale-105 shadow-lg'
@@ -1678,10 +1678,10 @@ const PSWVoiceReporter = () => {
                     style={{
                       background: !isProcessing
                         ? (isListening
-                            ? '#EF4444'
+                            ? 'linear-gradient(135deg, #EF4444, #DC2626)'
                             : 'linear-gradient(135deg, #FFE6C5, #F2A043)')
                         : undefined,
-                      color: isListening || isProcessing ? '#FFFFFF' : '#2C1301'
+                      color: '#FFFFFF'
                     }}
                   >
                     {isListening ? '⏹️' : '🎤'}
@@ -1714,7 +1714,7 @@ const PSWVoiceReporter = () => {
                     onChange={(e) => setTextInput(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Type your response here... (Press Enter to send, Shift+Enter for new line)"
-                    className="flex-1 px-4 py-3 rounded-2xl focus:outline-none resize-none text-base"
+                    className="flex-1 px-4 py-3 rounded-3xl focus:outline-none resize-none text-base"
                     style={{
                       backgroundColor: '#FFF5E6',
                       border: '1px solid rgba(194,122,31,0.25)'
@@ -1726,7 +1726,7 @@ const PSWVoiceReporter = () => {
                     onClick={handleTextSubmit}
                     disabled={isSendDisabled}
                     aria-label="Send message"
-                    className="px-5 py-2 rounded-2xl font-semibold text-[#2C1301] transition-all disabled:text-white"
+                    className="px-5 py-2 rounded-3xl font-semibold text-[#2C1301] transition-all disabled:text-white"
                     style={isSendDisabled
                       ? { backgroundColor: '#D1D5DB', color: '#FFFFFF' }
                       : {
@@ -1741,7 +1741,7 @@ const PSWVoiceReporter = () => {
             )}
 
             {transcript && !showTextInput && (
-              <div className="mb-4 p-3 bg-[#FFF5E6] rounded-2xl border border-[#F1E0CC]">
+              <div className="mb-4 p-3 bg-[#FFF5E6] rounded-3xl border border-[#F1E0CC]">
                 <p className="text-sm" style={{ color: brandColors.darkBlue }}>Listening: {transcript}</p>
               </div>
             )}
@@ -1768,7 +1768,7 @@ const PSWVoiceReporter = () => {
                     className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
                   >
                   <div
-                    className={`max-w-xs lg:max-w-md px-4 pt-4 pb-4 rounded-2xl ${
+                    className={`max-w-[75%] px-4 pt-4 pb-4 rounded-3xl ${
                       isUserMessage ? 'text-white' : 'text-[#2A1E12]'
                     }`}
                     style={{
@@ -1903,7 +1903,7 @@ const PSWVoiceReporter = () => {
                 <button
                   onClick={generateReport}
                   aria-label="Generate documentation report"
-                  className="flex-1 py-3 px-4 rounded-full text-[#2C1301] font-semibold transition-all"
+                  className="flex-1 py-4 px-6 rounded-3xl active:scale-98 text-[#2C1301] font-semibold transition-all"
                   style={{
                     background: 'linear-gradient(135deg, #FFE4C0, #F3A54E)',
                     boxShadow: '0 18px 35px rgba(227,162,72,0.35)'
