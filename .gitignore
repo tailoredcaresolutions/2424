@@ -83,3 +83,10 @@ logs/
 # macOS
 .AppleDouble
 .LSOverride
+
+# Cloudflare Tunnel Security (NEVER COMMIT)
+.cloudflared/
+**/*.json
+**/ea22fe8e-*.json
+backend/.env
+.env.local
