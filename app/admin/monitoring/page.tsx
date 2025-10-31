@@ -138,7 +138,13 @@ export default function MonitoringDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -147,39 +153,48 @@ export default function MonitoringDashboard() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-gray-900 text-4xl font-bold">
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
               System Monitoring
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-white/70 text-lg">
               Real-time health and performance metrics
             </p>
             {healthData && (
-              <p className="text-gray-500 mt-1 text-sm">
+              <p className="text-white/60 mt-2 text-sm">
                 Last updated: {new Date(healthData.timestamp).toLocaleString()}
               </p>
             )}
           </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              size="sm"
-              variant={autoRefresh ? 'success' : 'ghost'}
+          <div className="flex items-center gap-3">
+            <button
               onClick={() => setAutoRefresh(!autoRefresh)}
+              className={`touch-target rounded-glass-lg px-4 py-2 text-sm font-semibold transition-all ${
+                autoRefresh
+                  ? 'liquid-glass-gold text-[var(--tcs-blue-deep)] shadow-[0_10px_25px_rgba(212,165,116,0.4)]'
+                  : 'liquid-glass-light text-white border border-white/20'
+              }`}
             >
               {autoRefresh ? '🔄 Auto-refresh ON' : '⏸️ Auto-refresh OFF'}
-            </Button>
-            <Button size="sm" variant="primary" onClick={fetchHealthData}>
+            </button>
+            <button
+              onClick={fetchHealthData}
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+            >
               🔄 Refresh Now
-            </Button>
+            </button>
           </div>
         </div>
 
         {error && (
-          <div className="bg-red-50 border-red-200 text-red-800 mb-6 rounded-lg border p-4">
-            ⚠️ {error}
+          <div className="liquid-glass-card border-red-500/40 rounded-glass-lg text-red-100 mb-6 border p-6 shadow-[0_15px_40px_rgba(239,68,68,0.4)]">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚠️</span>
+              <span className="font-semibold">{error}</span>
+            </div>
           </div>
         )}
 

@@ -4,11 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import {
-  Card,
-  CardHeader,
-  CardContent,
   StatCard,
-  Button,
   Badge,
   LoadingSpinner,
 } from '@/components/ui';
@@ -152,7 +148,13 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -161,20 +163,23 @@ export default function AdminDashboard() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-white text-4xl font-bold">Admin Dashboard</h1>
-            <p className="text-white/70 mt-2">
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">Admin Dashboard</h1>
+            <p className="text-white/70 text-lg">
               PSW Voice Documentation System • Enterprise Control Center
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="border-red-500/40 rounded-2xl text-red-100 mb-6 border bg-gradient-to-r from-[#3B0F0F] to-[#5B1A1A] p-4 shadow-[0_15px_40px_rgba(59,15,15,0.5)]">
-            ⚠️ {error}
+          <div className="liquid-glass-card border-red-500/40 rounded-glass-lg text-red-100 mb-6 border p-6 shadow-[0_15px_40px_rgba(239,68,68,0.4)]">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚠️</span>
+              <span className="font-semibold">{error}</span>
+            </div>
           </div>
         )}
 
@@ -214,127 +219,101 @@ export default function AdminDashboard() {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <Card>
-            <CardHeader title="Quick Actions" icon="⚡" />
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                <Link href="/admin/monitoring">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">📊</span>
-                    <span className="text-sm">Monitoring</span>
-                  </Button>
-                </Link>
-                <Link href="/admin/users">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">👥</span>
-                    <span className="text-sm">Users</span>
-                  </Button>
-                </Link>
-                <Link href="/search">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">🔍</span>
-                    <span className="text-sm">Search</span>
-                  </Button>
-                </Link>
-                <Link href="/reports">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">📋</span>
-                    <span className="text-sm">Reports</span>
-                  </Button>
-                </Link>
-                <Link href="/admin/backups">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">💾</span>
-                    <span className="text-sm">Backups</span>
-                  </Button>
-                </Link>
-                <Link href="/admin/audit-logs">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">📜</span>
-                    <span className="text-sm">Audit Logs</span>
-                  </Button>
-                </Link>
-                <Link href="/analytics">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">📈</span>
-                    <span className="text-sm">Analytics</span>
-                  </Button>
-                </Link>
-                <Link href="/settings">
-                  <Button
-                    variant="ghost"
-                    fullWidth
-                    className="border-white/15 text-white h-24 flex-col border hover:text-[#2C1301]"
-                  >
-                    <span className="mb-1 text-2xl">⚙️</span>
-                    <span className="text-sm">Settings</span>
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">⚡</span>
+              <h2 className="text-2xl font-bold text-white">Quick Actions</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              <Link href="/admin/monitoring">
+                <button
+                  className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target"
+                >
+                  <span className="mb-1 text-2xl">📊</span>
+                  <span className="text-sm font-semibold">Monitoring</span>
+                </button>
+              </Link>
+              <Link href="/admin/users">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">👥</span>
+                  <span className="text-sm font-semibold">Users</span>
+                </button>
+              </Link>
+              <Link href="/search">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">🔍</span>
+                  <span className="text-sm font-semibold">Search</span>
+                </button>
+              </Link>
+              <Link href="/reports">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">📋</span>
+                  <span className="text-sm font-semibold">Reports</span>
+                </button>
+              </Link>
+              <Link href="/admin/backups">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">💾</span>
+                  <span className="text-sm font-semibold">Backups</span>
+                </button>
+              </Link>
+              <Link href="/admin/audit-logs">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">📜</span>
+                  <span className="text-sm font-semibold">Audit Logs</span>
+                </button>
+              </Link>
+              <Link href="/analytics">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">📈</span>
+                  <span className="text-sm font-semibold">Analytics</span>
+                </button>
+              </Link>
+              <Link href="/settings">
+                <button className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target">
+                  <span className="mb-1 text-2xl">⚙️</span>
+                  <span className="text-sm font-semibold">Settings</span>
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
 
         {/* Recent Activity & System Status */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Recent Activity */}
-          <Card>
-            <CardHeader
-              title="Recent Activity"
-              icon="📊"
-              action={
-                <Button size="sm" variant="ghost" onClick={fetchDashboardData}>
-                  🔄 Refresh
-                </Button>
-              }
-            />
-            <CardContent className="space-y-3">
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📊</span>
+                <h2 className="text-2xl font-bold text-white">Recent Activity</h2>
+              </div>
+              <button
+                onClick={fetchDashboardData}
+                className="touch-target liquid-glass-light text-white rounded-glass-md px-3 py-1.5 text-xs font-semibold border border-white/20 hover:border-white/30 transition-all"
+              >
+                🔄 Refresh
+              </button>
+            </div>
+            <div className="space-y-3">
               {stats?.recentActivity.map((activity) => (
                 <div
                   key={activity.id}
-                  className="rounded-2xl bg-white/85 flex items-start space-x-3 border border-[#F1E0CC] p-3 transition-all hover:-translate-y-0.5"
+                  className="liquid-glass-light rounded-glass-md flex items-start space-x-3 border border-white/15 p-4 transition-all hover:border-white/30 hover:-translate-y-0.5"
                 >
                   <span className="text-2xl">
                     {getActivityIcon(activity.type)}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#1F1B16]">
+                    <p className="text-sm font-medium text-white">
                       {activity.message}
                     </p>
                     {activity.user && (
-                      <p className="text-xs text-[#7A6A58]">
+                      <p className="text-xs text-white/60">
                         by {activity.user}
                       </p>
                     )}
-                    <p className="mt-1 text-xs text-[#9A8A78]">
+                    <p className="mt-1 text-xs text-white/50">
                       {formatTimestamp(activity.timestamp)}
                     </p>
                   </div>
@@ -346,19 +325,22 @@ export default function AdminDashboard() {
                   </Badge>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* System Status */}
-          <Card>
-            <CardHeader title="System Status" icon="💻" />
-            <CardContent className="space-y-4">
-              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">💻</span>
+              <h2 className="text-2xl font-bold text-white">System Status</h2>
+            </div>
+            <div className="space-y-4">
+              <div className="liquid-glass-light rounded-glass-md flex items-center justify-between border border-white/15 p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">✅</span>
                   <div>
-                    <p className="font-medium text-[#1F1B16]">Database</p>
-                    <p className="text-xs text-[#7A6A58]">
+                    <p className="font-medium text-white">Database</p>
+                    <p className="text-xs text-white/60">
                       Connected & healthy
                     </p>
                   </div>
@@ -366,12 +348,12 @@ export default function AdminDashboard() {
                 <Badge variant="success">Online</Badge>
               </div>
 
-              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
+              <div className="liquid-glass-light rounded-glass-md flex items-center justify-between border border-white/15 p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">🤖</span>
                   <div>
-                    <p className="font-medium text-[#1F1B16]">AI Model</p>
-                    <p className="text-xs text-[#7A6A58]">
+                    <p className="font-medium text-white">AI Model</p>
+                    <p className="text-xs text-white/60">
                       Llama 3.3 70B operational
                     </p>
                   </div>
@@ -379,35 +361,35 @@ export default function AdminDashboard() {
                 <Badge variant="success">Running</Badge>
               </div>
 
-              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
+              <div className="liquid-glass-light rounded-glass-md flex items-center justify-between border border-white/15 p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">⚡</span>
                   <div>
-                    <p className="font-medium text-[#1F1B16]">Redis Cache</p>
-                    <p className="text-xs text-[#7A6A58]">85% hit rate</p>
+                    <p className="font-medium text-white">Redis Cache</p>
+                    <p className="text-xs text-white/60">85% hit rate</p>
                   </div>
                 </div>
                 <Badge variant="success">Active</Badge>
               </div>
 
-              <div className="bg-white/85 rounded-2xl flex items-center justify-between border border-[#F1E0CC] p-4">
+              <div className="liquid-glass-light rounded-glass-md flex items-center justify-between border border-white/15 p-4">
                 <div className="flex items-center space-x-3">
                   <span className="text-2xl">💾</span>
                   <div>
-                    <p className="font-medium text-[#1F1B16]">Backups</p>
-                    <p className="text-xs text-[#7A6A58]">Last: 2 hours ago</p>
+                    <p className="font-medium text-white">Backups</p>
+                    <p className="text-xs text-white/60">Last: 2 hours ago</p>
                   </div>
                 </div>
                 <Badge variant="success">Automated</Badge>
               </div>
 
               <Link href="/admin/monitoring">
-                <Button variant="primary" fullWidth className="mt-4">
+                <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg w-full px-6 py-3 mt-4 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all">
                   View Full Monitoring Dashboard →
-                </Button>
+                </button>
               </Link>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

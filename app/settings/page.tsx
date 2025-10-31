@@ -28,16 +28,16 @@ function ToggleSwitch({
   description,
 }: ToggleSwitchProps) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between p-4 rounded-glass-md liquid-glass-light border border-white/10 hover:border-white/20 transition-all">
       <div className="flex-1">
         <label
           htmlFor={id}
-          className="text-white block cursor-pointer text-sm font-medium"
+          className="text-white block cursor-pointer text-base font-semibold"
         >
           {label}
         </label>
         {description && (
-          <p className="text-gray-300 mt-1 text-xs">{description}</p>
+          <p className="text-white/60 mt-1 text-sm">{description}</p>
         )}
       </div>
       <button
@@ -47,13 +47,15 @@ function ToggleSwitch({
         aria-checked={checked}
         aria-labelledby={`${id}-label`}
         onClick={onChange}
-        className={`rounded-full focus:ring-blue-500 focus:ring-offset-gray-800 relative inline-flex h-6 w-11 items-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-          checked ? 'bg-blue-600' : 'bg-gray-600'
+        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 touch-target ${
+          checked 
+            ? 'bg-[var(--tcs-gold)] shadow-[0_4px_15px_rgba(212,165,116,0.5)]' 
+            : 'bg-white/20 border border-white/30'
         }`}
       >
         <span className="sr-only">{label}</span>
         <span
-          className={`rounded-full bg-white inline-block h-4 w-4 transform transition-transform ${
+          className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-[0_2px_8px_rgba(0,0,0,0.3)] ${
             checked ? 'translate-x-6' : 'translate-x-1'
           }`}
         />
@@ -98,56 +100,66 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4">
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-8">
-          <h1 className="text-white text-3xl font-bold">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4 md:p-6 lg:p-8 relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-3xl">
+        <header className="mb-8 text-center">
+          <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
             Settings & Preferences
           </h1>
-          <p className="text-gray-300 mt-2">
+          <p className="text-white/70 text-lg">
             Customize your experience and accessibility options
           </p>
         </header>
 
         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-          <section className="liquid-glass-card rounded-glass-lg p-6">
+          {/* Language & Region Section */}
+          <section className="liquid-glass-card rounded-glass-lg p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <fieldset>
-              <legend className="text-white mb-4 text-lg font-semibold">
-                Language Preferences
+              <legend className="text-white mb-6 text-xl font-bold">
+                Language & Region
               </legend>
-              <div>
-                <label
-                  htmlFor="language-select"
-                  className="text-white mb-2 block text-sm font-medium"
-                >
-                  Select Language
-                </label>
-                <select
-                  id="language-select"
-                  value={settings.language}
-                  onChange={handleLanguageChange}
-                  className="bg-gray-800 border-gray-600 text-white focus:ring-blue-500 focus:border-transparent w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2"
-                  aria-describedby="language-help"
-                >
-                  {languages.map((lang) => (
-                    <option key={lang.value} value={lang.value}>
-                      {lang.label}
-                    </option>
-                  ))}
-                </select>
-                <p id="language-help" className="text-gray-300 mt-1 text-xs">
-                  Choose your preferred language for the interface
-                </p>
+              <div className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="language-select"
+                    className="text-white mb-2 block text-sm font-medium"
+                  >
+                    Select Language
+                  </label>
+                  <select
+                    id="language-select"
+                    value={settings.language}
+                    onChange={handleLanguageChange}
+                    className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                    aria-describedby="language-help"
+                  >
+                    {languages.map((lang) => (
+                      <option key={lang.value} value={lang.value} className="bg-[var(--tcs-blue-dark)]">
+                        {lang.label}
+                      </option>
+                    ))}
+                  </select>
+                  <p id="language-help" className="text-white/60 mt-2 text-xs">
+                    Choose your preferred language for the interface
+                  </p>
+                </div>
               </div>
             </fieldset>
           </section>
 
-          <section className="liquid-glass-card rounded-glass-lg p-6">
+          {/* Privacy & Data Section */}
+          <section className="liquid-glass-card rounded-glass-lg p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <fieldset>
-              <legend className="text-white mb-4 text-lg font-semibold">
-                Privacy Settings
+              <legend className="text-white mb-6 text-xl font-bold">
+                Privacy & Data
               </legend>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <ToggleSwitch
                   id="auto-save"
                   checked={settings.autoSaveSessions}
@@ -173,12 +185,13 @@ export default function SettingsPage() {
             </fieldset>
           </section>
 
-          <section className="liquid-glass-card rounded-glass-lg p-6">
+          {/* Accessibility Options Section */}
+          <section className="liquid-glass-card rounded-glass-lg p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <fieldset>
-              <legend className="text-white mb-4 text-lg font-semibold">
+              <legend className="text-white mb-6 text-xl font-bold">
                 Accessibility Options
               </legend>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <ToggleSwitch
                   id="reduce-motion"
                   checked={settings.reduceMotion}
@@ -204,24 +217,48 @@ export default function SettingsPage() {
             </fieldset>
           </section>
 
-          <div className="flex justify-end">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setSettings({
+                  language: 'en-CA',
+                  autoSaveSessions: true,
+                  shareAnalytics: false,
+                  enableVoiceFeedback: true,
+                  reduceMotion: false,
+                  highContrastMode: false,
+                  largeText: false,
+                });
+              }}
+              className="liquid-glass-light text-white rounded-glass-lg px-6 py-3 font-semibold transition-all border border-white/20 hover:border-white/30 shadow-[0_10px_25px_rgba(0,0,0,0.3)] touch-target"
+            >
+              Reset to Defaults
+            </button>
             <button
               type="button"
               onClick={handleSave}
-              className="touch-target liquid-glass-gold text-[#2C1301] rounded-glass px-6 py-3 font-semibold transition-all button-press shadow-[0_12px_30px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] focus:outline-none focus:ring-2 focus:ring-tcs-gold focus:ring-offset-2"
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-8 py-4 font-bold text-lg transition-all shadow-[0_15px_40px_rgba(212,165,116,0.4)] hover:shadow-[0_20px_50px_rgba(212,165,116,0.5)] focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50"
             >
               Save Preferences
             </button>
           </div>
         </form>
 
+        {/* Enhanced Toast Notification */}
         {showToast && (
           <div
             role="alert"
             aria-live="polite"
-            className="bg-green-600 text-white fixed bottom-4 right-4 rounded-lg px-6 py-3 shadow-lg"
+            className="liquid-glass-card text-white fixed bottom-6 right-6 rounded-glass-lg px-6 py-4 shadow-[0_20px_50px_rgba(74,222,128,0.4)] border border-green-400/40 animate-slide-up z-50"
           >
-            Preferences saved successfully!
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 rounded-full bg-green-400/30 flex items-center justify-center">
+                ✓
+              </div>
+              <span className="font-semibold">Preferences saved successfully!</span>
+            </div>
           </div>
         )}
       </div>

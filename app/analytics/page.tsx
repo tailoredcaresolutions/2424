@@ -135,7 +135,13 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -144,14 +150,14 @@ export default function AnalyticsPage() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-white text-4xl font-bold">
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
               Analytics Dashboard
             </h1>
-            <p className="text-white/70 mt-2">
+            <p className="text-white/70 text-lg">
               Hyper-precise insights across every PSW shift
             </p>
           </div>
@@ -160,18 +166,21 @@ export default function AnalyticsPage() {
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
-                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
+                className={`touch-target rounded-glass-lg border px-4 py-2 text-sm font-semibold transition-all ${
                   timeRange === range
-                    ? 'bg-white border-transparent text-[#2C1301] shadow-[0_12px_25px_rgba(255,255,255,0.25)]'
-                    : 'bg-transparent text-white/70 border-white/20 hover:text-white hover:bg-white/10'
+                    ? 'liquid-glass-light text-[var(--tcs-blue-deep)] shadow-[0_12px_25px_rgba(255,255,255,0.25)] border-white/30'
+                    : 'liquid-glass-card text-white/70 border-white/20 hover:text-white hover:border-white/30'
                 }`}
               >
                 {getTimeRangeLabel(range)}
               </button>
             ))}
-            <Button size="sm" variant="ghost" onClick={fetchAnalytics}>
+            <button
+              onClick={fetchAnalytics}
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+            >
               🔄 Refresh
-            </Button>
+            </button>
           </div>
         </div>
 

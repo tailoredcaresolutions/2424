@@ -299,7 +299,13 @@ export default function AuditLogsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -308,52 +314,55 @@ export default function AuditLogsPage() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-gray-900 text-4xl font-bold">Audit Logs</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">Audit Logs</h1>
+            <p className="text-white/70 text-lg">
               Track all system activity and user actions
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button
-              size="sm"
-              variant="ghost"
+          <div className="flex flex-wrap items-center gap-3">
+            <button
               onClick={() => exportLogs('json')}
+              className="touch-target liquid-glass-light text-white rounded-glass-lg px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all"
             >
               📄 Export JSON
-            </Button>
-            <Button
-              size="sm"
-              variant="success"
+            </button>
+            <button
               onClick={() => exportLogs('csv')}
+              className="touch-target liquid-glass-light text-white rounded-glass-lg px-4 py-2 text-sm font-semibold border border-white/20 hover:border-green-400/40 transition-all"
             >
               📥 Export CSV
-            </Button>
-            <Button size="sm" variant="primary" onClick={fetchLogs}>
+            </button>
+            <button
+              onClick={fetchLogs}
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+            >
               🔄 Refresh
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Filters */}
-        <Card className="mb-6">
-          <CardHeader title="Filters" icon="🔍" />
-          <div className="px-6 pb-6">
-            <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Category
-                </label>
-                <select
-                  value={filters.category}
-                  onChange={(e) =>
-                    setFilters({ ...filters, category: e.target.value })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                >
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-2xl">🔍</span>
+            <h2 className="text-2xl font-bold text-white">Filters</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Category
+              </label>
+              <select
+                value={filters.category}
+                onChange={(e) =>
+                  setFilters({ ...filters, category: e.target.value })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              >
                   <option value="all">All</option>
                   <option value="auth">Auth</option>
                   <option value="user">User</option>
@@ -363,93 +372,95 @@ export default function AuditLogsPage() {
                 </select>
               </div>
 
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  User ID
-                </label>
-                <input
-                  type="text"
-                  value={filters.userId}
-                  onChange={(e) =>
-                    setFilters({ ...filters, userId: e.target.value })
-                  }
-                  placeholder="Filter by user"
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                />
-              </div>
-
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Action
-                </label>
-                <input
-                  type="text"
-                  value={filters.action}
-                  onChange={(e) =>
-                    setFilters({ ...filters, action: e.target.value })
-                  }
-                  placeholder="Filter by action"
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                />
-              </div>
-
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Start Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) =>
-                    setFilters({ ...filters, startDate: e.target.value })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                />
-              </div>
-
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  End Date
-                </label>
-                <input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) =>
-                    setFilters({ ...filters, endDate: e.target.value })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                />
-              </div>
-
-              <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Status
-                </label>
-                <select
-                  value={filters.success}
-                  onChange={(e) =>
-                    setFilters({ ...filters, success: e.target.value })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:ring-[#1B365D]"
-                >
-                  <option value="all">All</option>
-                  <option value="true">Success</option>
-                  <option value="false">Failed</option>
-                </select>
-              </div>
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                User ID
+              </label>
+              <input
+                type="text"
+                value={filters.userId}
+                onChange={(e) =>
+                  setFilters({ ...filters, userId: e.target.value })
+                }
+                placeholder="Filter by user"
+                className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              />
             </div>
 
-            <div className="flex items-center justify-between">
-              <p className="text-gray-600 text-sm">
-                Showing <span className="font-bold">{totalLogs}</span> total
-                logs
-              </p>
-              <Button size="sm" variant="ghost" onClick={clearFilters}>
-                Clear Filters
-              </Button>
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Action
+              </label>
+              <input
+                type="text"
+                value={filters.action}
+                onChange={(e) =>
+                  setFilters({ ...filters, action: e.target.value })
+                }
+                placeholder="Filter by action"
+                className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) =>
+                  setFilters({ ...filters, startDate: e.target.value })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                End Date
+              </label>
+              <input
+                type="date"
+                value={filters.endDate}
+                onChange={(e) =>
+                  setFilters({ ...filters, endDate: e.target.value })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Status
+              </label>
+              <select
+                value={filters.success}
+                onChange={(e) =>
+                  setFilters({ ...filters, success: e.target.value })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-3 py-2 text-sm focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              >
+                <option value="all" className="bg-[var(--tcs-blue-dark)]">All</option>
+                <option value="true" className="bg-[var(--tcs-blue-dark)]">Success</option>
+                <option value="false" className="bg-[var(--tcs-blue-dark)]">Failed</option>
+              </select>
             </div>
           </div>
-        </Card>
+
+          <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/20">
+            <p className="text-white/70 text-sm">
+              Showing <span className="font-bold text-white">{totalLogs}</span> total
+              logs
+            </p>
+            <button
+              onClick={clearFilters}
+              className="touch-target liquid-glass-light text-white rounded-glass-md px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all"
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
 
         {/* Logs Table */}
         {loading ? (

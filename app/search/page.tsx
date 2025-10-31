@@ -3,10 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Navigation from '@/components/Navigation';
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  Button,
   Table,
   Pagination,
   Badge,
@@ -180,19 +176,24 @@ export default function SearchPage() {
       width: '100px',
       align: 'center' as const,
       render: (value: number) => (
-        <Button
-          size="sm"
-          variant="ghost"
+        <button
           onClick={() => (window.location.href = `/reports/${value}`)}
+          className="touch-target liquid-glass-light text-white rounded-glass-md px-3 py-1.5 text-xs font-semibold border border-white/20 hover:border-white/30 transition-all"
         >
           View
-        </Button>
+        </button>
       ),
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -201,51 +202,50 @@ export default function SearchPage() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-white text-4xl font-bold">Search Reports</h1>
-          <p className="text-white/70 mt-2">
+          <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">Search Reports</h1>
+          <p className="text-white/70 text-lg">
             Full-text search across every shift report and note
           </p>
         </div>
 
         {/* Search Form */}
-        <Card className="mb-8">
-          <CardContent>
-            <form onSubmit={handleSearch}>
-              {/* Main search input */}
-              <div className="mb-4 flex gap-3">
-                <input
-                  type="text"
-                  value={filters.query}
-                  onChange={(e) =>
-                    setFilters({ ...filters, query: e.target.value })
-                  }
-                  placeholder="Search reports, activities, concerns, notes..."
-                  className="input-premium flex-1"
-                />
-                <Button
-                  type="submit"
-                  variant="primary"
-                  disabled={!filters.query || loading}
-                >
-                  {loading ? '🔄 Searching...' : '🔍 Search'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setShowAdvanced(!showAdvanced)}
-                >
-                  {showAdvanced ? '⬆️ Hide Filters' : '⬇️ Advanced Filters'}
-                </Button>
-              </div>
+        <div className="liquid-glass-card rounded-glass-lg mb-8 p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <form onSubmit={handleSearch}>
+            {/* Main search input */}
+            <div className="mb-4 flex gap-3">
+              <input
+                type="text"
+                value={filters.query}
+                onChange={(e) =>
+                  setFilters({ ...filters, query: e.target.value })
+                }
+                placeholder="Search reports, activities, concerns, notes..."
+                className="liquid-glass-light flex-1 rounded-glass-md border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              />
+              <button
+                type="submit"
+                disabled={!filters.query || loading}
+                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? '🔄 Searching...' : '🔍 Search'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="touch-target liquid-glass-light text-white rounded-glass-lg px-4 py-3 font-semibold border border-white/20 hover:border-white/30 transition-all"
+              >
+                {showAdvanced ? '⬆️ Hide Filters' : '⬇️ Advanced Filters'}
+              </button>
+            </div>
 
               {/* Advanced filters */}
               {showAdvanced && (
-                <div className="grid grid-cols-1 gap-4 border-t border-[#F1E0CC] pt-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-4 border-t border-white/20 pt-4 md:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       PSW ID
                     </label>
                     <input
@@ -255,12 +255,12 @@ export default function SearchPage() {
                         setFilters({ ...filters, pswId: e.target.value })
                       }
                       placeholder="Filter by PSW"
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white placeholder-white/60 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       Client ID
                     </label>
                     <input
@@ -270,12 +270,12 @@ export default function SearchPage() {
                         setFilters({ ...filters, clientId: e.target.value })
                       }
                       placeholder="Filter by client"
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white placeholder-white/60 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       Start Date
                     </label>
                     <input
@@ -284,12 +284,12 @@ export default function SearchPage() {
                       onChange={(e) =>
                         setFilters({ ...filters, startDate: e.target.value })
                       }
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       End Date
                     </label>
                     <input
@@ -298,12 +298,12 @@ export default function SearchPage() {
                       onChange={(e) =>
                         setFilters({ ...filters, endDate: e.target.value })
                       }
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       Status
                     </label>
                     <select
@@ -311,17 +311,17 @@ export default function SearchPage() {
                       onChange={(e) =>
                         setFilters({ ...filters, status: e.target.value })
                       }
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     >
-                      <option value="">All statuses</option>
-                      <option value="completed">Completed</option>
-                      <option value="pending">Pending</option>
-                      <option value="draft">Draft</option>
+                      <option value="" className="bg-[var(--tcs-blue-dark)]">All statuses</option>
+                      <option value="completed" className="bg-[var(--tcs-blue-dark)]">Completed</option>
+                      <option value="pending" className="bg-[var(--tcs-blue-dark)]">Pending</option>
+                      <option value="draft" className="bg-[var(--tcs-blue-dark)]">Draft</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       Sort By
                     </label>
                     <select
@@ -332,17 +332,17 @@ export default function SearchPage() {
                           sortBy: e.target.value as any,
                         })
                       }
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     >
-                      <option value="relevance">Relevance</option>
-                      <option value="date">Date</option>
-                      <option value="psw">PSW</option>
-                      <option value="client">Client</option>
+                      <option value="relevance" className="bg-[var(--tcs-blue-dark)]">Relevance</option>
+                      <option value="date" className="bg-[var(--tcs-blue-dark)]">Date</option>
+                      <option value="psw" className="bg-[var(--tcs-blue-dark)]">PSW</option>
+                      <option value="client" className="bg-[var(--tcs-blue-dark)]">Client</option>
                     </select>
                   </div>
 
                   <div>
-                    <label className="mb-1 block text-sm font-medium text-[#7A6A58]">
+                    <label className="mb-1 block text-sm font-medium text-white/90">
                       Sort Order
                     </label>
                     <select
@@ -353,18 +353,16 @@ export default function SearchPage() {
                           sortOrder: e.target.value as any,
                         })
                       }
-                      className="input-premium w-full"
+                      className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-3 py-2 text-white focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                     >
-                      <option value="desc">Descending</option>
-                      <option value="asc">Ascending</option>
+                      <option value="desc" className="bg-[var(--tcs-blue-dark)]">Descending</option>
+                      <option value="asc" className="bg-[var(--tcs-blue-dark)]">Ascending</option>
                     </select>
                   </div>
 
                   <div className="flex items-end">
-                    <Button
+                    <button
                       type="button"
-                      variant="ghost"
-                      fullWidth
                       onClick={() => {
                         setFilters({
                           query: filters.query,
@@ -372,15 +370,15 @@ export default function SearchPage() {
                           sortOrder: 'desc',
                         });
                       }}
+                      className="touch-target liquid-glass-light text-white rounded-glass-md w-full px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all"
                     >
                       Clear Filters
-                    </Button>
+                    </button>
                   </div>
                 </div>
               )}
             </form>
-          </CardContent>
-        </Card>
+        </div>
 
         {/* Results */}
         {loading && <LoadingSpinner size="lg" text="Searching..." />}
@@ -395,14 +393,13 @@ export default function SearchPage() {
                 results
                 {filters.query && ` for "${filters.query}"`}
               </p>
-              <Button
-                size="sm"
-                variant="primary"
+              <button
                 onClick={exportToCSV}
                 disabled={searchResults.totalResults === 0}
+                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 📥 Export CSV
-              </Button>
+              </button>
             </div>
 
             {/* Results table */}
@@ -428,59 +425,55 @@ export default function SearchPage() {
                 )}
               </>
             ) : (
-              <Card>
-                <CardContent>
-                  <div className="py-12 text-center">
-                    <p className="mb-4 text-4xl">🔍</p>
-                    <h3 className="mb-2 text-xl font-bold text-[#1F1B16]">
-                      No results found
-                    </h3>
-                    <p className="mb-6 text-[#7A6A58]">
-                      Try adjusting your search query or filters
-                    </p>
-                    <Button
-                      variant="ghost"
-                      onClick={() => {
-                        setFilters({
-                          query: '',
-                          sortBy: 'relevance',
-                          sortOrder: 'desc',
-                        });
-                        setSearchResults(null);
-                      }}
-                    >
-                      Clear search
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="liquid-glass-card rounded-glass-lg p-12 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+                <div className="text-center">
+                  <p className="mb-4 text-6xl">🔍</p>
+                  <h3 className="mb-2 text-xl font-bold text-white">
+                    No results found
+                  </h3>
+                  <p className="mb-6 text-white/70">
+                    Try adjusting your search query or filters
+                  </p>
+                  <button
+                    onClick={() => {
+                      setFilters({
+                        query: '',
+                        sortBy: 'relevance',
+                        sortOrder: 'desc',
+                      });
+                      setSearchResults(null);
+                    }}
+                    className="touch-target liquid-glass-light text-white rounded-glass-lg px-6 py-2 font-semibold border border-white/20 hover:border-white/30 transition-all"
+                  >
+                    Clear search
+                  </button>
+                </div>
+              </div>
             )}
           </>
         )}
 
         {/* Empty state */}
         {!searchResults && !loading && (
-          <Card>
-            <CardContent>
-              <div className="py-12 text-center">
-                <p className="mb-4 text-6xl">🔍</p>
-                <h3 className="mb-2 text-2xl font-bold text-[#1F1B16]">
-                  Search Reports
-                </h3>
-                <p className="mb-6 text-[#7A6A58]">
-                  Enter keywords to search across all shift reports, activities,
-                  concerns, and notes
+          <div className="liquid-glass-card rounded-glass-lg p-12 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="text-center">
+              <p className="mb-4 text-6xl">🔍</p>
+              <h3 className="mb-2 text-2xl font-bold text-white">
+                Search Reports
+              </h3>
+              <p className="mb-6 text-white/70">
+                Enter keywords to search across all shift reports, activities,
+                concerns, and notes
+              </p>
+              <div className="space-y-1 text-sm text-white/60">
+                <p>💡 Tip: Use advanced filters to narrow down your search</p>
+                <p>
+                  💡 Tip: Search supports full-text search with relevance
+                  ranking
                 </p>
-                <div className="space-y-1 text-sm text-[#9A8A78]">
-                  <p>💡 Tip: Use advanced filters to narrow down your search</p>
-                  <p>
-                    💡 Tip: Search supports full-text search with relevance
-                    ranking
-                  </p>
-                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
       </div>
     </div>

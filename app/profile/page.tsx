@@ -4,11 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Button,
   Badge,
   LoadingSpinner,
 } from '@/components/ui';
@@ -128,7 +123,13 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
       <Navigation
         user={{
           name: profile.fullName,
@@ -137,495 +138,501 @@ export default function ProfilePage() {
         }}
       />
 
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-gray-900 text-4xl font-bold">My Profile</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">My Profile</h1>
+          <p className="text-white/70 text-lg">
             Manage your account information and preferences
           </p>
         </div>
 
         {/* Profile Card */}
-        <Card className="mb-6">
-          <CardContent>
-            <div className="flex items-start space-x-6">
-              {/* Avatar */}
-              <div className="flex-shrink-0">
-                <div className="rounded-full text-white flex h-32 w-32 items-center justify-center bg-gradient-to-br from-[#1B365D] to-[#D4A574] text-5xl font-bold">
-                  {profile.fullName.charAt(0).toUpperCase()}
-                </div>
-                <Button variant="ghost" size="sm" className="mt-3 w-full">
-                  Change Photo
-                </Button>
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-start space-x-6">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              <div className="rounded-full text-white flex h-32 w-32 items-center justify-center bg-gradient-to-br from-[var(--tcs-blue-primary)] to-[var(--tcs-gold)] text-5xl font-bold shadow-[0_10px_30px_rgba(212,165,116,0.4)]">
+                {profile.fullName.charAt(0).toUpperCase()}
               </div>
-
-              {/* Profile Info */}
-              <div className="flex-1">
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-gray-900 text-3xl font-bold">
-                      {profile.fullName}
-                    </h2>
-                    <p className="text-gray-600">@{profile.username}</p>
-                  </div>
-                  {getRoleBadge(profile.role)}
-                </div>
-
-                <div className="mb-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-gray-600 text-sm">Email</p>
-                    <p className="text-gray-900 font-medium">{profile.email}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">Phone</p>
-                    <p className="text-gray-900 font-medium">
-                      {profile.phoneNumber || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">Member Since</p>
-                    <p className="text-gray-900 font-medium">
-                      {new Date(profile.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600 text-sm">Last Login</p>
-                    <p className="text-gray-900 font-medium">
-                      {new Date(profile.lastLogin).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Badge variant={profile.mfaEnabled ? 'success' : 'warning'}>
-                    {profile.mfaEnabled ? '🔒 MFA Enabled' : '⚠️ MFA Disabled'}
-                  </Badge>
-                  {!profile.mfaEnabled && (
-                    <Link href="/settings/mfa">
-                      <Button size="sm" variant="warning">
-                        Enable MFA
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </div>
+              <button className="liquid-glass-light text-white rounded-glass-md mt-3 w-full px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all">
+                Change Photo
+              </button>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Statistics */}
-        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card padding="sm">
-            <div className="p-4 text-center">
-              <p className="mb-2 text-4xl font-bold text-[#1B365D]">
-                {profile.stats.totalReports}
-              </p>
-              <p className="text-gray-600 text-sm">Total Reports</p>
-            </div>
-          </Card>
-          <Card padding="sm">
-            <div className="p-4 text-center">
-              <p className="mb-2 text-4xl font-bold text-[#D4A574]">
-                {profile.stats.reportsThisMonth}
-              </p>
-              <p className="text-gray-600 text-sm">This Month</p>
-            </div>
-          </Card>
-          <Card padding="sm">
-            <div className="p-4 text-center">
-              <p className="text-purple-600 mb-2 text-4xl font-bold">
-                {profile.stats.avgResponseTime}ms
-              </p>
-              <p className="text-gray-600 text-sm">Avg Response Time</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Edit Profile */}
-        <Card className="mb-6">
-          <CardHeader
-            title="Profile Information"
-            icon="✏️"
-            action={
-              !editing && (
-                <Button
-                  size="sm"
-                  variant="primary"
-                  onClick={() => setEditing(true)}
-                >
-                  Edit Profile
-                </Button>
-              )
-            }
-          />
-          <CardContent>
-            {editing ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={profile.fullName}
-                      onChange={(e) =>
-                        setProfile({ ...profile, fullName: e.target.value })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Username
-                    </label>
-                    <input
-                      type="text"
-                      value={profile.username}
-                      onChange={(e) =>
-                        setProfile({ ...profile, username: e.target.value })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      value={profile.email}
-                      onChange={(e) =>
-                        setProfile({ ...profile, email: e.target.value })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      value={profile.phoneNumber}
-                      onChange={(e) =>
-                        setProfile({ ...profile, phoneNumber: e.target.value })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-6">
+            {/* Profile Info */}
+            <div className="flex-1">
+              <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 mb-1 text-sm">Full Name</p>
-                  <p className="text-gray-900 text-lg font-medium">
+                  <h2 className="text-white text-3xl md:text-4xl font-bold">
                     {profile.fullName}
-                  </p>
+                  </h2>
+                  <p className="text-white/70">@{profile.username}</p>
+                </div>
+                {getRoleBadge(profile.role)}
+              </div>
+
+              <div className="mb-4 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-white/60 text-sm">Email</p>
+                  <p className="text-white font-medium">{profile.email}</p>
                 </div>
                 <div>
-                  <p className="text-gray-600 mb-1 text-sm">Username</p>
-                  <p className="text-gray-900 text-lg font-medium">
-                    @{profile.username}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600 mb-1 text-sm">Email Address</p>
-                  <p className="text-gray-900 text-lg font-medium">
-                    {profile.email}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600 mb-1 text-sm">Phone Number</p>
-                  <p className="text-gray-900 text-lg font-medium">
+                  <p className="text-white/60 text-sm">Phone</p>
+                  <p className="text-white font-medium">
                     {profile.phoneNumber || 'Not set'}
                   </p>
                 </div>
+                <div>
+                  <p className="text-white/60 text-sm">Member Since</p>
+                  <p className="text-white font-medium">
+                    {new Date(profile.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-white/60 text-sm">Last Login</p>
+                  <p className="text-white font-medium">
+                    {new Date(profile.lastLogin).toLocaleString()}
+                  </p>
+                </div>
               </div>
-            )}
-          </CardContent>
-          {editing && (
-            <CardFooter>
-              <Button variant="ghost" onClick={() => setEditing(false)}>
-                Cancel
-              </Button>
-              <Button variant="primary" onClick={saveProfile} loading={saving}>
-                Save Changes
-              </Button>
-            </CardFooter>
-          )}
-        </Card>
 
-        {/* Preferences */}
-        <Card className="mb-6">
-          <CardHeader title="Preferences" icon="⚙️" />
-          <CardContent>
+              <div className="flex items-center space-x-2">
+                <Badge variant={profile.mfaEnabled ? 'success' : 'warning'}>
+                  {profile.mfaEnabled ? '🔒 MFA Enabled' : '⚠️ MFA Disabled'}
+                </Badge>
+                {!profile.mfaEnabled && (
+                  <Link href="/settings/mfa">
+                    <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-md px-4 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(212,165,116,0.4)] hover:shadow-[0_12px_30px_rgba(212,165,116,0.5)] transition-all">
+                      Enable MFA
+                    </button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics */}
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="text-center">
+              <p className="mb-2 text-4xl font-bold text-white">
+                {profile.stats.totalReports}
+              </p>
+              <p className="text-white/70 text-sm">Total Reports</p>
+            </div>
+          </div>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="text-center">
+              <p className="mb-2 text-4xl font-bold text-[var(--tcs-gold)]">
+                {profile.stats.reportsThisMonth}
+              </p>
+              <p className="text-white/70 text-sm">This Month</p>
+            </div>
+          </div>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+            <div className="text-center">
+              <p className="text-purple-300 mb-2 text-4xl font-bold">
+                {profile.stats.avgResponseTime}ms
+              </p>
+              <p className="text-white/70 text-sm">Avg Response Time</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Edit Profile */}
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">✏️</span>
+              <h2 className="text-2xl font-bold text-white">Profile Information</h2>
+            </div>
+            {!editing && (
+              <button
+                onClick={() => setEditing(true)}
+                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(212,165,116,0.4)] hover:shadow-[0_12px_30px_rgba(212,165,116,0.5)] transition-all"
+              >
+                Edit Profile
+              </button>
+            )}
+          </div>
+          {editing ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.fullName}
+                    onChange={(e) =>
+                      setProfile({ ...profile, fullName: e.target.value })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={profile.username}
+                    onChange={(e) =>
+                      setProfile({ ...profile, username: e.target.value })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={profile.email}
+                    onChange={(e) =>
+                      setProfile({ ...profile, email: e.target.value })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={profile.phoneNumber}
+                    onChange={(e) =>
+                      setProfile({ ...profile, phoneNumber: e.target.value })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 pt-4">
+                <button
+                  onClick={() => setEditing(false)}
+                  className="touch-target liquid-glass-light text-white rounded-glass-lg px-6 py-2 font-semibold border border-white/20 hover:border-white/30 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveProfile}
+                  disabled={saving}
+                  className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all disabled:opacity-50"
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </div>
+          ) : (
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Language
-                </label>
-                <select
-                  value={profile.preferences.language}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile,
-                      preferences: {
-                        ...profile.preferences,
-                        language: e.target.value,
-                      },
-                    })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                >
-                  <option value="en">English</option>
-                  <option value="fr">Français</option>
-                  <option value="es">Español</option>
-                </select>
+                <p className="text-white/60 mb-1 text-sm">Full Name</p>
+                <p className="text-white text-lg font-medium">
+                  {profile.fullName}
+                </p>
               </div>
-
               <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Timezone
-                </label>
-                <select
-                  value={profile.preferences.timezone}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile,
-                      preferences: {
-                        ...profile.preferences,
-                        timezone: e.target.value,
-                      },
-                    })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                >
-                  <option value="America/Toronto">
-                    Eastern Time (Toronto)
-                  </option>
-                  <option value="America/Vancouver">
-                    Pacific Time (Vancouver)
-                  </option>
-                  <option value="America/Chicago">
-                    Central Time (Chicago)
-                  </option>
-                </select>
+                <p className="text-white/60 mb-1 text-sm">Username</p>
+                <p className="text-white text-lg font-medium">
+                  @{profile.username}
+                </p>
               </div>
-
               <div>
-                <label className="text-gray-700 mb-1 block text-sm font-medium">
-                  Theme
-                </label>
-                <select
-                  value={profile.preferences.theme}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile,
-                      preferences: {
-                        ...profile.preferences,
-                        theme: e.target.value as any,
-                      },
-                    })
-                  }
-                  className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark (Coming Soon)</option>
-                  <option value="auto">Auto (System)</option>
-                </select>
+                <p className="text-white/60 mb-1 text-sm">Email Address</p>
+                <p className="text-white text-lg font-medium">
+                  {profile.email}
+                </p>
               </div>
-
-              <div className="bg-gray-50 flex items-center justify-between rounded-lg p-4">
-                <div>
-                  <p className="text-gray-900 font-medium">
-                    Email Notifications
-                  </p>
-                  <p className="text-gray-600 text-sm">Receive email alerts</p>
-                </div>
-                <label className="relative inline-flex cursor-pointer items-center">
-                  <input
-                    type="checkbox"
-                    checked={profile.preferences.emailNotifications}
-                    onChange={(e) =>
-                      setProfile({
-                        ...profile,
-                        preferences: {
-                          ...profile.preferences,
-                          emailNotifications: e.target.checked,
-                        },
-                      })
-                    }
-                    className="peer sr-only"
-                  />
-                  <div className="bg-gray-200 peer-focus:ring-blue-300 rounded-full peer-checked:after:border-white after:bg-white after:border-gray-300 after:rounded-full peer h-6 w-11 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:border after:transition-all after:content-[''] peer-checked:bg-[#1B365D] peer-checked:after:translate-x-full peer-focus:outline-none peer-focus:ring-4"></div>
-                </label>
+              <div>
+                <p className="text-white/60 mb-1 text-sm">Phone Number</p>
+                <p className="text-white text-lg font-medium">
+                  {profile.phoneNumber || 'Not set'}
+                </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
+
+        {/* Preferences */}
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-2xl">⚙️</span>
+            <h2 className="text-2xl font-bold text-white">Preferences</h2>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Language
+              </label>
+              <select
+                value={profile.preferences.language}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    preferences: {
+                      ...profile.preferences,
+                      language: e.target.value,
+                    },
+                  })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              >
+                <option value="en" className="bg-[var(--tcs-blue-dark)]">English</option>
+                <option value="fr" className="bg-[var(--tcs-blue-dark)]">Français</option>
+                <option value="es" className="bg-[var(--tcs-blue-dark)]">Español</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Timezone
+              </label>
+              <select
+                value={profile.preferences.timezone}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    preferences: {
+                      ...profile.preferences,
+                      timezone: e.target.value,
+                    },
+                  })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              >
+                <option value="America/Toronto" className="bg-[var(--tcs-blue-dark)]">
+                  Eastern Time (Toronto)
+                </option>
+                <option value="America/Vancouver" className="bg-[var(--tcs-blue-dark)]">
+                  Pacific Time (Vancouver)
+                </option>
+                <option value="America/Chicago" className="bg-[var(--tcs-blue-dark)]">
+                  Central Time (Chicago)
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-white/90 mb-1 block text-sm font-medium">
+                Theme
+              </label>
+              <select
+                value={profile.preferences.theme}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    preferences: {
+                      ...profile.preferences,
+                      theme: e.target.value as any,
+                    },
+                  })
+                }
+                className="liquid-glass-light text-white w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+              >
+                <option value="light" className="bg-[var(--tcs-blue-dark)]">Light</option>
+                <option value="dark" className="bg-[var(--tcs-blue-dark)]">Dark (Coming Soon)</option>
+                <option value="auto" className="bg-[var(--tcs-blue-dark)]">Auto (System)</option>
+              </select>
+            </div>
+
+            <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-white/10">
+              <div>
+                <p className="text-white font-medium">
+                  Email Notifications
+                </p>
+                <p className="text-white/60 text-sm">Receive email alerts</p>
+              </div>
+              <label className="relative inline-flex cursor-pointer items-center">
+                <input
+                  type="checkbox"
+                  checked={profile.preferences.emailNotifications}
+                  onChange={(e) =>
+                    setProfile({
+                      ...profile,
+                      preferences: {
+                        ...profile.preferences,
+                        emailNotifications: e.target.checked,
+                      },
+                    })
+                  }
+                  className="peer sr-only"
+                />
+                <div className="bg-white/20 peer-focus:ring-[var(--tcs-gold)] rounded-full peer-checked:after:border-white after:bg-white after:border-white/30 after:rounded-full peer h-7 w-12 after:absolute after:left-[2px] after:top-[2px] after:h-6 after:w-6 after:border after:transition-all after:content-[''] peer-checked:bg-[var(--tcs-gold)] peer-checked:after:translate-x-6 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--tcs-gold)]/50"></div>
+              </label>
+            </div>
+          </div>
+        </div>
 
         {/* Security */}
-        <Card className="mb-6">
-          <CardHeader title="Security" icon="🔒" />
-          <CardContent>
-            <div className="space-y-4">
-              {!changingPassword ? (
-                <>
-                  <div className="bg-gray-50 flex items-center justify-between rounded-lg p-4">
-                    <div>
-                      <p className="text-gray-900 font-medium">Password</p>
-                      <p className="text-gray-600 text-sm">
-                        Last changed: 30 days ago
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setChangingPassword(true)}
-                    >
-                      Change Password
-                    </Button>
-                  </div>
-
-                  <div className="bg-gray-50 flex items-center justify-between rounded-lg p-4">
-                    <div>
-                      <p className="text-gray-900 font-medium">
-                        Multi-Factor Authentication
-                      </p>
-                      <p className="text-gray-600 text-sm">
-                        {profile.mfaEnabled
-                          ? 'Currently enabled'
-                          : 'Not enabled'}
-                      </p>
-                    </div>
-                    <Link href="/settings/mfa">
-                      <Button size="sm" variant="ghost">
-                        {profile.mfaEnabled ? 'Manage MFA' : 'Enable MFA'}
-                      </Button>
-                    </Link>
-                  </div>
-
-                  <div className="bg-gray-50 flex items-center justify-between rounded-lg p-4">
-                    <div>
-                      <p className="text-gray-900 font-medium">
-                        Active Sessions
-                      </p>
-                      <p className="text-gray-600 text-sm">2 active sessions</p>
-                    </div>
-                    <Button size="sm" variant="danger">
-                      Logout All Devices
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <div className="space-y-4">
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 md:p-8 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-2xl">🔒</span>
+            <h2 className="text-2xl font-bold text-white">Security</h2>
+          </div>
+          <div className="space-y-4">
+            {!changingPassword ? (
+              <>
+                <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-white/10">
                   <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Current Password
-                    </label>
-                    <input
-                      type="password"
-                      value={passwordData.currentPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          currentPassword: e.target.value,
-                        })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
+                    <p className="text-white font-medium">Password</p>
+                    <p className="text-white/60 text-sm">
+                      Last changed: 30 days ago
+                    </p>
                   </div>
-
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={passwordData.newPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          newPassword: e.target.value,
-                        })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-gray-700 mb-1 block text-sm font-medium">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      value={passwordData.confirmPassword}
-                      onChange={(e) =>
-                        setPasswordData({
-                          ...passwordData,
-                          confirmPassword: e.target.value,
-                        })
-                      }
-                      className="border-gray-300 focus:border-transparent w-full rounded-lg border px-3 py-2 focus:ring-2 focus:ring-[#1B365D]"
-                    />
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <Button
-                      variant="ghost"
-                      onClick={() => setChangingPassword(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button variant="primary" onClick={changePassword}>
-                      Change Password
-                    </Button>
-                  </div>
+                  <button
+                    onClick={() => setChangingPassword(true)}
+                    className="touch-target liquid-glass-light text-white rounded-glass-md px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all"
+                  >
+                    Change Password
+                  </button>
                 </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+
+                <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-white/10">
+                  <div>
+                    <p className="text-white font-medium">
+                      Multi-Factor Authentication
+                    </p>
+                    <p className="text-white/60 text-sm">
+                      {profile.mfaEnabled
+                        ? 'Currently enabled'
+                        : 'Not enabled'}
+                    </p>
+                  </div>
+                  <Link href="/settings/mfa">
+                    <button className="touch-target liquid-glass-light text-white rounded-glass-md px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all">
+                      {profile.mfaEnabled ? 'Manage MFA' : 'Enable MFA'}
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-white/10">
+                  <div>
+                    <p className="text-white font-medium">
+                      Active Sessions
+                    </p>
+                    <p className="text-white/60 text-sm">2 active sessions</p>
+                  </div>
+                  <button className="touch-target liquid-glass-light text-red-300 rounded-glass-md px-4 py-2 text-sm font-semibold border border-red-400/30 hover:border-red-400/50 transition-all">
+                    Logout All Devices
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        newPassword: e.target.value,
+                      })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-white/90 mb-1 block text-sm font-medium">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    className="liquid-glass-light text-white placeholder-white/60 w-full rounded-glass-md border border-white/20 px-4 py-3 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <button
+                    onClick={() => setChangingPassword(false)}
+                    className="touch-target liquid-glass-light text-white rounded-glass-lg px-6 py-2 font-semibold border border-white/20 hover:border-white/30 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={changePassword}
+                    className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+                  >
+                    Change Password
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Danger Zone */}
-        <Card className="border-red-200">
-          <CardHeader title="Danger Zone" icon="⚠️" />
-          <CardContent>
-            <div className="space-y-4">
-              <div className="bg-red-50 border-red-200 flex items-center justify-between rounded-lg border p-4">
-                <div>
-                  <p className="text-red-900 font-medium">
-                    Export Account Data
-                  </p>
-                  <p className="text-red-700 text-sm">
-                    Download all your data in JSON format
-                  </p>
-                </div>
-                <Button size="sm" variant="ghost">
-                  Export Data
-                </Button>
+        <div className="liquid-glass-card rounded-glass-lg p-6 md:p-8 border border-red-400/40 shadow-[0_15px_40px_rgba(239,68,68,0.3)]">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-2xl">⚠️</span>
+            <h2 className="text-2xl font-bold text-red-200">Danger Zone</h2>
+          </div>
+          <div className="space-y-4">
+            <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-red-400/30">
+              <div>
+                <p className="text-red-200 font-medium">
+                  Export Account Data
+                </p>
+                <p className="text-red-300/80 text-sm">
+                  Download all your data in JSON format
+                </p>
               </div>
-
-              <div className="bg-red-50 border-red-200 flex items-center justify-between rounded-lg border p-4">
-                <div>
-                  <p className="text-red-900 font-medium">Delete Account</p>
-                  <p className="text-red-700 text-sm">
-                    Permanently delete your account and all data
-                  </p>
-                </div>
-                <Button size="sm" variant="danger">
-                  Delete Account
-                </Button>
-              </div>
+              <button className="touch-target liquid-glass-light text-red-200 rounded-glass-md px-4 py-2 text-sm font-semibold border border-red-400/30 hover:border-red-400/50 transition-all">
+                Export Data
+              </button>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="liquid-glass-light flex items-center justify-between rounded-glass-md p-4 border border-red-400/30">
+              <div>
+                <p className="text-red-200 font-medium">Delete Account</p>
+                <p className="text-red-300/80 text-sm">
+                  Permanently delete your account and all data
+                </p>
+              </div>
+              <button className="touch-target liquid-glass-light text-red-200 rounded-glass-md px-4 py-2 text-sm font-semibold border border-red-400/40 hover:border-red-400/60 hover:bg-red-500/20 transition-all">
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

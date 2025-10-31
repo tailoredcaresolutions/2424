@@ -27,15 +27,24 @@ export default function LoadingSpinner({
   };
 
   const spinner = (
-    <div className={`animate-spin rounded-full ${sizeClasses[size]} ${colorClasses[color]}`}></div>
+    <div className={`animate-spin rounded-full ${sizeClasses[size]} ${colorClasses[color]}`} role="status" aria-label="Loading">
+      <span className="sr-only">Loading...</span>
+    </div>
   );
 
   if (fullScreen) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-glass-heavy liquid-glass-dark">
-        <div className="flex flex-col items-center space-y-4 liquid-glass-card rounded-glass-lg p-8">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-tcs-blue-primary border-t-transparent"></div>
-          {text && <p className="text-lg text-tcs-blue-dark font-medium">{text}</p>}
+        <div className="flex flex-col items-center space-y-6 liquid-glass-card rounded-glass-lg p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-tcs-blue-primary/30 border-t-tcs-blue-primary border-r-tcs-gold/50"></div>
+            <div className="absolute inset-0 animate-spin rounded-full h-16 w-16 border-4 border-transparent border-t-tcs-gold border-r-tcs-blue-light" style={{ animationDirection: 'reverse', animationDuration: '0.8s' }}></div>
+          </div>
+          {text && (
+            <p className="text-lg text-white font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
+              {text}
+            </p>
+          )}
         </div>
       </div>
     );

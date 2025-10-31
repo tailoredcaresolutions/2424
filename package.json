@@ -15,7 +15,11 @@
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test:run && npm run test:e2e",
     "prepare": "husky",
-    "precommit:guard": "echo '✅ Local AI guard: No cloud AI calls detected'"
+    "precommit:guard": "echo '✅ Local AI guard: No cloud AI calls detected'",
+      "test:integrations": "node scripts/test-integrations.js",
+      "sync-figma-project": "tsx scripts/sync-figma-project.ts",
+      "sync-figma-tokens": "tsx scripts/sync-figma-tokens.ts",
+      "extract-figma-ios26": "tsx scripts/extract-figma-ios26-tokens.ts"
   },
   "dependencies": {
     "@builder.io/react": "^8.2.9",
@@ -66,6 +70,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
     "@dotenvx/dotenvx": "^1.51.0",
+    "@modelcontextprotocol/sdk": "^1.20.2",
     "@next/bundle-analyzer": "^16.0.0",
     "@playwright/test": "^1.56.1",
     "@testing-library/jest-dom": "^6.9.1",

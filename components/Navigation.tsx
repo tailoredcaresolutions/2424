@@ -3,36 +3,61 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { 
+  Home, 
+  Settings, 
+  FileText, 
+  Search, 
+  BarChart3, 
+  Activity,
+  User,
+  Shield,
+  LogOut,
+  Menu,
+  X
+} from 'lucide-react';
 
 const TailoredCareLogo = () => (
-    <svg width="40" height="28" viewBox="0 0 60 40" className="inline-block">
+    <svg width="42" height="30" viewBox="0 0 60 40" className="inline-block drop-shadow-[0_2px_8px_rgba(212,165,116,0.3)]">
       <defs>
         <linearGradient id="navBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: '#1B365D', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#122853', stopOpacity: 1 }} />
           <stop offset="100%" style={{ stopColor: '#0F1E3A', stopOpacity: 1 }} />
         </linearGradient>
         <linearGradient id="navGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#D4A574', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: '#E3B888', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#D4A574', stopOpacity: 1 }} />
           <stop offset="100%" style={{ stopColor: '#C39760', stopOpacity: 1 }} />
         </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
 
-      {/* Blue wing/leaf (left) */}
+      {/* Blue wing/leaf (left) with enhanced depth */}
       <path
         d="M15,20 Q10,10 20,8 Q28,7 30,15 Q31,20 25,22 Q18,24 15,20 Z"
         fill="url(#navBlueGradient)"
+        filter="url(#glow)"
       />
 
-      {/* Gold wing/leaf (right) */}
+      {/* Gold wing/leaf (right) with enhanced depth */}
       <path
         d="M45,20 Q50,10 40,8 Q32,7 30,15 Q29,20 35,22 Q42,24 45,20 Z"
         fill="url(#navGoldGradient)"
+        filter="url(#glow)"
       />
 
-      {/* Central heart */}
+      {/* Central heart with enhanced gradient */}
       <path
         d="M30,16 Q27,12 24,14 Q22,16 24,19 L30,25 L36,19 Q38,16 36,14 Q33,12 30,16 Z"
         fill="url(#navGoldGradient)"
+        filter="url(#glow)"
       />
     </svg>
   );
@@ -51,12 +76,12 @@ export default function Navigation({ user }: NavigationProps) {
   const pathname = usePathname();
 
   const navigation = [
-    { name: 'Home', href: '/', icon: '🏠' },
-    { name: 'Admin', href: '/admin', icon: '⚙️', adminOnly: true },
-    { name: 'Reports', href: '/reports', icon: '📋' },
-    { name: 'Search', href: '/search', icon: '🔍' },
-    { name: 'Monitoring', href: '/admin/monitoring', icon: '📊', adminOnly: true },
-    { name: 'Analytics', href: '/analytics', icon: '📈', adminOnly: true },
+    { name: 'Home', href: '/', icon: Home, adminOnly: false },
+    { name: 'Admin', href: '/admin', icon: Settings, adminOnly: true },
+    { name: 'Reports', href: '/reports', icon: FileText, adminOnly: false },
+    { name: 'Search', href: '/search', icon: Search, adminOnly: false },
+    { name: 'Monitoring', href: '/admin/monitoring', icon: Activity, adminOnly: true },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3, adminOnly: true },
   ];
 
   const isActive = (href: string) => pathname === href;
@@ -80,20 +105,23 @@ export default function Navigation({ user }: NavigationProps) {
           <div className="hidden md:flex md:items-center md:space-x-1">
             {navigation
               .filter(item => !item.adminOnly || user?.role === 'admin')
-              .map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`touch-target px-4 py-2 rounded-full text-sm font-semibold transition-all button-press ${
-                    isActive(item.href)
-                      ? 'liquid-glass-light text-tcs-blue-dark shadow-[0_12px_25px_rgba(255,255,255,0.25)] font-bold'
-                      : 'text-white/80 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
-                  }`}
-                >
-                  <span className="mr-1">{item.icon}</span>
-                  {item.name}
-                </Link>
-              ))}
+              .map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`touch-target px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 button-press flex items-center gap-2 ${
+                      isActive(item.href)
+                        ? 'liquid-glass-light text-tcs-blue-dark shadow-[0_12px_25px_rgba(255,255,255,0.25)] font-bold'
+                        : 'text-white/80 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
+                    }`}
+                  >
+                    <IconComponent className="w-4 h-4" strokeWidth={2.5} />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
           </div>
 
           {/* User menu (desktop) */}
@@ -121,21 +149,25 @@ export default function Navigation({ user }: NavigationProps) {
                       <p className="text-xs text-gray-500">{user.email}</p>
                       <p className="text-xs text-[#C9822D] font-semibold mt-1">{user.role.toUpperCase()}</p>
                     </div>
-                    <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6]">
-                      👤 Profile
+                    <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6] transition-colors">
+                      <User className="w-4 h-4" strokeWidth={2} />
+                      Profile
                     </Link>
-                    <Link href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6]">
-                      ⚙️ Settings
+                    <Link href="/settings" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6] transition-colors">
+                      <Settings className="w-4 h-4" strokeWidth={2} />
+                      Settings
                     </Link>
-                    <Link href="/settings/mfa" className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6]">
-                      🔒 Security (MFA)
+                    <Link href="/settings/mfa" className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-[#FFF5E6] transition-colors">
+                      <Shield className="w-4 h-4" strokeWidth={2} />
+                      Security (MFA)
                     </Link>
-                    <hr className="my-1" />
+                    <hr className="my-1 border-[#F1E0CC]" />
                     <button
                       onClick={() => {/* Handle logout */}}
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-2xl"
+                      className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-2xl transition-colors"
                     >
-                      🚪 Logout
+                      <LogOut className="w-4 h-4" strokeWidth={2} />
+                      Logout
                     </button>
                   </div>
                 )}
@@ -154,15 +186,14 @@ export default function Navigation({ user }: NavigationProps) {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-full text-white hover:bg-white/10"
+              className="touch-target p-2 rounded-full text-white hover:bg-white/10 transition-all button-press"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {mobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" strokeWidth={2.5} />
+              ) : (
+                <Menu className="w-6 h-6" strokeWidth={2.5} />
+              )}
             </button>
           </div>
         </div>
@@ -174,21 +205,24 @@ export default function Navigation({ user }: NavigationProps) {
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation
               .filter(item => !item.adminOnly || user?.role === 'admin')
-              .map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`touch-target block px-4 py-3 rounded-xl text-base font-medium button-press ${
-                    isActive(item.href)
-                      ? 'liquid-glass-light text-tcs-blue-dark font-bold'
-                      : 'text-white/75 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
-                  }`}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.name}
-                </Link>
-              ))}
+              .map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`touch-target flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium button-press transition-all ${
+                      isActive(item.href)
+                        ? 'liquid-glass-light text-tcs-blue-dark font-bold'
+                        : 'text-white/75 hover:text-white hover:bg-white/10 hover:liquid-glass-vibrant'
+                    }`}
+                  >
+                    <IconComponent className="w-5 h-5" strokeWidth={2.5} />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
 
             {user ? (
               <>
@@ -200,22 +234,25 @@ export default function Navigation({ user }: NavigationProps) {
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-white/70 hover:bg-white/10 rounded-xl"
+                  className="flex items-center gap-3 px-4 py-3 text-base text-white/70 hover:bg-white/10 rounded-xl transition-colors"
                 >
-                  👤 Profile
+                  <User className="w-5 h-5" strokeWidth={2} />
+                  Profile
                 </Link>
                 <Link
                   href="/settings"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-base text-white/70 hover:bg-white/10 rounded-xl"
+                  className="flex items-center gap-3 px-4 py-3 text-base text-white/70 hover:bg-white/10 rounded-xl transition-colors"
                 >
-                  ⚙️ Settings
+                  <Settings className="w-5 h-5" strokeWidth={2} />
+                  Settings
                 </Link>
                 <button
                   onClick={() => {/* Handle logout */}}
-                  className="block w-full text-left px-4 py-3 text-base text-red-400 hover:bg-red-500/10 rounded-xl"
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 text-base text-red-400 hover:bg-red-500/10 rounded-xl transition-colors"
                 >
-                  🚪 Logout
+                  <LogOut className="w-5 h-5" strokeWidth={2} />
+                  Logout
                 </button>
               </>
             ) : (

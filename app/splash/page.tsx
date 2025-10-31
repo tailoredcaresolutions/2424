@@ -20,6 +20,12 @@ export default function SplashPage() {
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-6"
       aria-label="Tailored Care Solutions loading screen"
     >
+      {/* Enhanced background orbs */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/10 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      </div>
+      
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,165,116,0.15),transparent_45%),radial-gradient(circle_at_80%_0,rgba(212,165,116,0.12),transparent_40%)]" />
       <div className="absolute inset-8 rounded-glass-lg border border-white/20 liquid-glass-card shadow-[0_40px_80px_rgba(0,0,0,0.4)]" />
 
@@ -28,18 +34,28 @@ export default function SplashPage() {
           <Orb prefersReducedMotion={prefersReducedMotion} />
         </div>
 
-        <div className="max-w-xl space-y-3">
-          <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl lg:text-6xl">
+        <motion.div
+          className="max-w-xl space-y-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
+          <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)] md:text-5xl lg:text-6xl">
             Tailored Care Solutions
           </h1>
-          <p className="text-lg font-medium text-[#E6C5A1] md:text-xl">
+          <p className="text-lg font-semibold text-[#E6C5A1] md:text-xl">
             PSW Voice Documentation Platform
           </p>
-        </div>
+        </motion.div>
 
-        <div className="rounded-full border border-white/20 bg-white/10 px-6 py-2 text-sm text-[#F3D7B7] shadow-[0_12px_30px_rgba(12,22,44,0.45)]">
+        <motion.div
+          className="liquid-glass-light rounded-full border border-white/20 px-6 py-2 text-sm text-[#F3D7B7] shadow-[0_12px_30px_rgba(12,22,44,0.45)]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+        >
           Preparing secure local environment…
-        </div>
+        </motion.div>
       </section>
     </main>
   );

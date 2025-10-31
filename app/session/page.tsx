@@ -116,19 +116,26 @@ export default function SessionPage() {
   };
 
   return (
-    <div className="text-white min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4">
-      <div className="mx-auto max-w-4xl">
+    <div className="text-white min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4 md:p-6 lg:p-8 relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-10 right-10 w-96 h-96 bg-[var(--tcs-gold)]/10 rounded-full blur-3xl animate-pulse-glow" />
+        <div className="absolute bottom-10 left-10 w-96 h-96 bg-[var(--tcs-blue-light)]/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-5xl">
         <header className="mb-8">
-          <h1 className="mb-6 text-center text-3xl font-bold">
+          <h1 className="mb-6 text-center text-3xl md:text-4xl font-bold text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
             PSW Documentation Session
           </h1>
 
-          <div className="bg-white/10 mb-6 rounded-lg p-6">
+          {/* Session Header Card */}
+          <div className="liquid-glass-card rounded-glass-lg mb-6 p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label
                   htmlFor="client-name"
-                  className="mb-2 block text-sm font-medium"
+                  className="mb-2 block text-sm font-medium text-white/90"
                 >
                   Client Name
                 </label>
@@ -137,7 +144,7 @@ export default function SessionPage() {
                   type="text"
                   value={clientName}
                   onChange={(e) => setClientName(e.target.value)}
-                  className="bg-white/20 border-white/30 text-white placeholder-white/60 focus:border-transparent w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#D4A574]"
+                  className="liquid-glass-light w-full rounded-glass-md border border-white/20 px-4 py-3 text-white placeholder-white/60 focus:border-[var(--tcs-gold)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--tcs-gold)]/30 transition-all"
                   placeholder="Enter client name"
                   aria-describedby="client-name-desc"
                 />
@@ -147,129 +154,171 @@ export default function SessionPage() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium text-white/90">
                   Session Date & Time
                 </label>
-                <div className="bg-white/10 text-white/90 rounded-md px-3 py-2">
+                <div className="liquid-glass-light text-white/90 rounded-glass-md px-4 py-3 border border-white/20">
                   {currentDateTime}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white/10 mb-6 rounded-lg p-4">
-            <h2 className="mb-2 text-lg font-semibold">Keyboard Shortcuts</h2>
+          {/* Keyboard Shortcuts Card */}
+          <div className="liquid-glass-card rounded-glass-lg mb-6 p-4 border border-white/15">
+            <h2 className="mb-3 text-lg font-semibold text-white">Keyboard Shortcuts</h2>
             <div className="grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
               <div className="flex items-center gap-2">
-                <kbd className="bg-white/20 rounded px-2 py-1 text-xs">
+                <kbd className="bg-white/20 text-white rounded-glass-md px-3 py-1.5 text-xs font-mono border border-white/20">
                   Space
                 </kbd>
-                <span>Start/Stop Recording</span>
+                <span className="text-white/80">Start/Stop Recording</span>
               </div>
               <div className="flex items-center gap-2">
-                <kbd className="bg-white/20 rounded px-2 py-1 text-xs">
+                <kbd className="bg-white/20 text-white rounded-glass-md px-3 py-1.5 text-xs font-mono border border-white/20">
                   Ctrl+G
                 </kbd>
-                <span>Generate Report</span>
+                <span className="text-white/80">Generate Report</span>
               </div>
             </div>
           </div>
         </header>
 
-        <main>
-          <div className="mb-8 text-center">
-            <button
-              ref={recordButtonRef}
-              onClick={toggleRecording}
-              className={`touch-target rounded-full h-32 w-32 liquid-glass-gold button-press transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-tcs-gold/50 ${
-                isRecording ? 'animate-pulse shadow-lg shadow-tcs-gold/50' : ''
-              }`}
-              aria-label={
-                isRecording ? 'Stop voice recording' : 'Start voice recording'
-              }
-              aria-pressed={isRecording}
-            >
-              <div className="flex h-full items-center justify-center">
-                {isRecording ? (
-                  <div
-                    className="bg-white h-8 w-8 rounded-sm"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <div
-                    className="border-l-white border-t-transparent border-b-transparent ml-1 h-0 w-0 border-b-[12px] border-l-[16px] border-t-[12px]"
-                    aria-hidden="true"
-                  />
-                )}
-              </div>
-            </button>
+        <main className="space-y-8">
+          {/* Recording Interface */}
+          <div className="text-center">
+            <div className="relative inline-block">
+              {/* Pulsing rings when recording */}
+              {isRecording && (
+                <>
+                  <div className="absolute inset-0 rounded-full border-2 border-[var(--tcs-gold)]/50 animate-ping" />
+                  <div className="absolute inset-0 rounded-full border-2 border-[var(--tcs-gold)]/30 animate-ping" style={{ animationDelay: '0.5s' }} />
+                </>
+              )}
+              <button
+                ref={recordButtonRef}
+                onClick={toggleRecording}
+                className={`touch-target rounded-full h-32 w-32 md:h-40 md:w-40 liquid-glass-gold button-press transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 shadow-[0_20px_50px_rgba(212,165,116,0.4)] ${
+                  isRecording 
+                    ? 'shadow-[0_25px_60px_rgba(212,165,116,0.6)] animate-pulse' 
+                    : 'hover:shadow-[0_25px_60px_rgba(212,165,116,0.5)]'
+                }`}
+                aria-label={
+                  isRecording ? 'Stop voice recording' : 'Start voice recording'
+                }
+                aria-pressed={isRecording}
+              >
+                <div className="flex h-full items-center justify-center">
+                  {isRecording ? (
+                    <div
+                      className="bg-white h-10 w-10 md:h-12 md:w-12 rounded-lg"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <div
+                      className="border-l-white border-t-transparent border-b-transparent ml-2 h-0 w-0 border-b-[14px] border-l-[18px] border-t-[14px] md:border-b-[18px] md:border-l-[24px] md:border-t-[18px]"
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+              </button>
+            </div>
 
-            <p className="mt-4 text-lg font-medium">
+            <p className="mt-6 text-xl md:text-2xl font-semibold text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
               {isRecording ? 'Recording...' : 'Press to Record'}
             </p>
+            {isRecording && (
+              <p className="mt-2 text-sm text-white/70">Press Space to stop</p>
+            )}
           </div>
 
-          <div className="mb-8">
-            <h2 className="mb-4 text-xl font-semibold">Live Transcript</h2>
+          {/* Live Transcript Panel */}
+          <div>
+            <h2 className="mb-4 text-xl md:text-2xl font-semibold text-white">Live Transcript</h2>
             <div
-              className="bg-white/10 border-white/20 min-h-[100px] rounded-lg border-2 p-4"
+              className="liquid-glass-card rounded-glass-lg min-h-[120px] border border-white/20 p-6 shadow-[0_15px_40px_rgba(0,0,0,0.3)]"
               aria-live="polite"
               aria-label="Live transcript"
             >
               {currentTranscript ? (
-                <p className="text-white/90">{currentTranscript}</p>
+                <p className="text-white/90 text-lg leading-relaxed">{currentTranscript}</p>
               ) : (
-                <p className="text-white/60 italic">
+                <p className="text-white/60 italic text-center">
                   Transcript will appear here...
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mb-8">
-            <h2 className="mb-4 text-xl font-semibold">Quick Actions</h2>
+          {/* Quick Actions Bar */}
+          <div>
+            <h2 className="mb-4 text-xl md:text-2xl font-semibold text-white">Quick Actions</h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <button
                 onClick={() => addQuickEntry('observation')}
-                className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 rounded-lg px-4 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1B365D]"
+                className="liquid-glass-card rounded-glass-lg px-6 py-4 font-semibold text-white border border-white/20 hover:border-[var(--tcs-blue-light)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(75,111,165,0.4)] touch-target"
                 aria-label="Add current transcript as observation"
               >
-                Add Observation
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[var(--tcs-blue-light)]/30 flex items-center justify-center">
+                    👁️
+                  </div>
+                  <span>Add Observation</span>
+                </div>
               </button>
 
               <button
                 onClick={() => addQuickEntry('care-activity')}
-                className="bg-green-600 hover:bg-green-700 focus:ring-green-500 rounded-lg px-4 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1B365D]"
+                className="liquid-glass-card rounded-glass-lg px-6 py-4 font-semibold text-white border border-white/20 hover:border-green-400/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(74,222,128,0.4)] touch-target"
                 aria-label="Add current transcript as care activity"
               >
-                Add Care Activity
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-green-500/30 flex items-center justify-center">
+                    ✋
+                  </div>
+                  <span>Add Care Activity</span>
+                </div>
               </button>
 
               <button
                 onClick={() => addQuickEntry('client-response')}
-                className="bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 rounded-lg px-4 py-3 font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1B365D]"
+                className="liquid-glass-card rounded-glass-lg px-6 py-4 font-semibold text-white border border-white/20 hover:border-purple-400/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(192,132,252,0.4)] touch-target"
                 aria-label="Add current transcript as client response"
               >
-                Client Response
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/30 flex items-center justify-center">
+                    💬
+                  </div>
+                  <span>Client Response</span>
+                </div>
               </button>
             </div>
           </div>
 
-          <div className="mb-8">
-            <h2 className="mb-4 text-xl font-semibold">Session Transcript</h2>
-            <div className="bg-white/10 max-h-96 overflow-y-auto rounded-lg p-4">
+          {/* Session Transcript */}
+          <div>
+            <h2 className="mb-4 text-xl md:text-2xl font-semibold text-white">Session Transcript</h2>
+            <div className="liquid-glass-card rounded-glass-lg max-h-96 overflow-y-auto border border-white/20 p-6 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
               {transcript.length === 0 ? (
-                <p className="text-white/60 italic">No entries yet...</p>
+                <p className="text-white/60 italic text-center py-8">No entries yet...</p>
               ) : (
                 <ul className="space-y-4" role="list">
                   {transcript.map((entry) => (
                     <li
                       key={entry.id}
-                      className="border-white/20 border-b pb-4 last:border-b-0"
+                      className="liquid-glass-light rounded-glass-md border border-white/15 p-4 last:border-b-0 hover:border-white/30 transition-all"
                     >
                       <div className="mb-2 flex items-start justify-between">
                         <span
-                          className={`rounded-full px-2 py-1 text-xs font-medium ${getTypeColor(entry.type)}`}
+                          className={`rounded-full px-3 py-1.5 text-xs font-semibold ${
+                            entry.type === 'observation' 
+                              ? 'bg-[var(--tcs-blue-light)]/20 text-blue-200 border border-blue-400/30'
+                              : entry.type === 'care-activity'
+                              ? 'bg-green-500/20 text-green-200 border border-green-400/30'
+                              : entry.type === 'client-response'
+                              ? 'bg-purple-500/20 text-purple-200 border border-purple-400/30'
+                              : 'bg-white/20 text-white/80 border border-white/20'
+                          }`}
                         >
                           {getTypeLabel(entry.type)}
                         </span>
@@ -280,7 +329,7 @@ export default function SessionPage() {
                           {entry.timestamp.toLocaleTimeString()}
                         </time>
                       </div>
-                      <p className="text-white/90">{entry.text}</p>
+                      <p className="text-white/90 leading-relaxed">{entry.text}</p>
                     </li>
                   ))}
                 </ul>
@@ -288,11 +337,12 @@ export default function SessionPage() {
             </div>
           </div>
 
+          {/* Action Bar */}
           <div className="text-center">
             <button
               onClick={generateReport}
               disabled={transcript.length === 0 || !clientName.trim()}
-              className="disabled:bg-gray-600 rounded-lg bg-[#D4A574] px-8 py-4 text-lg font-semibold transition-colors hover:bg-[#C19660] focus:outline-none focus:ring-2 focus:ring-[#D4A574] focus:ring-offset-2 focus:ring-offset-[#1B365D] disabled:cursor-not-allowed"
+              className="disabled:opacity-50 disabled:cursor-not-allowed liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-8 py-4 text-lg md:text-xl font-bold transition-all shadow-[0_15px_40px_rgba(212,165,116,0.4)] hover:shadow-[0_20px_50px_rgba(212,165,116,0.5)] focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 touch-target"
               aria-label="Generate documentation report"
             >
               Generate Report

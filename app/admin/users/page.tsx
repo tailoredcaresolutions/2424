@@ -290,7 +290,13 @@ export default function UsersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary relative overflow-hidden">
+      {/* Enhanced background orbs */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 right-20 w-96 h-96 bg-[var(--tcs-gold)]/8 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/8 rounded-full blur-3xl" />
+      </div>
+
       <Navigation
         user={{
           name: 'Admin User',
@@ -299,84 +305,90 @@ export default function UsersPage() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-gray-900 text-4xl font-bold">
+            <h1 className="text-white text-4xl md:text-5xl font-bold mb-3 drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
               User Management
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-white/70 text-lg">
               Manage users, roles, and permissions
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            <Button size="sm" variant="primary" onClick={handleAddUser}>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleAddUser}
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+            >
               ➕ Add User
-            </Button>
-            <Button size="sm" variant="ghost" onClick={fetchUsers}>
+            </button>
+            <button
+              onClick={fetchUsers}
+              className="touch-target liquid-glass-light text-white rounded-glass-lg px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all"
+            >
               🔄 Refresh
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Stats Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <Card padding="sm">
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <div className="text-center">
-              <p className="text-3xl font-bold text-[#1B365D]">
+              <p className="text-white text-3xl font-bold">
                 {users.length}
               </p>
-              <p className="text-gray-600 text-sm">Total Users</p>
+              <p className="text-white/70 text-sm">Total Users</p>
             </div>
-          </Card>
-          <Card padding="sm">
+          </div>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <div className="text-center">
-              <p className="text-green-600 text-3xl font-bold">
+              <p className="text-green-300 text-3xl font-bold">
                 {users.filter((u) => u.active).length}
               </p>
-              <p className="text-gray-600 text-sm">Active Users</p>
+              <p className="text-white/70 text-sm">Active Users</p>
             </div>
-          </Card>
-          <Card padding="sm">
+          </div>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <div className="text-center">
-              <p className="text-amber-600 text-3xl font-bold">
+              <p className="text-[var(--tcs-gold)] text-3xl font-bold">
                 {users.filter((u) => u.mfaEnabled).length}
               </p>
-              <p className="text-gray-600 text-sm">MFA Enabled</p>
+              <p className="text-white/70 text-sm">MFA Enabled</p>
             </div>
-          </Card>
-          <Card padding="sm">
+          </div>
+          <div className="liquid-glass-card rounded-glass-lg p-6 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
             <div className="text-center">
-              <p className="text-red-600 text-3xl font-bold">
+              <p className="text-red-300 text-3xl font-bold">
                 {users.filter((u) => u.role === 'admin').length}
               </p>
-              <p className="text-gray-600 text-sm">Administrators</p>
+              <p className="text-white/70 text-sm">Administrators</p>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Filters */}
-        <Card className="mb-6">
-          <div className="flex items-center space-x-4 p-4">
-            <span className="text-gray-700 text-sm font-medium">
+        <div className="liquid-glass-card rounded-glass-lg mb-6 p-4 border border-white/20 shadow-[0_15px_40px_rgba(0,0,0,0.3)]">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-white text-sm font-medium">
               Filter by role:
             </span>
             {['all', 'admin', 'supervisor', 'psw'].map((role) => (
               <button
                 key={role}
                 onClick={() => setFilterRole(role)}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                className={`touch-target rounded-glass-lg px-4 py-2 text-sm font-semibold transition-all ${
                   filterRole === role
-                    ? 'text-white bg-[#1B365D]'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'liquid-glass-gold text-[var(--tcs-blue-deep)] shadow-[0_8px_20px_rgba(212,165,116,0.4)]'
+                    : 'liquid-glass-light text-white border border-white/20 hover:border-white/30'
                 }`}
               >
                 {role === 'all' ? 'All' : role.toUpperCase()}
               </button>
             ))}
           </div>
-        </Card>
+        </div>
 
         {/* Users Table */}
         {loading ? (
