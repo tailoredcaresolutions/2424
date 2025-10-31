@@ -30,7 +30,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
-  themeColor: '#0E1535',
+  themeColor: '#1B365D', // Tailored Care Solutions Blue
 };
 
 export default function RootLayout({
