@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test:run && npm run test:e2e",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "precommit:guard": "echo '✅ Local AI guard: No cloud AI calls detected'",
       "test:integrations": "node scripts/test-integrations.js",
       "sync-figma-project": "tsx scripts/sync-figma-project.ts",
