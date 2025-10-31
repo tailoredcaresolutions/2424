@@ -40,46 +40,6 @@ export default function SimpleChatWrapper() {
 
   return (
     <div className="min-h-screen bg-[#172D53] flex items-center justify-center p-4 md:p-6 lg:p-8 relative overflow-hidden">
-      {/* Enhanced animated background gradient orbs */}
-      <div className="absolute inset-0 pointer-events-none">
-        <motion.div 
-          className="absolute top-20 left-10 w-96 h-96 bg-[var(--tcs-gold)]/10 rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ 
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-20 right-10 w-96 h-96 bg-[var(--tcs-blue-light)]/10 rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-        <motion.div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[var(--tcs-gold)]/5 rounded-full blur-3xl"
-          animate={{ 
-            scale: [0.8, 1, 0.8],
-            opacity: [0.1, 0.2, 0.1]
-          }}
-          transition={{ 
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
 
       <div className="max-w-4xl w-full mx-4 space-y-8 relative z-10">
         
@@ -100,25 +60,12 @@ export default function SimpleChatWrapper() {
 
         {/* Avatar with Enhanced Styling */}
         <motion.div 
-          className="flex justify-center relative z-20 my-4 md:my-6"
+          className="flex justify-center relative z-20 my-8 md:my-12"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
         >
-          <div className="relative mb-4 md:mb-6">
-            {/* Glow ring around avatar */}
-            <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--tcs-gold)]/30 to-[var(--tcs-gold)]/10 blur-2xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.8, 0.5]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
+          <div className="relative mb-8 md:mb-12">
             <AICompanionAvatar 
               state={getAvatarState()}
               expression={isListening ? "curiosity" : isSpeaking ? "excitement" : "joy"}
@@ -131,7 +78,7 @@ export default function SimpleChatWrapper() {
 
         {/* Enhanced Speech Bubble */}
         <motion.div 
-          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10 mt-8 md:mt-12"
+          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10 mt-12 md:mt-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
@@ -143,7 +90,7 @@ export default function SimpleChatWrapper() {
 
         {/* Enhanced Microphone Button with Status Indicator */}
         <motion.div
-          className="space-y-4 mt-6 md:mt-8"
+          className="space-y-4 mt-10 md:mt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
