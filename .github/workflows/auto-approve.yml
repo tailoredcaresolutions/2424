@@ -1,0 +1,200 @@
+---
+name: Auto-Approve PRs
+
+# Automatically approve pull requests from trusted sources
+# - Dependabot dependency updates (minor/patch only)
+# - Trusted bot accounts
+# Only approves if all security checks pass
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    # Only run for PRs that are not drafts
+    if: github.event.pull_request.draft == false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check PR author
+        id: check-author
+        run: |
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+          echo "PR Title: ${{ github.event.pull_request.title }}"
+          
+          # Define trusted bot accounts
+          TRUSTED_BOTS="dependabot[bot] github-actions[bot] renovate[bot]"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          
+          # Check if author is a trusted bot
+          if echo "$TRUSTED_BOTS" | grep -q "$PR_AUTHOR"; then
+            echo "is_trusted_bot=true" >> $GITHUB_OUTPUT
+            echo "✅ Trusted bot detected: $PR_AUTHOR"
+          else
+            echo "is_trusted_bot=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  Not a trusted bot: $PR_AUTHOR"
+          fi
+
+      - name: Check if Dependabot minor/patch update
+        id: check-dependabot
+        if: steps.check-author.outputs.is_trusted_bot == 'true' && github.event.pull_request.user.login == 'dependabot[bot]'
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          
+          # Check if it's a version update (supports multiple formats)
+          # Supported formats:
+          # - "bump X from Y to Z"
+          # - "Bump X from Y to Z" (capitalized)
+          # - "update X to Y"
+          # - "Update X from Y to Z"
+          
+          # First, check if title contains version update keywords
+          if echo "$PR_TITLE" | grep -qiE "(bump|update)"; then
+            # Try to extract "from X to Y" pattern (most common)
+            FROM_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*from \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/Ip' | head -1)
+            TO_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*to \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/Ip' | head -1)
+            
+            if [ -n "$FROM_VERSION" ] && [ -n "$TO_VERSION" ]; then
+              FROM_MAJOR=$(echo "$FROM_VERSION" | cut -d. -f1)
+              TO_MAJOR=$(echo "$TO_VERSION" | cut -d. -f1)
+              
+              echo "From version: $FROM_VERSION (major: $FROM_MAJOR)"
+              echo "To version: $TO_VERSION (major: $TO_MAJOR)"
+              
+              # Compare major versions to determine if it's a safe update
+              if [ "$FROM_MAJOR" = "$TO_MAJOR" ]; then
+                echo "is_safe_update=true" >> $GITHUB_OUTPUT
+                echo "✅ Safe update (minor/patch)"
+              else
+                echo "is_safe_update=false" >> $GITHUB_OUTPUT
+                echo "⚠️  Major version update - requires manual review"
+              fi
+            else
+              echo "is_safe_update=false" >> $GITHUB_OUTPUT
+              echo "ℹ️  Unable to determine version change type"
+            fi
+          else
+            echo "is_safe_update=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  Unable to determine version change type"
+          fi
+
+      - name: Check for security vulnerabilities
+        id: security-check
+        if: steps.check-author.outputs.is_trusted_bot == 'true'
+        run: |
+          # Check if PR fixes security vulnerabilities (should be approved)
+          PR_BODY="${{ github.event.pull_request.body }}"
+          
+          if echo "$PR_BODY" | grep -qi "security"; then
+            echo "is_security_fix=true" >> $GITHUB_OUTPUT
+            echo "🔒 Security fix detected"
+          else
+            echo "is_security_fix=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Auto-approve safe updates
+        if: |
+          steps.check-author.outputs.is_trusted_bot == 'true' && (
+            steps.check-dependabot.outputs.is_safe_update == 'true' ||
+            steps.security-check.outputs.is_security_fix == 'true' ||
+            github.event.pull_request.user.login == 'github-actions[bot]'
+          )
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add approval comment
+        if: |
+          steps.check-author.outputs.is_trusted_bot == 'true' && (
+            steps.check-dependabot.outputs.is_safe_update == 'true' ||
+            steps.security-check.outputs.is_security_fix == 'true' ||
+            github.event.pull_request.user.login == 'github-actions[bot]'
+          )
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            
+            // Check if already approved by this action
+            const alreadyApproved = reviews.some(review => 
+              review.user.login === 'github-actions[bot]' && 
+              review.state === 'APPROVED'
+            );
+            
+            if (!alreadyApproved) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: `✅ **Auto-approved**\n\n` +
+                      `This PR has been automatically approved because:\n` +
+                      `- Author: \`${{ github.event.pull_request.user.login }}\` (trusted bot)\n` +
+                      `- Type: Safe dependency update or security fix\n` +
+                      `- All automated checks must still pass before merge\n\n` +
+                      `_Automated by GitHub Actions_`
+              });
+            }
+
+      - name: Add labels
+        if: steps.check-author.outputs.is_trusted_bot == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ['automated'];
+            
+            if ('${{ github.event.pull_request.user.login }}' === 'dependabot[bot]') {
+              labels.push('dependencies');
+            }
+            
+            if ('${{ steps.security-check.outputs.is_security_fix }}' === 'true') {
+              labels.push('security');
+            }
+            
+            if ('${{ steps.check-dependabot.outputs.is_safe_update }}' === 'true') {
+              labels.push('auto-merge');
+            }
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: labels
+            });
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Auto-Approve Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** ${{ github.event.pull_request.user.login }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Title:** ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check-author.outputs.is_trusted_bot }}" = "true" ]; then
+            echo "✅ Trusted bot detected" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "${{ steps.check-dependabot.outputs.is_safe_update }}" = "true" ]; then
+              echo "✅ Safe dependency update (minor/patch)" >> $GITHUB_STEP_SUMMARY
+              echo "✅ **PR Auto-Approved**" >> $GITHUB_STEP_SUMMARY
+            elif [ "${{ steps.security-check.outputs.is_security_fix }}" = "true" ]; then
+              echo "🔒 Security fix detected" >> $GITHUB_STEP_SUMMARY
+              echo "✅ **PR Auto-Approved**" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️  Requires manual review (major update or other change)" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "ℹ️  Not a trusted bot - requires manual review" >> $GITHUB_STEP_SUMMARY
+          fi

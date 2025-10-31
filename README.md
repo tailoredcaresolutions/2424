@@ -397,6 +397,44 @@ See [docs/LOCAL_SETUP.md](docs/LOCAL_SETUP.md) for testing scenarios
 
 ---
 
+## 🤖 Repository Automation
+
+This repository uses GitHub Actions to automate pull request workflows, dependency updates, and maintenance tasks.
+
+### Automated Features
+
+- ✅ **Auto-Approve**: Automatically approves Dependabot PRs (minor/patch updates)
+- ✅ **Auto-Merge**: Automatically merges approved PRs with `auto-merge` label
+- ✅ **Auto-Label**: Automatically categorizes PRs by type, size, and content
+- ✅ **Dependabot**: Weekly dependency updates with security prioritization
+- ✅ **Branch Cleanup**: Automatically deletes merged branches
+
+### For Contributors
+
+**Creating a PR:**
+1. Use conventional commit format: `feat:`, `fix:`, `docs:`, etc.
+2. Labels will be applied automatically based on your changes
+3. Add `auto-merge` label for automatic merging after approval
+
+**For Dependabot PRs:**
+- Minor/patch updates are auto-approved
+- Add `auto-merge` label if you want automatic merging
+- Major updates require manual review
+
+### Documentation
+
+- **Automation Guide**: [AUTOMATION_GUIDE.md](AUTOMATION_GUIDE.md) - Complete usage guide
+- **Repository Settings**: [REPOSITORY_SETTINGS.md](REPOSITORY_SETTINGS.md) - Configuration instructions
+- **Workflow Documentation**: [.github/workflows/README.md](.github/workflows/README.md) - Technical details
+
+**Setup Script:**
+```bash
+# Create all required labels automatically
+./scripts/setup-labels.sh
+```
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Whether you're fixing bugs, adding features, or improving documentation, your help is appreciated.
