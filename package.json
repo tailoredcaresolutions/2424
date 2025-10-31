@@ -19,7 +19,10 @@
       "test:integrations": "node scripts/test-integrations.js",
       "sync-figma-project": "tsx scripts/sync-figma-project.ts",
       "sync-figma-tokens": "tsx scripts/sync-figma-tokens.ts",
-      "extract-figma-ios26": "tsx scripts/extract-figma-ios26-tokens.ts"
+      "extract-figma-ios26": "tsx scripts/extract-figma-ios26-tokens.ts",
+      "harden:production": "node scripts/harden-production.js",
+      "harden:generate-keys": "node scripts/harden-production.js --generate-keys",
+      "lint:console": "grep -r \"console\\.\\(log\\|error\\|warn\\)\" app/ components/ lib/ --include=\"*.js\" --include=\"*.jsx\" --include=\"*.ts\" --include=\"*.tsx\" || true"
   },
   "dependencies": {
     "@builder.io/react": "^8.2.9",
