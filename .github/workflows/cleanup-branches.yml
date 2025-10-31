@@ -1,0 +1,64 @@
+---
+name: Cleanup Branches After Merge
+
+'on':
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup-branches:
+    # Only run if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Delete merged branches (except main)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Fetching all branches..."
+          git fetch --all
+
+          echo "Getting list of remote branches..."
+          # Get all remote branches except main
+          BRANCHES=$(git branch -r | grep -v 'HEAD' | grep -v 'main' \
+            | sed 's/origin\///' | tr -d ' ')
+
+          echo "Branches to delete:"
+          echo "$BRANCHES"
+
+          # Delete each branch
+          for branch in $BRANCHES; do
+            if [ ! -z "$branch" ]; then
+              echo "Deleting branch: $branch"
+              git push origin --delete "$branch" \
+                || echo "Failed to delete $branch"
+            fi
+          done
+
+          echo "Branch cleanup completed!"
+
+      - name: Summary
+        run: |
+          echo "### Branch Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All branches except \`main\` deleted." \
+            >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Remaining branches:" >> $GITHUB_STEP_SUMMARY
+          git branch -r >> $GITHUB_STEP_SUMMARY
