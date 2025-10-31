@@ -56,6 +56,45 @@ logger.error('error');
 
 ---
 
+## 🎨 FIGMA INTEGRATION HARDENING
+
+### Current Status
+- ✅ Multiple clients: `figma-client.ts`, `figma-official.ts`, `figma-oauth.ts`, `figma-integration.ts`
+- ✅ API token support
+- ✅ OAuth2 support
+- ⚠️ **NOW HARDENED**: Error handling, retry logic, validation
+
+### Hardening Checklist
+
+#### 1. **API Token Security** ✅
+```typescript
+// ✅ SECURE - Validates token format
+if (!token || token.length < 20) {
+  throw new Error('Figma API token appears invalid');
+}
+if (!token.startsWith('figd_') && !/^[A-Za-z0-9_-]{20,}$/.test(token)) {
+  throw new Error('Figma API token appears invalid (invalid format)');
+}
+```
+
+#### 2. **Error Handling** ✅
+- ✅ Try/catch blocks on all requests
+- ✅ Retry logic with exponential backoff
+- ✅ Request timeouts (15 seconds)
+- ✅ Rate limit handling (429 status)
+
+#### 3. **OAuth2 Security** ✅
+- ✅ Client ID/Secret validation
+- ✅ Token caching with expiry
+- ✅ Secure token storage (never expose)
+
+#### 4. **Response Validation** ✅
+- ✅ Validates response structure
+- ✅ Validates OAuth token response
+- ✅ Handles invalid JSON gracefully
+
+---
+
 ## 🔧 BUILDER.IO HARDENING
 
 ### Current Status
@@ -328,11 +367,12 @@ describe('Builder.io Component', () => {
 3. ✅ Add CSP headers
 4. ✅ Validate API keys
 
-### Phase 2: Builder.io/V0 Hardening (2-3 days)
+### Phase 2: Builder.io/V0/Figma Hardening (2-3 days)
 1. ✅ Error boundaries for Builder.io components
 2. ✅ Rate limiting for Builder.io API
 3. ✅ Component validation for V0
-4. ✅ Cache invalidation strategies
+4. ✅ Figma integration hardened (all clients)
+5. ✅ Cache invalidation strategies
 
 ### Phase 3: Monitoring & Testing (1-2 days)
 1. ✅ Structured logging implementation

@@ -191,6 +191,58 @@ function checkBuilderIoIntegration() {
   return true;
 }
 
+function checkFigmaIntegration() {
+  log('\n🔍 Checking Figma integration...', 'cyan');
+  
+  const figmaFiles = [
+    'lib/integrations/figma-client.ts',
+    'lib/integrations/figma-official.ts',
+    'lib/integrations/figma-oauth.ts',
+    'lib/integrations/figma-integration.ts',
+  ];
+  
+  let allPassed = true;
+  const issues = [];
+  
+  figmaFiles.forEach(file => {
+    if (!fs.existsSync(file)) {
+      return; // Skip if file doesn't exist
+    }
+    
+    const content = fs.readFileSync(file, 'utf8');
+    
+    const checks = {
+      'Error handling': /try\s*\{/.test(content) && /catch/.test(content),
+      'No hardcoded tokens': !/['"]figd_[^'"]+['"]/.test(content) && !/token\s*=\s*['"][^'"]+['"]/.test(content),
+      'Retry logic': /retries|retry/i.test(content),
+      'Timeout handling': /timeout|AbortController/i.test(content),
+    };
+    
+    const fileIssues = Object.entries(checks)
+      .filter(([_, passed]) => !passed)
+      .map(([check]) => `${file}: ${check}`);
+    
+    if (fileIssues.length > 0) {
+      issues.push(...fileIssues);
+      allPassed = false;
+    }
+  });
+  
+  if (issues.length > 0) {
+    log(`⚠️  Figma integration hardening needed:`, 'yellow');
+    issues.forEach(issue => log(`   - ${issue}`, 'yellow'));
+    return false;
+  }
+  
+  if (figmaFiles.some(f => fs.existsSync(f))) {
+    log('✅ Figma integration secured', 'green');
+  } else {
+    log('⚠️  No Figma integration files found', 'yellow');
+  }
+  
+  return allPassed || !figmaFiles.some(f => fs.existsSync(f));
+}
+
 function main() {
   log('\n🛡️  PRODUCTION HARDENING CHECK\n', 'blue');
   log('=' .repeat(50), 'blue');
@@ -201,6 +253,7 @@ function main() {
     securityHeaders: checkSecurityHeaders(),
     apiKeys: checkApiKeys(),
     builderIo: checkBuilderIoIntegration(),
+    figma: checkFigmaIntegration(),
   };
   
   const allPassed = Object.values(results).every(Boolean);

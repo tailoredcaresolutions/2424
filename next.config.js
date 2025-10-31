@@ -94,8 +94,8 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://cdn.builder.io https://v0.dev",
-              "frame-src 'self' https://builder.io",
+              "connect-src 'self' https://cdn.builder.io https://v0.dev https://api.figma.com",
+              "frame-src 'self' https://builder.io https://www.figma.com",
             ].join('; '),
           },
           {

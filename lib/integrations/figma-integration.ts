@@ -282,11 +282,41 @@ let figmaIntegration: FigmaIntegration | null = null;
 
 export function getFigmaIntegration(): FigmaIntegration {
   if (!figmaIntegration) {
+    const personalToken = process.env.FIGMA_API_TOKEN;
+    const oauthClientId = process.env.FIGMA_CLIENT_ID;
+    const oauthClientSecret = process.env.FIGMA_CLIENT_SECRET;
+    const fileKeys = process.env.FIGMA_FILE_KEYS?.split(',').filter(Boolean);
+    
+    // Validate at least one authentication method is provided
+    if (!personalToken && (!oauthClientId || !oauthClientSecret)) {
+      throw new Error('Either FIGMA_API_TOKEN or (FIGMA_CLIENT_ID + FIGMA_CLIENT_SECRET) must be set');
+    }
+    
+    // Validate personal token if provided
+    if (personalToken) {
+      if (personalToken.includes('your_') || personalToken.includes('CHANGE_THIS')) {
+        throw new Error('FIGMA_API_TOKEN appears to be a placeholder - please set a real token');
+      }
+      if (personalToken.length < 20) {
+        throw new Error('FIGMA_API_TOKEN appears invalid (too short)');
+      }
+    }
+    
+    // Validate OAuth credentials if provided
+    if (oauthClientId && oauthClientSecret) {
+      if (oauthClientId.includes('your_') || oauthClientSecret.includes('your_')) {
+        throw new Error('Figma OAuth credentials appear to be placeholders - please set real credentials');
+      }
+      if (oauthClientId.length < 10 || oauthClientSecret.length < 20) {
+        throw new Error('Figma OAuth credentials appear invalid');
+      }
+    }
+    
     const config: FigmaConfig = {
-      personalToken: process.env.FIGMA_API_TOKEN,
-      oauthClientId: process.env.FIGMA_CLIENT_ID,
-      oauthClientSecret: process.env.FIGMA_CLIENT_SECRET,
-      fileKeys: process.env.FIGMA_FILE_KEYS?.split(',').filter(Boolean),
+      personalToken,
+      oauthClientId,
+      oauthClientSecret,
+      fileKeys,
     };
 
     figmaIntegration = new FigmaIntegration(config);

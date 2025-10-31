@@ -28,22 +28,81 @@ export class FigmaClient {
   private baseUrl = 'https://api.figma.com/v1';
 
   constructor(apiToken: string) {
+    // Security validation
+    if (!apiToken || apiToken.length < 20) {
+      throw new Error('Figma API token appears invalid (too short)');
+    }
+    // Figma tokens typically start with 'figd_'
+    if (!apiToken.startsWith('figd_') && !/^[A-Za-z0-9_-]{20,}$/.test(apiToken)) {
+      throw new Error('Figma API token appears invalid (invalid format)');
+    }
     this.apiToken = apiToken;
   }
 
-  private async request(endpoint: string) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      headers: {
-        'X-Figma-Token': this.apiToken,
-      },
-    });
+  /**
+   * Make authenticated request to Figma API
+   * Includes error handling, retry logic, and validation
+   */
+  private async request(endpoint: string, retries = 3) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout (Figma can be slow)
+    
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+          headers: {
+            'X-Figma-Token': this.apiToken,
+            'Content-Type': 'application/json',
+          },
+          signal: controller.signal,
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+          // Handle rate limiting (429)
+          if (response.status === 429) {
+            const retryAfter = response.headers.get('Retry-After');
+            const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * Math.pow(2, attempt);
+            if (attempt < retries - 1) {
+              await new Promise(resolve => setTimeout(resolve, waitTime));
+              continue;
+            }
+          }
+          
+          const error = await response.text().catch(() => 'Unknown error');
+          throw new Error(`Figma API error ${response.status}: ${error}`);
+        }
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Figma API error: ${response.status} - ${error}`);
+        const data = await response.json();
+        
+        // Validate response structure
+        if (!data || typeof data !== 'object') {
+          throw new Error('Figma API returned invalid response format');
+        }
+        
+        return data;
+      } catch (error: any) {
+        lastError = error;
+        
+        // Don't retry on abort or 4xx errors (except 429)
+        if (error.name === 'AbortError' || (error.message?.includes('40') && !error.message?.includes('429'))) {
+          clearTimeout(timeoutId);
+          throw error;
+        }
+        
+        // Exponential backoff for retries
+        if (attempt < retries - 1) {
+          const waitTime = 500 * Math.pow(2, attempt);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+        }
+      }
     }
-
-    return response.json();
+    
+    clearTimeout(timeoutId);
+    throw lastError || new Error('Figma API request failed after retries');
   }
 
   /**
@@ -218,6 +277,10 @@ export function getFigmaClient(): FigmaClient {
     const token = process.env.FIGMA_API_TOKEN;
     if (!token) {
       throw new Error('FIGMA_API_TOKEN not set in environment');
+    }
+    // Additional validation before creating client
+    if (token.includes('your_') || token.includes('CHANGE_THIS')) {
+      throw new Error('FIGMA_API_TOKEN appears to be a placeholder - please set a real token');
     }
     figmaClient = new FigmaClient(token);
   }
