@@ -1216,23 +1216,56 @@ export default function AICompanionAvatar({
           />
         )}
         
-        {/* Avatar image with expression effects */}
+        {/* Avatar image with expression effects - Subtle shake when speaking */}
         <motion.div
           animate={expressionControls}
           style={{
             transformStyle: "preserve-3d",
           }}
         >
-          <motion.img
-            src={finalAvatarUrl}
-            alt="AI Companion"
-            className="w-full h-full object-contain relative z-10 rounded-full"
-            style={{
-              filter: `brightness(${stateAnim.brightness * expressionEffect.eyeBrightness}) contrast(${1 + (stateAnim.brightness - 1) * 0.6}) saturate(${0.95 + expressionEffect.eyeBrightness * 0.15})`,
-              opacity: state === "sleeping" ? 0.65 : 1,
-              transformStyle: "preserve-3d",
+          {/* Subtle shake overlay when speaking - only applies x/y translation */}
+          <motion.div
+            animate={{
+              x: (state === "speaking" || state === "laughing" || state === "excited") 
+                ? [0, 0.8, -0.8, 0.6, -0.6, 0, 0.4, -0.4, 0]
+                : 0,
+              y: (state === "speaking" || state === "laughing" || state === "excited")
+                ? [0, 0.4, -0.4, 0.3, -0.3, 0]
+                : 0,
             }}
-          />
+            transition={{
+              x: {
+                duration: 0.1,
+                repeat: state === "speaking" || state === "laughing" || state === "excited" ? Infinity : 0,
+                ease: "easeInOut",
+                repeatType: "reverse"
+              },
+              y: {
+                duration: 0.08,
+                repeat: state === "speaking" || state === "laughing" || state === "excited" ? Infinity : 0,
+                ease: "easeInOut",
+                repeatType: "reverse"
+              }
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            <motion.img
+              src={finalAvatarUrl}
+              alt="AI Companion"
+              className="w-full h-full object-contain relative z-10 rounded-full"
+              style={{
+                filter: `brightness(${stateAnim.brightness * expressionEffect.eyeBrightness}) contrast(${1 + (stateAnim.brightness - 1) * 0.6}) saturate(${0.95 + expressionEffect.eyeBrightness * 0.15})`,
+                opacity: state === "sleeping" ? 0.65 : 1,
+                transformStyle: "preserve-3d",
+              }}
+            />
+          </motion.div>
         </motion.div>
         
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mic, MessageCircle, Camera } from 'lucide-react';
@@ -11,17 +11,30 @@ export default function SimpleChatWrapper() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceLevel, setVoiceLevel] = useState(0);
+  const voiceIntervalRef = useRef(null);
 
+  // ChatGPT-style toggle: Press once to start, press again to stop
   const handleMicClick = () => {
-    setIsListening(true);
-    const voiceInterval = setInterval(() => setVoiceLevel(Math.random()), 100);
-    setTimeout(() => {
-      clearInterval(voiceInterval);
+    if (isListening) {
+      // Stop listening
       setIsListening(false);
       setVoiceLevel(0);
+      if (voiceIntervalRef.current) {
+        clearInterval(voiceIntervalRef.current);
+        voiceIntervalRef.current = null;
+      }
+      // Brief speaking state to show response
       setIsSpeaking(true);
-      setTimeout(() => setIsSpeaking(false), 3000);
-    }, 2000);
+      setTimeout(() => setIsSpeaking(false), 2000);
+    } else {
+      // Start listening (continuous until pressed again)
+      setIsListening(true);
+      setIsSpeaking(false);
+      // Simulate voice level feedback while listening
+      voiceIntervalRef.current = setInterval(() => {
+        setVoiceLevel(Math.random());
+      }, 100);
+    }
   };
 
   const handleChatsClick = () => {
@@ -72,6 +85,10 @@ export default function SimpleChatWrapper() {
               avatarUrl="/companion-avatar-realistic.png"
               size="lg"
               primaryColor="#c9a063"
+              showParticles={false}
+              showRings={false}
+              showSparkles={false}
+              showAmbientEffects={false}
             />
           </div>
         </motion.div>
@@ -95,55 +112,44 @@ export default function SimpleChatWrapper() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <motion.button
-            onClick={handleMicClick}
-            className={`w-full text-white rounded-glass-lg p-8 md:p-10 min-h-[160px] flex flex-col items-center justify-center gap-4 transition-all touch-target ${
-              isListening 
-                ? 'liquid-glass-gold' 
-                : 'liquid-glass-gold'
-            }`}
-            whileHover={{ scale: isListening ? 1 : 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className="relative">
-              <Mic className={`w-16 h-16 md:w-20 md:h-20 ${isListening ? 'animate-pulse' : ''}`} strokeWidth={2.5} />
-              {isListening && (
-                <motion.div
-                  className="absolute inset-0 rounded-full border-2 border-white/50"
-                  animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [0.8, 0, 0.8]
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity
-                  }}
+          <div className="flex flex-col items-center gap-4">
+            <motion.button
+              onClick={handleMicClick}
+              className={`touch-target rounded-full h-32 w-32 md:h-40 md:w-40 liquid-glass-gold flex items-center justify-center transition-all focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 ${
+                isListening 
+                  ? 'shadow-[0_20px_50px_rgba(201,160,99,0.5)]' 
+                  : ''
+              }`}
+              whileHover={{ scale: isListening ? 1 : 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={isListening ? 'Stop listening' : 'Start listening'}
+            >
+              <div className="relative flex items-center justify-center">
+                <Mic 
+                  className={`w-16 h-16 md:w-20 md:h-20 text-white ${isListening ? 'animate-pulse' : ''}`} 
+                  strokeWidth={2.5} 
+                  fill={isListening ? 'rgba(255,255,255,0.25)' : 'none'}
                 />
-              )}
-            </div>
-            <span className="text-2xl md:text-3xl font-black leading-tight text-[var(--tcs-gold)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(201,160,99,0.3)]">
-              {isListening ? 'Listening...' : 'Tap the microphone to talk'}
-            </span>
-            {isListening && (
-              <motion.div
-                className="w-full max-w-xs h-2 bg-white/20 rounded-full overflow-hidden"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <motion.div
-                  className="h-full bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)]"
-                  animate={{
-                    width: ['0%', '100%', '0%']
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-              </motion.div>
-            )}
-          </motion.button>
+                {isListening && (
+                  <motion.div
+                    className="absolute inset-0 rounded-full border-2 border-white/50"
+                    animate={{
+                      scale: [1, 1.4, 1],
+                      opacity: [0.7, 0, 0.7]
+                    }}
+                    transition={{
+                      duration: 1.2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                )}
+              </div>
+            </motion.button>
+            <p className="text-white text-lg md:text-xl font-semibold text-center">
+              {isListening ? 'Listening... Tap to stop' : 'Tap to start conversation'}
+            </p>
+          </div>
         </motion.div>
 
         {/* Enhanced Quick Actions with Three Primary CTAs */}
