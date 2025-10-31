@@ -259,12 +259,12 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #1B365D, #0F1E3A);
+  background: linear-gradient(135deg, #1B365D, #2A4A6D);
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #0F1E3A, #1B365D);
+  background: linear-gradient(135deg, #2A4A6D, #4A6FA5);
 }
 
 /* Loading Spinner Enhancement */

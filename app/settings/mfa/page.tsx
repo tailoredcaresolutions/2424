@@ -179,7 +179,7 @@ export default function MFAPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#030817] via-[#050d1f] to-[#0b142c]">
+    <div className="min-h-screen bg-gradient-to-br from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light">
       <Navigation
         user={{ name: 'User', role: 'psw', email: 'user@tailoredcare.ca' }}
       />
