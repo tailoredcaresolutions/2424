@@ -47,12 +47,8 @@
 html,
 body {
   min-height: 100%;
-  /* Tailored Care Solutions Brand Background - Professional Blue */
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.15), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(75, 111, 165, 0.2), transparent 45%),
-    radial-gradient(circle at 50% 100%, rgba(212, 165, 116, 0.12), transparent 50%),
-    linear-gradient(180deg, var(--tcs-blue-primary) 0%, var(--tcs-blue-mid) 50%, var(--tcs-blue-light) 100%);
+  /* Tailored Care Solutions Brand Background - Exact match to avatar oval */
+  background: #0A1F35 !important; /* Solid dark blue matching avatar oval exactly */
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -374,14 +370,10 @@ body {
   }
 }
 
-/* Tailored Care Solutions - Blue background override */
+/* Tailored Care Solutions - Blue background override - Exact match to avatar oval */
 body {
   color: #ffffff !important;
-  background: 
-    radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.15), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(75, 111, 165, 0.2), transparent 45%),
-    radial-gradient(circle at 50% 100%, rgba(212, 165, 116, 0.12), transparent 50%),
-    linear-gradient(180deg, #1B365D 0%, #2A4A6D 50%, #4A6FA5 100%) !important;
+  background: #0A1F35 !important; /* Solid dark blue - exact match to avatar oval */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
