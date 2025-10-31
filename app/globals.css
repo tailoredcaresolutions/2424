@@ -7,18 +7,18 @@
    ============================================ */
 
 :root {
-  /* Brand Colors - Blue Primary, Gold Accent */
-  --tcs-blue-primary: #1B365D;
-  --tcs-blue-dark: #0F1E3A;
-  --tcs-blue-deep: #030817;
-  --tcs-blue-mid: #122853;
-  --tcs-blue-light: #4A6FA5;
-  --tcs-blue-lighter: #6B8FC7;
+  /* Tailored Care Solutions Brand Colors - Blue Background, Gold Accents */
+  --tcs-blue-primary: #1B365D;      /* Primary blue background */
+  --tcs-blue-dark: #0F2A4A;         /* Darker blue variant */
+  --tcs-blue-deep: #1B365D;         /* Deep blue (same as primary) */
+  --tcs-blue-mid: #2A4A6D;          /* Mid-tone blue */
+  --tcs-blue-light: #4A6FA5;        /* Light blue */
+  --tcs-blue-lighter: #6B8FC7;      /* Lighter blue */
   
-  --tcs-gold: #D4A574;
-  --tcs-light-gold: #E3B888;
-  --tcs-deep-gold: #C9A86A;
-  --tcs-gold-pale: #F5E8D8;
+  --tcs-gold: #D4A574;               /* Primary gold for buttons & accents */
+  --tcs-light-gold: #E3B888;        /* Light gold */
+  --tcs-deep-gold: #C39760;          /* Deep gold */
+  --tcs-gold-pale: #F5E8D8;          /* Pale gold */
   
   /* Legacy compatibility */
   --tcs-navy: #1A1F2E;
@@ -47,13 +47,13 @@
 html,
 body {
   min-height: 100%;
-  /* iOS 26 Liquid Glass Background - Dynamic Blue Gradients */
+  /* Tailored Care Solutions Brand Background - Professional Blue */
   background: 
-    radial-gradient(circle at 20% 20%, rgba(75, 111, 165, 0.2), transparent 50%),
-    radial-gradient(circle at 80% 0%, rgba(212, 165, 116, 0.15), transparent 45%),
-    radial-gradient(circle at 50% 100%, rgba(27, 54, 93, 0.25), transparent 50%),
-    linear-gradient(180deg, var(--tcs-blue-deep) 0%, var(--tcs-blue-dark) 40%, var(--tcs-blue-primary) 100%);
-  color: #fdf7ee;
+    radial-gradient(circle at 20% 20%, rgba(212, 165, 116, 0.15), transparent 50%),
+    radial-gradient(circle at 80% 0%, rgba(75, 111, 165, 0.2), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(212, 165, 116, 0.12), transparent 50%),
+    linear-gradient(180deg, var(--tcs-blue-primary) 0%, var(--tcs-blue-mid) 50%, var(--tcs-blue-light) 100%);
+  color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

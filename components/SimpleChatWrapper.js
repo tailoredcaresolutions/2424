@@ -39,7 +39,7 @@ export default function SimpleChatWrapper() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary flex items-center justify-center p-4 md:p-6 lg:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light flex items-center justify-center p-4 md:p-6 lg:p-8 relative overflow-hidden">
       {/* Enhanced animated background gradient orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 

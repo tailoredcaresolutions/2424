@@ -17,7 +17,7 @@ export default function SplashPage() {
 
   return (
     <main
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-6"
+      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light p-6"
       aria-label="Tailored Care Solutions loading screen"
     >
       {/* Enhanced background orbs */}

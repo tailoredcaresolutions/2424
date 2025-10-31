@@ -131,7 +131,7 @@ export default function ReviewPage() {
   );
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-6 text-white">
+    <main className="relative min-h-screen bg-gradient-to-br from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light p-6 text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,165,116,0.18),transparent_35%),radial-gradient(circle_at_bottom,rgba(212,165,116,0.1),transparent_40%)]" />
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-glass-lg liquid-glass-card p-8">

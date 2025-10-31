@@ -116,7 +116,7 @@ export default function SessionPage() {
   };
 
   return (
-    <div className="text-white min-h-screen bg-gradient-to-br from-tcs-blue-deep via-tcs-blue-dark to-tcs-blue-primary p-4 md:p-6 lg:p-8 relative overflow-hidden">
+    <div className="text-white min-h-screen bg-gradient-to-br from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light p-4 md:p-6 lg:p-8 relative overflow-hidden">
       {/* Enhanced background orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 right-10 w-96 h-96 bg-[var(--tcs-gold)]/10 rounded-full blur-3xl animate-pulse-glow" />
