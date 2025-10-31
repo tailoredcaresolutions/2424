@@ -99,8 +99,8 @@ export default function SimpleChatWrapper() {
             onClick={handleMicClick}
             className={`w-full text-white rounded-glass-lg p-8 md:p-10 min-h-[160px] flex flex-col items-center justify-center gap-4 transition-all touch-target ${
               isListening 
-                ? 'liquid-glass-gold shadow-[0_20px_50px_rgba(201,160,99,0.6)]' 
-                : 'liquid-glass-gold shadow-[0_20px_50px_rgba(201,160,99,0.4)] hover:shadow-[0_25px_60px_rgba(201,160,99,0.5)]'
+                ? 'liquid-glass-gold' 
+                : 'liquid-glass-gold'
             }`}
             whileHover={{ scale: isListening ? 1 : 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -158,7 +158,7 @@ export default function SimpleChatWrapper() {
             {/* Start Voice Session - Primary */}
             <motion.button
               onClick={handleMicClick}
-              className="liquid-glass-gold rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-[var(--tcs-gold)]/40 hover:border-[var(--tcs-gold)]/60 transition-all shadow-[0_15px_40px_rgba(201,160,99,0.4)] hover:shadow-[0_20px_50px_rgba(201,160,99,0.5)] touch-target"
+              className="liquid-glass-gold rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-white/20 hover:border-white/30 transition-all touch-target"
               whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
             >

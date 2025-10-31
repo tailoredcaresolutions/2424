@@ -175,7 +175,7 @@ export default function Navigation({ user }: NavigationProps) {
             ) : (
               <Link
                 href="/login"
-                className="touch-target px-6 py-2 rounded-full font-semibold text-[#2C1301] liquid-glass-gold shadow-[0_12px_30px_rgba(201,160,99,0.4)] button-press"
+                className="touch-target px-6 py-2 rounded-full font-semibold text-white liquid-glass-gold button-press"
               >
                 Login
               </Link>

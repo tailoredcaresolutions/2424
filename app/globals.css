@@ -894,34 +894,177 @@ button[aria-label*="Expand all"]:hover {
   overflow: hidden;
 }
 
-/* Light Liquid Glass - For lighter backgrounds */
+/* ═══════════════════════════════════════════════════════════════
+   iOS 26 LIGHT GLASS - Official Apple Specifications
+   ═══════════════════════════════════════════════════════════════ */
+
 .liquid-glass-light {
-  background: var(--glass-light-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border: 1px solid var(--glass-border-light);
+  position: relative;
+  /* Official iOS 26: Background opacity 0.15 for light glass */
+  background: rgba(255, 255, 255, 0.15);
+  
+  /* Official iOS 26: Backdrop filter blur(20px) saturate(180%) */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  /* Official iOS 26: Border opacity 0.2 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  /* Official iOS 26: Multi-layer shadows */
   box-shadow: 
     0 8px 32px 0 rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    0 4px 16px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset -1px 0 0 rgba(255, 255, 255, 0.12);
+  
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-/* Gold Accent Liquid Glass - Solid gold background for buttons */
+.liquid-glass-light::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.liquid-glass-light:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 12px 40px 0 rgba(0, 0, 0, 0.4),
+    0 6px 20px 0 rgba(0, 0, 0, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 rgba(255, 255, 255, 0.15),
+    inset -2px 0 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px) scale(1.01);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   iOS 26/macOS 26 LIQUID GLASS - OFFICIAL APPLE SPECIFICATIONS
+   Premium Glass Morphism with Physics-Based Animations
+   ═══════════════════════════════════════════════════════════════ */
+
 .liquid-glass-gold {
-  background: linear-gradient(135deg, #c9a063, #b89452); /* Solid gold gradient (from avatar package) */
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border: 1px solid var(--glass-border-gold);
+  position: relative;
+  /* Official iOS 26: Background opacity 0.05-0.7 range, standard 0.15 for light glass */
+  background: rgba(255, 255, 255, 0.15);
+  
+  /* Official iOS 26: Backdrop filter - blur(20px) saturate(180%) for buttons */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  /* Official iOS 26: Border opacity 0.2-0.4 range, standard 0.2 for light borders */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  /* Official iOS 26: Multi-layer depth shadows (outer + inset) */
   box-shadow: 
-    0 8px 32px 0 rgba(201, 160, 99, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    /* Outer shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) - Apple standard */
+    0 8px 32px 0 rgba(0, 0, 0, 0.4),
+    /* Additional depth layer for premium feel */
+    0 4px 16px 0 rgba(0, 0, 0, 0.25),
+    /* Inset highlight: inset 0 1px 0 rgba(255, 255, 255, 0.1) - Apple standard */
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    /* Subtle edge highlighting - all sides for glass definition */
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    inset 1px 0 0 rgba(255, 255, 255, 0.12),
+    inset -1px 0 0 rgba(255, 255, 255, 0.12);
+  
+  overflow: hidden;
+  will-change: transform, box-shadow, border-color;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-/* Gold hover state */
+/* Top reflection gradient - iOS 26 environmental context adaptation */
+.liquid-glass-gold::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Bottom subtle reflection for depth */
+.liquid-glass-gold::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20%;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Hover state - Physics-based animation with spring damping */
 .liquid-glass-gold:hover {
-  background: linear-gradient(135deg, #d4b078, #c9a063); /* Lighter gold on hover */
+  /* Enhanced border on interaction */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  /* Elevated shadow depth */
   box-shadow: 
-    0 12px 40px 0 rgba(201, 160, 99, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 12px 48px 0 rgba(0, 0, 0, 0.45),
+    0 6px 24px 0 rgba(0, 0, 0, 0.3),
+    0 3px 12px 0 rgba(0, 0, 0, 0.2),
+    /* Brighter top highlight on hover */
+    inset 0 2px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 2px 0 0 rgba(255, 255, 255, 0.15),
+    inset -2px 0 0 rgba(255, 255, 255, 0.15);
+  
+  /* Physics-based lift (spring damping 0.4, 0.0, 0.2, 1) */
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Active/pressed state - Tactile feedback */
+.liquid-glass-gold:active {
+  transform: translateY(0px) scale(0.99);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 4px 16px 0 rgba(0, 0, 0, 0.35),
+    0 2px 8px 0 rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: all 0.15s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Focus state - Accessibility compliance */
+.liquid-glass-gold:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
+  box-shadow: 
+    0 8px 32px 0 rgba(0, 0, 0, 0.4),
+    0 0 0 4px rgba(255, 255, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Dark Liquid Glass - For deeper UI layers */
@@ -935,16 +1078,92 @@ button[aria-label*="Expand all"]:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Liquid Glass Card - For content containers */
+/* ═══════════════════════════════════════════════════════════════
+   iOS 26 LIQUID GLASS CARD - Official Apple Specifications
+   Cards use blur(24px) - higher blur for larger surface areas
+   ═══════════════════════════════════════════════════════════════ */
+
 .liquid-glass-card {
-  background: rgba(255, 255, 255, 0.1);
+  position: relative;
+  /* Official iOS 26: Background opacity 0.15 for light glass cards */
+  background: rgba(255, 255, 255, 0.15);
+  
+  /* Official iOS 26: Cards use blur(24px) saturate(180%) */
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  
+  /* Official iOS 26: Border opacity 0.2 for light borders */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  
+  /* Official iOS 26: Border radius 24px for cards */
+  border-radius: 24px;
+  
+  /* Official iOS 26: Multi-layer shadows for depth */
   box-shadow: 
-    0 12px 40px 0 rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+    /* Outer shadow: Enhanced for cards (larger surface) */
+    0 12px 40px 0 rgba(0, 0, 0, 0.35),
+    0 6px 20px 0 rgba(0, 0, 0, 0.25),
+    0 2px 8px 0 rgba(0, 0, 0, 0.2),
+    /* Inset highlights: Top, bottom, and sides */
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    inset 1px 0 0 rgba(255, 255, 255, 0.15),
+    inset -1px 0 0 rgba(255, 255, 255, 0.15);
+  
+  overflow: hidden;
+  will-change: transform, box-shadow;
+  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Top reflection - Environmental context adaptation */
+.liquid-glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: 24px 24px 0 0;
+  z-index: 1;
+}
+
+/* Bottom depth shadow */
+.liquid-glass-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 25%;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.06) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  border-radius: 0 0 24px 24px;
+  z-index: 1;
+}
+
+/* Hover state - Physics-based elevation */
+.liquid-glass-card:hover {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 16px 50px 0 rgba(0, 0, 0, 0.4),
+    0 8px 24px 0 rgba(0, 0, 0, 0.3),
+    0 4px 12px 0 rgba(0, 0, 0, 0.25),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    inset 2px 0 0 rgba(255, 255, 255, 0.18),
+    inset -2px 0 0 rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px) scale(1.005);
 }
 
 /* Dynamic Reflection Effect */

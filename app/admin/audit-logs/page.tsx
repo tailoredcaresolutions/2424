@@ -338,7 +338,7 @@ export default function AuditLogsPage() {
             </button>
             <button
               onClick={fetchLogs}
-              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all"
+              className="touch-target liquid-glass-gold text-white rounded-glass-lg px-4 py-2 text-sm font-semibold transition-all"
             >
               🔄 Refresh
             </button>

@@ -203,7 +203,7 @@ export default function ProfilePage() {
                 </Badge>
                 {!profile.mfaEnabled && (
                   <Link href="/settings/mfa">
-                    <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-md px-4 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(201,160,99,0.4)] hover:shadow-[0_12px_30px_rgba(201,160,99,0.5)] transition-all">
+                    <button className="touch-target liquid-glass-gold text-white rounded-glass-md px-4 py-2 text-sm font-semibold transition-all">
                       Enable MFA
                     </button>
                   </Link>
@@ -251,7 +251,7 @@ export default function ProfilePage() {
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
-                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(201,160,99,0.4)] hover:shadow-[0_12px_30px_rgba(201,160,99,0.5)] transition-all"
+                className="touch-target liquid-glass-gold text-white rounded-glass-lg px-6 py-2 text-sm font-semibold transition-all"
               >
                 Edit Profile
               </button>
@@ -327,7 +327,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={saving}
-                  className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all disabled:opacity-50"
+                  className="touch-target liquid-glass-gold text-white rounded-glass-lg px-6 py-2 font-semibold transition-all disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -589,7 +589,7 @@ export default function ProfilePage() {
                   </button>
                   <button
                     onClick={changePassword}
-                    className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all"
+                    className="touch-target liquid-glass-gold text-white rounded-glass-lg px-6 py-2 font-semibold transition-all"
                   >
                     Change Password
                   </button>

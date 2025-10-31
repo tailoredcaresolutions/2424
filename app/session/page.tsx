@@ -198,7 +198,7 @@ export default function SessionPage() {
               <button
                 ref={recordButtonRef}
                 onClick={toggleRecording}
-                className={`touch-target rounded-full h-32 w-32 md:h-40 md:w-40 liquid-glass-gold button-press transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 shadow-[0_20px_50px_rgba(201,160,99,0.4)] ${
+                className={`touch-target rounded-full h-32 w-32 md:h-40 md:w-40 liquid-glass-gold button-press transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 ${
                   isRecording 
                     ? 'shadow-[0_25px_60px_rgba(201,160,99,0.6)] animate-pulse' 
                     : 'hover:shadow-[0_25px_60px_rgba(201,160,99,0.5)]'
@@ -342,7 +342,7 @@ export default function SessionPage() {
             <button
               onClick={generateReport}
               disabled={transcript.length === 0 || !clientName.trim()}
-              className="disabled:opacity-50 disabled:cursor-not-allowed liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-8 py-4 text-lg md:text-xl font-bold transition-all shadow-[0_15px_40px_rgba(201,160,99,0.4)] hover:shadow-[0_20px_50px_rgba(201,160,99,0.5)] focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 touch-target"
+              className="disabled:opacity-50 disabled:cursor-not-allowed liquid-glass-gold text-white rounded-glass-lg px-8 py-4 text-lg md:text-xl font-bold transition-all focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 touch-target"
               aria-label="Generate documentation report"
             >
               Generate Report
