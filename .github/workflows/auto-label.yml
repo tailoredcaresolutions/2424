@@ -1,0 +1,229 @@
+---
+name: Auto-Label PRs
+
+# Automatically label pull requests based on:
+# - Files changed
+# - PR title
+# - PR author
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  auto-label:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Analyze changed files
+        id: analyze
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            
+            const labels = new Set();
+            
+            // Analyze file patterns
+            for (const file of files) {
+              const path = file.filename;
+              
+              // Documentation
+              if (path.match(/\.(md|txt)$/i) || path.includes('docs/')) {
+                labels.add('documentation');
+              }
+              
+              // Tests
+              if (path.match(/\.(test|spec)\.(js|jsx|ts|tsx)$/i) || 
+                  path.includes('tests/') || 
+                  path.includes('__tests__/')) {
+                labels.add('tests');
+              }
+              
+              // Frontend
+              if (path.includes('app/') || 
+                  path.includes('components/') || 
+                  path.includes('styles/') ||
+                  path.match(/\.(jsx|tsx|css|scss)$/i)) {
+                labels.add('frontend');
+              }
+              
+              // Backend
+              if (path.includes('backend/') || 
+                  path.includes('server/') ||
+                  path.match(/server\.(js|ts)$/i)) {
+                labels.add('backend');
+              }
+              
+              // Configuration
+              if (path.match(/\.(json|yml|yaml|toml|config\.(js|ts))$/i) ||
+                  path.includes('.github/') ||
+                  path.match(/^(package\.json|tsconfig\.json|next\.config\.)/) ) {
+                labels.add('configuration');
+              }
+              
+              // Dependencies
+              if (path.match(/^(package\.json|package-lock\.json|yarn\.lock|pnpm-lock\.yaml)$/)) {
+                labels.add('dependencies');
+              }
+              
+              // CI/CD
+              if (path.includes('.github/workflows/') || 
+                  path.includes('.github/actions/')) {
+                labels.add('ci-cd');
+              }
+              
+              // Database
+              if (path.includes('database/') || 
+                  path.includes('migrations/') ||
+                  path.match(/\.(sql|db)$/i)) {
+                labels.add('database');
+              }
+              
+              // Security
+              if (path.includes('security/') || 
+                  path.includes('auth/') ||
+                  path.match(/(security|auth|crypt)/i)) {
+                labels.add('security');
+              }
+              
+              // UI/UX
+              if (path.match(/(styles|theme|design)/i) ||
+                  path.includes('public/')) {
+                labels.add('ui-ux');
+              }
+            }
+            
+            // Analyze PR title
+            const title = context.payload.pull_request.title.toLowerCase();
+            
+            if (title.match(/^fix(\(.*\))?:/)) {
+              labels.add('bug');
+            }
+            
+            if (title.match(/^feat(\(.*\))?:/)) {
+              labels.add('enhancement');
+            }
+            
+            if (title.match(/^docs(\(.*\))?:/)) {
+              labels.add('documentation');
+            }
+            
+            if (title.match(/^test(\(.*\))?:/)) {
+              labels.add('tests');
+            }
+            
+            if (title.match(/^chore(\(.*\))?:/)) {
+              labels.add('chore');
+            }
+            
+            if (title.match(/^perf(\(.*\))?:/)) {
+              labels.add('performance');
+            }
+            
+            if (title.match(/^refactor(\(.*\))?:/)) {
+              labels.add('refactor');
+            }
+            
+            if (title.match(/^ci(\(.*\))?:/)) {
+              labels.add('ci-cd');
+            }
+            
+            if (title.match(/^style(\(.*\))?:/)) {
+              labels.add('ui-ux');
+            }
+            
+            if (title.match(/breaking|major/i)) {
+              labels.add('breaking-change');
+            }
+            
+            if (title.match(/security|vulnerability|cve/i)) {
+              labels.add('security');
+            }
+            
+            // Analyze PR body
+            const body = (context.payload.pull_request.body || '').toLowerCase();
+            
+            if (body.includes('phipa') || body.includes('healthcare')) {
+              labels.add('compliance');
+            }
+            
+            if (body.includes('accessibility') || body.includes('wcag')) {
+              labels.add('accessibility');
+            }
+            
+            // Size labels based on changes
+            const totalChanges = files.reduce((sum, file) => 
+              sum + file.additions + file.deletions, 0
+            );
+            
+            if (totalChanges < 10) {
+              labels.add('size/xs');
+            } else if (totalChanges < 50) {
+              labels.add('size/s');
+            } else if (totalChanges < 200) {
+              labels.add('size/m');
+            } else if (totalChanges < 500) {
+              labels.add('size/l');
+            } else {
+              labels.add('size/xl');
+            }
+            
+            return Array.from(labels);
+
+      - name: Apply labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ${{ steps.analyze.outputs.result }};
+            
+            if (labels.length > 0) {
+              console.log('Applying labels:', labels.join(', '));
+              
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: labels
+              });
+              
+              // Add comment explaining labels
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: `🏷️ **Auto-labeled**\n\n` +
+                      `Applied labels: ${labels.map(l => '`' + l + '`').join(', ')}\n\n` +
+                      `_Automated by GitHub Actions_`
+              });
+            } else {
+              console.log('No labels to apply');
+            }
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Auto-Label Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Title:** ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          LABELS='${{ steps.analyze.outputs.result }}'
+          if [ -n "$LABELS" ] && [ "$LABELS" != "[]" ]; then
+            echo "**Labels Applied:**" >> $GITHUB_STEP_SUMMARY
+            echo "$LABELS" | jq -r '.[]' | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No labels applied" >> $GITHUB_STEP_SUMMARY
+          fi
