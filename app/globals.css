@@ -15,9 +15,9 @@
   --tcs-blue-light: #4A6FA5;        /* Light blue */
   --tcs-blue-lighter: #6B8FC7;      /* Lighter blue */
   
-  --tcs-gold: #D4A574;               /* Primary gold for buttons & accents */
-  --tcs-light-gold: #E3B888;        /* Light gold */
-  --tcs-deep-gold: #C39760;          /* Deep gold */
+  --tcs-gold: #c9a063;               /* Primary gold for buttons & accents (from avatar package) */
+  --tcs-light-gold: #d4b078;        /* Light gold (from avatar package secondary) */
+  --tcs-deep-gold: #b89452;          /* Deep gold */
   --tcs-gold-pale: #F5E8D8;          /* Pale gold */
   
   /* Legacy compatibility */
@@ -34,10 +34,10 @@
   --glass-light-bg: rgba(255, 255, 255, 0.15);
   --glass-dark-bg: rgba(27, 54, 93, 0.7);
   --glass-blue-bg: rgba(27, 54, 93, 0.6);
-  --glass-gold-bg: rgba(212, 165, 116, 0.2);
+  --glass-gold-bg: rgba(201, 160, 99, 0.2); /* #c9a063 */
   --glass-border-light: rgba(255, 255, 255, 0.2);
   --glass-border-blue: rgba(75, 111, 165, 0.3);
-  --glass-border-gold: rgba(212, 165, 116, 0.4);
+  --glass-border-gold: rgba(201, 160, 99, 0.4); /* #c9a063 */
   
   /* iOS HIG Minimum Touch Targets */
   --touch-target-min: 44px;
@@ -130,14 +130,14 @@ body {
   color: #1B365D; /* Dark blue text on gold button */
   transition: all 0.3s;
   transform: scale(1);
-  background: linear-gradient(135deg, #D4A574, #C39760); /* Gold gradient */
-  box-shadow: 0 4px 15px rgba(212, 165, 116, 0.4);
-  border: 1px solid rgba(212, 165, 116, 0.5);
+  background: linear-gradient(135deg, #c9a063, #b89452); /* Gold gradient (from avatar package) */
+  box-shadow: 0 4px 15px rgba(201, 160, 99, 0.4);
+  border: 1px solid rgba(201, 160, 99, 0.5);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #E3B888, #D4A574); /* Lighter gold on hover */
-  box-shadow: 0 6px 20px rgba(212, 165, 116, 0.6);
+  background: linear-gradient(135deg, #d4b078, #c9a063); /* Lighter gold on hover (from avatar package) */
+  box-shadow: 0 6px 20px rgba(201, 160, 99, 0.6);
   transform: scale(1.05);
 }
 
@@ -186,8 +186,8 @@ body {
   height: 100%;
   border-radius: 9999px;
   transition: all 0.5s ease-out;
-  background: linear-gradient(135deg, #D4A574, #C39760);
-  box-shadow: 0 0 10px rgba(212, 167, 116, 0.5);
+  background: linear-gradient(135deg, #c9a063, #b89452);
+  box-shadow: 0 0 10px rgba(201, 160, 99, 0.5);
 }
 
 /* Enhanced Input Styles */
@@ -225,9 +225,9 @@ body {
   z-index: 50;
   background: linear-gradient(135deg, #FFFFFF, #F8FAFC);
   border-radius: 0.75rem;
-  box-shadow: 0 10px 30px rgba(212, 167, 116, 0.3);
+  box-shadow: 0 10px 30px rgba(201, 160, 99, 0.3);
   padding: 1rem;
-  border: 2px solid #D4A574;
+  border: 2px solid #c9a063;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -240,7 +240,7 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #D4A574, #C39760);
+  background: linear-gradient(90deg, #c9a063, #b89452);
   border-radius: 12px 12px 0 0;
 }
 
@@ -270,7 +270,7 @@ body {
   border: 4px solid #E5E7EB;
   border-radius: 9999px;
   border-top-color: #1B365D;
-  border-right-color: #D4A574;
+  border-right-color: #c9a063;
   animation: spin 1s linear infinite;
 }
 
@@ -355,11 +355,11 @@ body {
 :root {
   /* Tailored Care Solutions Brand Colors */
   --primary-blue: #1B365D;
-  --primary-gold: #D4A574;
+  --primary-gold: #c9a063;
   --foreground-rgb: 255, 255, 255; /* White text on blue background */
   --background-start-rgb: 27, 54, 93; /* Tailored Care Solutions Blue #1B365D */
   --background-end-rgb: 74, 111, 165; /* Light blue #4A6FA5 */
-  --accent-gold: #D4A574;
+  --accent-gold: #c9a063;
 }
 
 @media (prefers-color-scheme: dark) {

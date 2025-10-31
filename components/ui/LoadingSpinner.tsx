@@ -22,7 +22,7 @@ export default function LoadingSpinner({
 
   const colorClasses = {
     blue: 'border-[#1B365D] border-t-transparent',
-    green: 'border-[#D4A574] border-t-transparent',
+    green: 'border-[#c9a063] border-t-transparent',
     white: 'border-white border-t-transparent'
   };
 

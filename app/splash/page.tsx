@@ -107,13 +107,13 @@ function Orb({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
             initial={{ opacity: 0.25, scale: 1.05 }}
             animate={{ opacity: [0.25, 0.05], scale: [1.05, 1.35] }}
             transition={{ duration: 4.8, repeat: Infinity, ease: 'easeOut' }}
-            className="absolute inset-[-12%] rounded-full border border-[#D4A574]/30"
+            className="absolute inset-[-12%] rounded-full border border-[#c9a063]/30"
           />
           <motion.div
             initial={{ opacity: 0.18, scale: 1.15 }}
             animate={{ opacity: [0.18, 0], scale: [1.15, 1.45] }}
             transition={{ duration: 5.4, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
-            className="absolute inset-[-22%] rounded-full border border-[#D4A574]/15"
+            className="absolute inset-[-22%] rounded-full border border-[#c9a063]/15"
           />
         </>
       )}

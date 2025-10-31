@@ -29,7 +29,7 @@ export default function Button({
 
   const variantClasses = {
     primary:
-      'liquid-glass-gold text-[#2C1301] shadow-[0_18px_35px_rgba(212,165,116,0.4)] hover:-translate-y-0.5 hover:shadow-[0_22px_40px_rgba(212,165,116,0.5)]',
+      'liquid-glass-gold text-[#2C1301] shadow-[0_18px_35px_rgba(201,160,99,0.4)] hover:-translate-y-0.5 hover:shadow-[0_22px_40px_rgba(201,160,99,0.5)]',
     secondary:
       'liquid-glass-light text-tcs-blue-dark border border-tcs-blue-light/30 shadow-[0_8px_24px_rgba(0,0,0,0.25)] hover:bg-white/20',
     success:

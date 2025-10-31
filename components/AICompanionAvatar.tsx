@@ -725,13 +725,90 @@ export default function AICompanionAvatar({
   // STATE & REFS
   // ============================================================================
   
-  // Use HD avatar on high-resolution displays (iPhone 17, Retina displays, etc.)
-  const isHighRes = typeof window !== 'undefined' && window.devicePixelRatio >= 2;
-  const finalAvatarUrl = avatarUrl || (isHighRes ? "/companion-avatar-hd.png" : "/companion-avatar.png");
+  // Sprite-based facial animation system
+  const AVATAR_FRAMES = {
+    neutral: "/avatar-neutral.png",
+    speaking1: "/avatar-speaking-1.png",
+    speaking2: "/avatar-speaking-2.png",
+    speaking3: "/avatar-speaking-3.png",
+    happy: "/avatar-happy.png",
+    listening: "/avatar-listening.png",
+    thinking: "/avatar-thinking.png",
+    surprised: "/avatar-surprised.png",
+  };
+  
+  // Map AI states to avatar frames
+  const getAvatarFrame = (currentState: AIState, frameIndex: number = 0): string => {
+    switch (currentState) {
+      case "speaking":
+      case "laughing":
+      case "excited":
+      case "encouraging":
+      case "welcoming":
+        // Cycle through speaking frames for lip-sync effect
+        const speakingFrames = [AVATAR_FRAMES.speaking1, AVATAR_FRAMES.speaking2, AVATAR_FRAMES.speaking3, AVATAR_FRAMES.speaking2];
+        return speakingFrames[frameIndex % speakingFrames.length];
+      
+      case "happy":
+      case "celebrating":
+      case "proud":
+      case "grateful":
+      case "loving":
+        return AVATAR_FRAMES.happy;
+      
+      case "listening":
+      case "focused":
+      case "comforting":
+      case "reassuring":
+      case "sympathetic":
+        return AVATAR_FRAMES.listening;
+      
+      case "thinking":
+      case "confused":
+      case "curious":
+      case "meditative":
+        return AVATAR_FRAMES.thinking;
+      
+      case "surprised":
+      case "amazed":
+      case "worried":
+        return AVATAR_FRAMES.surprised;
+      
+      case "idle":
+      case "sleeping":
+      case "tired":
+      case "relieved":
+      case "nodding":
+      case "shaking":
+      case "determined":
+      case "confident":
+      case "playful":
+      case "sad":
+      case "concerned":
+      default:
+        return AVATAR_FRAMES.neutral;
+    }
+  };
+  
+  // Frame cycling for speaking animation
+  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
+  const finalAvatarUrl = avatarUrl || getAvatarFrame(state, currentFrameIndex);
   
   const controls = useAnimationControls();
   const expressionControls = useAnimationControls();
   const [particles, setParticles] = useState<Array<{id: number; angle: number; delay: number; velocity: number}>>([]);
+  // Cycle through speaking frames for lip-sync effect
+  useEffect(() => {
+    if (state === "speaking" || state === "laughing" || state === "excited" || state === "encouraging" || state === "welcoming") {
+      const interval = setInterval(() => {
+        setCurrentFrameIndex(prev => (prev + 1) % 4);
+      }, 150 / animationSpeed); // Change frame every 150ms for natural speech
+      return () => clearInterval(interval);
+    } else {
+      setCurrentFrameIndex(0);
+    }
+  }, [state, animationSpeed]);
+  
   const particleIdRef = useRef(0);
   const sizeMultiplier = getSizeMultiplier(size);
   const previousStateRef = useRef<AIState>(state);

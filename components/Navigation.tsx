@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 const TailoredCareLogo = () => (
-    <svg width="42" height="30" viewBox="0 0 60 40" className="inline-block drop-shadow-[0_2px_8px_rgba(212,165,116,0.3)]">
+    <svg width="42" height="30" viewBox="0 0 60 40" className="inline-block drop-shadow-[0_2px_8px_rgba(201,160,99,0.3)]">
       <defs>
         <linearGradient id="navBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: '#1B365D', stopOpacity: 1 }} />
@@ -26,9 +26,9 @@ const TailoredCareLogo = () => (
           <stop offset="100%" style={{ stopColor: '#0F1E3A', stopOpacity: 1 }} />
         </linearGradient>
         <linearGradient id="navGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#E3B888', stopOpacity: 1 }} />
-          <stop offset="50%" style={{ stopColor: '#D4A574', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#C39760', stopOpacity: 1 }} />
+          <stop offset="0%" style={{ stopColor: '#d4b078', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#c9a063', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#b89452', stopOpacity: 1 }} />
         </linearGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
@@ -175,7 +175,7 @@ export default function Navigation({ user }: NavigationProps) {
             ) : (
               <Link
                 href="/login"
-                className="touch-target px-6 py-2 rounded-full font-semibold text-[#2C1301] liquid-glass-gold shadow-[0_12px_30px_rgba(212,165,116,0.4)] button-press"
+                className="touch-target px-6 py-2 rounded-full font-semibold text-[#2C1301] liquid-glass-gold shadow-[0_12px_30px_rgba(201,160,99,0.4)] button-press"
               >
                 Login
               </Link>

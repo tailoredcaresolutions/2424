@@ -22,11 +22,11 @@ const blobToBase64 = (blob) =>
 // Tailored Care Solutions brand colors
 const brandColors = {
   blue: '#1B365D',      // Primary dark blue
-  gold: '#D4A574',      // Primary gold
+  gold: '#c9a063',      // Primary gold (from avatar package)
   lightBlue: '#E8F0F5',
   lightGold: '#F5EFE6',
   darkBlue: '#0F1E3A',
-  accentGold: '#C39760'
+  accentGold: '#d4b078'  // Secondary gold (from avatar package)
 };
 
 // Phase 2 Q2: LocalStorage utilities for conversation history

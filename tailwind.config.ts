@@ -57,10 +57,10 @@ const config: Config = {
               "lighter": "#6B8FC7",
             },
             "tcs-gold": {
-              "DEFAULT": "#D4A574",
-              "light": "#E3B888",
-              "deep": "#C9A86A",
-              "pale": "#F5E8D8",
+              "DEFAULT": "#c9a063",      /* Primary gold (from avatar package) */
+              "light": "#d4b078",        /* Light gold (from avatar package secondary) */
+              "deep": "#b89452",         /* Deep gold */
+              "pale": "#F5E8D8",         /* Pale gold */
             }
           },
       borderRadius: {

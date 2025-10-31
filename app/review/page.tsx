@@ -264,10 +264,10 @@ function TabButton({
       role="tab"
       aria-selected={isActive}
       aria-controls={controls}
-      className={`rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A574] ${
+      className={`rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c9a063] ${
         isActive
-          ? 'bg-[#D4A574] text-[#10213D] shadow-[0_10px_25px_rgba(214,173,117,0.45)]'
-          : 'border border-[#D4A574]/35 text-[#F8E4CA]/80 hover:bg-[#D4A574]/10'
+          ? 'bg-[#c9a063] text-[#10213D] shadow-[0_10px_25px_rgba(201,160,99,0.45)]'
+          : 'border border-[#c9a063]/35 text-[#F8E4CA]/80 hover:bg-[#c9a063]/10'
       }`}
       onClick={onSelect}
       type="button"
@@ -328,13 +328,13 @@ function ActionButton({
   ariaLabel: string;
 }) {
   const base =
-    'inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D4A574]';
+    'inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#c9a063]';
 
   const styles: Record<ActionVariant, string> = {
-    primary: `${base} bg-[#D4A574] text-[#0E1F3D] shadow-[0_12px_30px_rgba(214,173,117,0.45)] hover:bg-[#C89657]`,
-    accent: `${base} bg-gradient-to-r from-[#F6E3CB] to-[#D4A574] text-[#0E1F3D] hover:from-[#F0D5B1] hover:to-[#C89657]`,
-    outline: `${base} border border-[#D4A574]/50 text-[#FCE9CC] hover:bg-[#D4A574]/15`,
-    ghost: `${base} border border-transparent text-[#FCE9CC]/85 hover:bg-[#D4A574]/10`,
+    primary: `${base} bg-[#c9a063] text-[#0E1F3D] shadow-[0_12px_30px_rgba(201,160,99,0.45)] hover:bg-[#b89452]`,
+    accent: `${base} bg-gradient-to-r from-[#F6E3CB] to-[#c9a063] text-[#0E1F3D] hover:from-[#F0D5B1] hover:to-[#b89452]`,
+    outline: `${base} border border-[#c9a063]/50 text-[#FCE9CC] hover:bg-[#c9a063]/15`,
+    ghost: `${base} border border-transparent text-[#FCE9CC]/85 hover:bg-[#c9a063]/10`,
   };
 
   return (
@@ -386,7 +386,7 @@ function ReviewOrb({ prefersReducedMotion }: { prefersReducedMotion: boolean }) 
           initial={{ opacity: 0.18, scale: 1.05 }}
           animate={{ opacity: [0.18, 0], scale: [1.05, 1.35] }}
           transition={{ duration: 5.6, repeat: Infinity, ease: 'easeOut' }}
-          className="absolute inset-[-15%] rounded-full border border-[#D4A574]/25"
+          className="absolute inset-[-15%] rounded-full border border-[#c9a063]/25"
         />
       )}
     </div>
