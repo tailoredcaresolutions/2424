@@ -218,8 +218,8 @@ export default function SimpleChatWrapper() {
               <div className="w-20 h-20 bg-gradient-to-br from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(212,165,116,0.5)]">
                 <Mic className="w-12 h-12 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-[var(--tcs-blue-deep)] text-xl md:text-2xl font-bold text-center">Start Voice Session</span>
-              <p className="text-sm text-[var(--tcs-blue-deep)]/80 text-center">Begin documenting your shift</p>
+              <span className="text-[var(--tcs-gold)] text-xl md:text-2xl font-bold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">Start Voice Session</span>
+              <p className="text-sm text-[var(--tcs-gold)]/80 text-center drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">Begin documenting your shift</p>
             </motion.button>
 
             {/* Review Reports - Secondary */}
@@ -232,7 +232,7 @@ export default function SimpleChatWrapper() {
               <div className="w-20 h-20 bg-gradient-to-br from-[var(--tcs-blue-light)] to-[var(--tcs-blue-primary)] rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(75,111,165,0.4)]">
                 <MessageCircle className="w-12 h-12 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-[var(--tcs-gold)] text-xl md:text-2xl font-bold text-center">Review Reports</span>
+              <span className="text-[var(--tcs-gold)] text-xl md:text-2xl font-bold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">Review Reports</span>
               <p className="text-sm text-[var(--tcs-gold)]/80 text-center drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">View and approve documentation</p>
             </motion.button>
 
