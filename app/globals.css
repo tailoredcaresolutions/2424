@@ -9,8 +9,8 @@
 :root {
   /* Tailored Care Solutions Brand Colors - Blue Background, Gold Accents */
   --tcs-blue-primary: #1B365D;      /* Primary blue background */
-  --tcs-blue-dark: #162D53;         /* Darker blue variant - RGB(0.090, 0.175, 0.325) - exact avatar oval match */
-  --tcs-blue-deep: #162D53;         /* Deep blue (RGB 0.090, 0.175, 0.325) */
+  --tcs-blue-dark: #172D53;         /* Darker blue variant - RGB(0.090, 0.175, 0.325) = rgb(23, 45, 83) - exact avatar oval match */
+  --tcs-blue-deep: #172D53;         /* Deep blue (RGB 0.090, 0.175, 0.325) = rgb(23, 45, 83) */
   --tcs-blue-mid: #2A4A6D;          /* Mid-tone blue */
   --tcs-blue-light: #4A6FA5;        /* Light blue */
   --tcs-blue-lighter: #6B8FC7;      /* Lighter blue */
@@ -48,7 +48,7 @@ html,
 body {
   min-height: 100%;
   /* Tailored Care Solutions Brand Background - Exact match to avatar oval */
-  background: #162D53 !important; /* RGB(0.090, 0.175, 0.325) - exact avatar oval match */
+  background: #172D53 !important; /* RGB(0.090, 0.175, 0.325) = rgb(23, 45, 83) - exact avatar oval match */
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
