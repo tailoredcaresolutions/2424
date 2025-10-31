@@ -6,18 +6,6 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // Safelist custom liquid-glass classes to prevent Tailwind from complaining
-  safelist: [
-    'liquid-glass',
-    'liquid-glass-light',
-    'liquid-glass-gold',
-    'liquid-glass-dark',
-    'liquid-glass-card',
-    'liquid-glass-vibrant',
-    'rounded-glass',
-    'rounded-glass-md',
-    'rounded-glass-lg',
-  ],
   theme: {
     extend: {
       backgroundImage: {
