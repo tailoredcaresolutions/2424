@@ -63,7 +63,8 @@ create_label() {
     local color="$2"
     local description="$3"
     
-    if gh label list | grep -q "^${name}"; then
+    # Check if label exists (properly quoted for special characters)
+    if gh label list --json name -q '.[].name' | grep -Fxq "$name"; then
         echo "⏩ Label '$name' already exists (skipping)"
     else
         gh label create "$name" --color "$color" --description "$description" 2>/dev/null && \
