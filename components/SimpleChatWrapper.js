@@ -100,12 +100,12 @@ export default function SimpleChatWrapper() {
 
         {/* Avatar with Enhanced Styling */}
         <motion.div 
-          className="flex justify-center relative z-20"
+          className="flex justify-center relative z-20 my-4 md:my-6"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
         >
-          <div className="relative">
+          <div className="relative mb-4 md:mb-6">
             {/* Glow ring around avatar */}
             <motion.div
               className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--tcs-gold)]/30 to-[var(--tcs-gold)]/10 blur-2xl"
@@ -131,7 +131,7 @@ export default function SimpleChatWrapper() {
 
         {/* Enhanced Speech Bubble */}
         <motion.div 
-          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10"
+          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10 mt-8 md:mt-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
@@ -143,7 +143,7 @@ export default function SimpleChatWrapper() {
 
         {/* Enhanced Microphone Button with Status Indicator */}
         <motion.div
-          className="space-y-4"
+          className="space-y-4 mt-6 md:mt-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}

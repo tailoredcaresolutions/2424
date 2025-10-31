@@ -9,8 +9,8 @@
 :root {
   /* Tailored Care Solutions Brand Colors - Blue Background, Gold Accents */
   --tcs-blue-primary: #1B365D;      /* Primary blue background */
-  --tcs-blue-dark: #0F2A4A;         /* Darker blue variant */
-  --tcs-blue-deep: #1B365D;         /* Deep blue (same as primary) */
+  --tcs-blue-dark: #0A1F35;         /* Darker blue variant - matches avatar oval exactly */
+  --tcs-blue-deep: #0A1F35;         /* Deep blue (matches avatar oval) */
   --tcs-blue-mid: #2A4A6D;          /* Mid-tone blue */
   --tcs-blue-light: #4A6FA5;        /* Light blue */
   --tcs-blue-lighter: #6B8FC7;      /* Lighter blue */
