@@ -221,9 +221,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           LABELS='${{ steps.analyze.outputs.result }}'
-          if [ -n "$LABELS" ] && [ "$LABELS" != "[]" ]; then
-            echo "**Labels Applied:**" >> $GITHUB_STEP_SUMMARY
-            echo "$LABELS" | jq -r '.[]' | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          if [ -n "$LABELS" ] && [ "$LABELS" != "[]" ] && [ "$LABELS" != "null" ]; then
+            # Validate JSON before processing
+            if echo "$LABELS" | jq -e . >/dev/null 2>&1; then
+              echo "**Labels Applied:**" >> $GITHUB_STEP_SUMMARY
+              echo "$LABELS" | jq -r '.[]' 2>/dev/null | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY || \
+                echo "Error processing labels" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "No valid labels data" >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "No labels applied" >> $GITHUB_STEP_SUMMARY
           fi

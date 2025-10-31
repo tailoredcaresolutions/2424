@@ -49,24 +49,30 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           
-          # Check if it's a minor or patch update
-          if echo "$PR_TITLE" | grep -qE "bump .* from [0-9]+\.[0-9]+\.[0-9]+ to [0-9]+\.[0-9]+\.[0-9]+"; then
-            # Extract versions
-            FROM_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*from \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
-            TO_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*to \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
+          # Check if it's a version update (supports multiple formats)
+          # Formats: "bump X from Y to Z", "update X to Y", "Bump X from Y to Z"
+          if echo "$PR_TITLE" | grep -qiE "(bump|update).*(from [0-9]+\.[0-9]+\.[0-9]+ to [0-9]+\.[0-9]+\.[0-9]+|to [0-9]+\.[0-9]+\.[0-9]+)"; then
+            # Extract versions (case-insensitive)
+            FROM_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*from \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/Ip' | head -1)
+            TO_VERSION=$(echo "$PR_TITLE" | sed -n 's/.*to \([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/Ip' | head -1)
             
-            FROM_MAJOR=$(echo "$FROM_VERSION" | cut -d. -f1)
-            TO_MAJOR=$(echo "$TO_VERSION" | cut -d. -f1)
-            
-            echo "From version: $FROM_VERSION (major: $FROM_MAJOR)"
-            echo "To version: $TO_VERSION (major: $TO_MAJOR)"
-            
-            if [ "$FROM_MAJOR" = "$TO_MAJOR" ]; then
-              echo "is_safe_update=true" >> $GITHUB_OUTPUT
-              echo "✅ Safe update (minor/patch)"
+            if [ -n "$FROM_VERSION" ] && [ -n "$TO_VERSION" ]; then
+              FROM_MAJOR=$(echo "$FROM_VERSION" | cut -d. -f1)
+              TO_MAJOR=$(echo "$TO_VERSION" | cut -d. -f1)
+              
+              echo "From version: $FROM_VERSION (major: $FROM_MAJOR)"
+              echo "To version: $TO_VERSION (major: $TO_MAJOR)"
+              
+              if [ "$FROM_MAJOR" = "$TO_MAJOR" ]; then
+                echo "is_safe_update=true" >> $GITHUB_OUTPUT
+                echo "✅ Safe update (minor/patch)"
+              else
+                echo "is_safe_update=false" >> $GITHUB_OUTPUT
+                echo "⚠️  Major version update - requires manual review"
+              fi
             else
               echo "is_safe_update=false" >> $GITHUB_OUTPUT
-              echo "⚠️  Major version update - requires manual review"
+              echo "ℹ️  Unable to determine version change type"
             fi
           else
             echo "is_safe_update=false" >> $GITHUB_OUTPUT

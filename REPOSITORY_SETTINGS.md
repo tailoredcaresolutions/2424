@@ -147,43 +147,13 @@ Create these labels if they don't exist:
 
 ## 🚀 Quick Setup Script
 
-If you prefer to create labels via CLI:
+Use the automated script to create all labels:
 
 ```bash
-# Install GitHub CLI if not already installed
-# brew install gh (macOS)
-# Or download from: https://cli.github.com/
-
-# Login to GitHub
-gh auth login
-
-# Create labels
-gh label create "bug" --color d73a4a --description "Something isn't working"
-gh label create "enhancement" --color a2eeef --description "New feature or request"
-gh label create "documentation" --color 0075ca --description "Documentation improvements"
-gh label create "tests" --color 17e672 --description "Testing improvements"
-gh label create "chore" --color fef2c0 --description "Maintenance tasks"
-gh label create "performance" --color ff9800 --description "Performance improvements"
-gh label create "refactor" --color 9c27b0 --description "Code refactoring"
-gh label create "breaking-change" --color d93f0b --description "Breaking changes"
-gh label create "dependencies" --color 0366d6 --description "Dependency updates"
-gh label create "frontend" --color 1d76db --description "Frontend changes"
-gh label create "backend" --color 0e8a16 --description "Backend changes"
-gh label create "ci-cd" --color 34495e --description "CI/CD changes"
-gh label create "configuration" --color b60205 --description "Configuration changes"
-gh label create "database" --color 5319e7 --description "Database changes"
-gh label create "security" --color b60205 --description "Security-related"
-gh label create "ui-ux" --color ffd86e --description "UI/UX improvements"
-gh label create "compliance" --color c5def5 --description "Compliance-related"
-gh label create "accessibility" --color 7057ff --description "Accessibility improvements"
-gh label create "size/xs" --color c2e0c6 --description "Extra small changes"
-gh label create "size/s" --color 84b6eb --description "Small changes"
-gh label create "size/m" --color fbca04 --description "Medium changes"
-gh label create "size/l" --color f9d0c4 --description "Large changes"
-gh label create "size/xl" --color d73a4a --description "Extra large changes"
-gh label create "automated" --color ededed --description "Automated PR"
-gh label create "auto-merge" --color 0e8a16 --description "Enable auto-merge"
+./scripts/setup-labels.sh
 ```
+
+See the script file for the complete list of labels and their descriptions.
 
 ---
 

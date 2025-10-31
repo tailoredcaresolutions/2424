@@ -63,7 +63,7 @@ create_label() {
     local color="$2"
     local description="$3"
     
-    if gh label list | grep -q "^$name"; then
+    if gh label list | grep -q "^${name}"; then
         echo "⏩ Label '$name' already exists (skipping)"
     else
         gh label create "$name" --color "$color" --description "$description" 2>/dev/null && \
