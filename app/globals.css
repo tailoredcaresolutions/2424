@@ -360,17 +360,17 @@ body {
   /* Tailored Care Solutions Brand Colors */
   --primary-blue: #1B365D;
   --primary-gold: #D4A574;
-  --foreground-rgb: 27, 54, 93; /* Dark Blue */
-  --background-start-rgb: 250, 250, 250;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 255, 255, 255; /* White text on blue background */
+  --background-start-rgb: 27, 54, 93; /* Tailored Care Solutions Blue #1B365D */
+  --background-end-rgb: 74, 111, 165; /* Light blue #4A6FA5 */
   --accent-gold: #D4A574;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 15, 23, 42; /* Darker blue-gray */
-    --background-end-rgb: 27, 54, 93; /* Primary blue */
+    --background-start-rgb: 27, 54, 93; /* Tailored Care Solutions Blue */
+    --background-end-rgb: 74, 111, 165; /* Light blue */
   }
 }
 
