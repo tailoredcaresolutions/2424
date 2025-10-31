@@ -9,8 +9,8 @@
 :root {
   /* Tailored Care Solutions Brand Colors - Blue Background, Gold Accents */
   --tcs-blue-primary: #1B365D;      /* Primary blue background */
-  --tcs-blue-dark: #0A1F35;         /* Darker blue variant - matches avatar oval exactly */
-  --tcs-blue-deep: #0A1F35;         /* Deep blue (matches avatar oval) */
+  --tcs-blue-dark: #162D53;         /* Darker blue variant - RGB(0.090, 0.175, 0.325) - exact avatar oval match */
+  --tcs-blue-deep: #162D53;         /* Deep blue (RGB 0.090, 0.175, 0.325) */
   --tcs-blue-mid: #2A4A6D;          /* Mid-tone blue */
   --tcs-blue-light: #4A6FA5;        /* Light blue */
   --tcs-blue-lighter: #6B8FC7;      /* Lighter blue */
@@ -48,7 +48,7 @@ html,
 body {
   min-height: 100%;
   /* Tailored Care Solutions Brand Background - Exact match to avatar oval */
-  background: #0A1F35 !important; /* Solid dark blue matching avatar oval exactly */
+  background: #162D53 !important; /* RGB(0.090, 0.175, 0.325) - exact avatar oval match */
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -373,7 +373,7 @@ body {
 /* Tailored Care Solutions - Blue background override - Exact match to avatar oval */
 body {
   color: #ffffff !important;
-  background: #0A1F35 !important; /* Solid dark blue - exact match to avatar oval */
+  background: #162D53 !important; /* RGB(0.090, 0.175, 0.325) - exact match to avatar oval */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
