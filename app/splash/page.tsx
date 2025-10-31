@@ -26,7 +26,7 @@ export default function SplashPage() {
         <div className="absolute bottom-20 left-20 w-96 h-96 bg-[var(--tcs-blue-light)]/10 rounded-full blur-3xl animate-pulse-glow" style={{ animationDelay: '1s' }} />
       </div>
       
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(212,165,116,0.15),transparent_45%),radial-gradient(circle_at_80%_0,rgba(212,165,116,0.12),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(201,160,99,0.15),transparent_45%),radial-gradient(circle_at_80%_0,rgba(201,160,99,0.12),transparent_40%)]" />
       <div className="absolute inset-8 rounded-glass-lg border border-white/20 liquid-glass-card shadow-[0_40px_80px_rgba(0,0,0,0.4)]" />
 
       <section className="relative z-10 flex flex-col items-center gap-10 text-center text-white" role="status">
@@ -78,7 +78,7 @@ function Orb({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
           repeatType: 'mirror',
           ease: 'easeInOut',
         }}
-        className="relative z-10 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#F6E3CB] via-[#E0AE74] to-[#B97A3A] shadow-[0_0_60px_rgba(212,165,116,0.45)]"
+        className="relative z-10 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#F6E3CB] via-[#E0AE74] to-[#B97A3A] shadow-[0_0_60px_rgba(201,160,99,0.45)]"
         aria-label="Golden orb loading animation"
         role="img"
       >

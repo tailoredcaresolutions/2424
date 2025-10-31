@@ -39,7 +39,7 @@ export default function Button({
     warning:
       'liquid-glass-light text-[#7A4B00] border border-[#F6D98B]/40 shadow-[0_12px_28px_rgba(244,196,86,0.3)] bg-[rgba(255,244,199,0.2)]',
     ghost:
-      'bg-transparent text-[var(--tcs-light-gold)] border border-[rgba(252,227,186,0.4)] hover:liquid-glass-vibrant hover:bg-[rgba(252,227,186,0.1)]'
+      'bg-transparent text-[var(--tcs-light-gold)] border border-[rgba(212,176,120,0.4)] hover:liquid-glass-vibrant hover:bg-[rgba(212,176,120,0.1)]'
   };
 
   const sizeClasses = {

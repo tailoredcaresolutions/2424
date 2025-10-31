@@ -177,7 +177,7 @@ export default function AnalyticsPage() {
             ))}
             <button
               onClick={fetchAnalytics}
-              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-4 py-2 text-sm font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all"
             >
               🔄 Refresh
             </button>
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
                         </div>
                         <div className="bg-white/10 rounded-full h-3 w-full overflow-hidden">
                           <div
-                            className="rounded-full h-full bg-gradient-to-r from-[var(--tcs-light-gold)] via-[var(--tcs-gold)] to-[var(--tcs-deep-gold)] shadow-[0_10px_25px_rgba(241,168,82,0.45)] transition-all"
+                            className="rounded-full h-full bg-gradient-to-r from-[var(--tcs-light-gold)] via-[var(--tcs-gold)] to-[var(--tcs-deep-gold)] shadow-[0_10px_25px_rgba(201,160,99,0.45)] transition-all"
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
@@ -307,7 +307,7 @@ export default function AnalyticsPage() {
                         <div className="flex items-center space-x-3">
                           <div className="bg-white/10 rounded-full h-2 flex-1 overflow-hidden">
                             <div
-                              className="rounded-full h-full bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] shadow-[0_4px_15px_rgba(241,168,82,0.45)]"
+                              className="rounded-full h-full bg-gradient-to-r from-[var(--tcs-light-gold)] to-[var(--tcs-gold)] shadow-[0_4px_15px_rgba(201,160,99,0.45)]"
                               style={{ width: `${concern.percentage}%` }}
                             />
                           </div>

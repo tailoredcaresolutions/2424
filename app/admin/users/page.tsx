@@ -319,7 +319,7 @@ export default function UsersPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleAddUser}
-              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all"
             >
               ➕ Add User
             </button>
@@ -380,7 +380,7 @@ export default function UsersPage() {
                 onClick={() => setFilterRole(role)}
                 className={`touch-target rounded-glass-lg px-4 py-2 text-sm font-semibold transition-all ${
                   filterRole === role
-                    ? 'liquid-glass-gold text-[var(--tcs-blue-deep)] shadow-[0_8px_20px_rgba(212,165,116,0.4)]'
+                    ? 'liquid-glass-gold text-[var(--tcs-blue-deep)] shadow-[0_8px_20px_rgba(201,160,99,0.4)]'
                     : 'liquid-glass-light text-white border border-white/20 hover:border-white/30'
                 }`}
               >

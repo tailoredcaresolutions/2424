@@ -34,7 +34,8 @@
   --glass-light-bg: rgba(255, 255, 255, 0.15);
   --glass-dark-bg: rgba(27, 54, 93, 0.7);
   --glass-blue-bg: rgba(27, 54, 93, 0.6);
-  --glass-gold-bg: rgba(201, 160, 99, 0.2); /* #c9a063 */
+  --glass-gold-bg: rgba(201, 160, 99, 0.85); /* #c9a063 - More opaque for buttons */
+  --glass-gold-bg-light: rgba(212, 176, 120, 0.8); /* #d4b078 - Lighter variant */
   --glass-border-light: rgba(255, 255, 255, 0.2);
   --glass-border-blue: rgba(75, 111, 165, 0.3);
   --glass-border-gold: rgba(201, 160, 99, 0.4); /* #c9a063 */
@@ -457,7 +458,7 @@ textarea:focus-visible {
 /* Gold variant for primary action buttons */
 button[style*="backgroundColor"]:focus-visible {
   outline: 2px solid var(--primary-gold);
-  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.2);
+  box-shadow: 0 0 0 4px rgba(201, 160, 99, 0.2);
 }
 
 /* ============================================
@@ -674,10 +675,10 @@ html {
 /* Success glow pulse */
 @keyframes success-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(212, 165, 116, 0.4);
+    box-shadow: 0 0 20px rgba(201, 160, 99, 0.4);
   }
   50% {
-    box-shadow: 0 0 40px rgba(212, 165, 116, 0.8);
+    box-shadow: 0 0 40px rgba(201, 160, 99, 0.8);
   }
 }
 
@@ -904,15 +905,23 @@ button[aria-label*="Expand all"]:hover {
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Gold Accent Liquid Glass */
+/* Gold Accent Liquid Glass - Solid gold background for buttons */
 .liquid-glass-gold {
-  background: var(--glass-gold-bg);
+  background: linear-gradient(135deg, #c9a063, #b89452); /* Solid gold gradient (from avatar package) */
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--glass-border-gold);
   box-shadow: 
-    0 8px 32px 0 rgba(212, 165, 116, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    0 8px 32px 0 rgba(201, 160, 99, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Gold hover state */
+.liquid-glass-gold:hover {
+  background: linear-gradient(135deg, #d4b078, #c9a063); /* Lighter gold on hover */
+  box-shadow: 
+    0 12px 40px 0 rgba(201, 160, 99, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
 /* Dark Liquid Glass - For deeper UI layers */
@@ -990,7 +999,7 @@ button[aria-label*="Expand all"]:hover {
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--glass-border-gold);
   box-shadow: 
-    0 8px 32px 0 rgba(212, 165, 116, 0.3),
+    0 8px 32px 0 rgba(201, 160, 99, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 

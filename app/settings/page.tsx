@@ -49,7 +49,7 @@ function ToggleSwitch({
         onClick={onChange}
         className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 touch-target ${
           checked 
-            ? 'bg-[var(--tcs-gold)] shadow-[0_4px_15px_rgba(212,165,116,0.5)]' 
+            ? 'bg-[var(--tcs-gold)] shadow-[0_4px_15px_rgba(201,160,99,0.5)]' 
             : 'bg-white/20 border border-white/30'
         }`}
       >
@@ -239,7 +239,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleSave}
-              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-8 py-4 font-bold text-lg transition-all shadow-[0_15px_40px_rgba(212,165,116,0.4)] hover:shadow-[0_20px_50px_rgba(212,165,116,0.5)] focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50"
+              className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-8 py-4 font-bold text-lg transition-all shadow-[0_15px_40px_rgba(201,160,99,0.4)] hover:shadow-[0_20px_50px_rgba(201,160,99,0.5)] focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50"
             >
               Save Preferences
             </button>

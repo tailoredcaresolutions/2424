@@ -132,7 +132,7 @@ export default function ReviewPage() {
 
   return (
     <main className="relative min-h-screen bg-gradient-to-br from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light p-6 text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(212,165,116,0.18),transparent_35%),radial-gradient(circle_at_bottom,rgba(212,165,116,0.1),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,160,99,0.18),transparent_35%),radial-gradient(circle_at_bottom,rgba(201,160,99,0.1),transparent_40%)]" />
       <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-8">
         <header className="rounded-glass-lg liquid-glass-card p-8">
           <div className="flex flex-col items-start justify-between gap-6 lg:flex-row lg:items-center">
@@ -361,7 +361,7 @@ function ReviewOrb({ prefersReducedMotion }: { prefersReducedMotion: boolean }) 
           repeatType: 'mirror',
           ease: 'easeInOut',
         }}
-        className="relative z-10 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#F8E4CA] via-[#DDB17D] to-[#B67A3A] shadow-[0_0_50px_rgba(212,165,116,0.45)]"
+        className="relative z-10 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#F8E4CA] via-[#DDB17D] to-[#B67A3A] shadow-[0_0_50px_rgba(201,160,99,0.45)]"
         aria-hidden="true"
       >
         <motion.div

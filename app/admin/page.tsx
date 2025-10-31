@@ -227,7 +227,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
               <Link href="/admin/monitoring">
                 <button
-                  className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.4)] touch-target"
+                  className="liquid-glass-light w-full rounded-glass-lg border border-white/20 text-white h-24 flex-col hover:border-[var(--tcs-gold)]/40 transition-all shadow-[0_10px_25px_rgba(0,0,0,0.3)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.4)] touch-target"
                 >
                   <span className="mb-1 text-2xl">📊</span>
                   <span className="text-sm font-semibold">Monitoring</span>
@@ -384,7 +384,7 @@ export default function AdminDashboard() {
               </div>
 
               <Link href="/admin/monitoring">
-                <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg w-full px-6 py-3 mt-4 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all">
+                <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg w-full px-6 py-3 mt-4 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all">
                   View Full Monitoring Dashboard →
                 </button>
               </Link>

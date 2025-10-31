@@ -152,7 +152,7 @@ export default function ProfilePage() {
           <div className="flex items-start space-x-6">
             {/* Avatar */}
             <div className="flex-shrink-0">
-              <div className="rounded-full text-white flex h-32 w-32 items-center justify-center bg-gradient-to-br from-[var(--tcs-blue-primary)] to-[var(--tcs-gold)] text-5xl font-bold shadow-[0_10px_30px_rgba(212,165,116,0.4)]">
+              <div className="rounded-full text-white flex h-32 w-32 items-center justify-center bg-gradient-to-br from-[var(--tcs-blue-primary)] to-[var(--tcs-gold)] text-5xl font-bold shadow-[0_10px_30px_rgba(201,160,99,0.4)]">
                 {profile.fullName.charAt(0).toUpperCase()}
               </div>
               <button className="liquid-glass-light text-white rounded-glass-md mt-3 w-full px-4 py-2 text-sm font-semibold border border-white/20 hover:border-white/30 transition-all">
@@ -203,7 +203,7 @@ export default function ProfilePage() {
                 </Badge>
                 {!profile.mfaEnabled && (
                   <Link href="/settings/mfa">
-                    <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-md px-4 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(212,165,116,0.4)] hover:shadow-[0_12px_30px_rgba(212,165,116,0.5)] transition-all">
+                    <button className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-md px-4 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(201,160,99,0.4)] hover:shadow-[0_12px_30px_rgba(201,160,99,0.5)] transition-all">
                       Enable MFA
                     </button>
                   </Link>
@@ -251,7 +251,7 @@ export default function ProfilePage() {
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
-                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(212,165,116,0.4)] hover:shadow-[0_12px_30px_rgba(212,165,116,0.5)] transition-all"
+                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 text-sm font-semibold shadow-[0_8px_20px_rgba(201,160,99,0.4)] hover:shadow-[0_12px_30px_rgba(201,160,99,0.5)] transition-all"
               >
                 Edit Profile
               </button>
@@ -327,7 +327,7 @@ export default function ProfilePage() {
                 <button
                   onClick={saveProfile}
                   disabled={saving}
-                  className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all disabled:opacity-50"
+                  className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : 'Save Changes'}
                 </button>
@@ -589,7 +589,7 @@ export default function ProfilePage() {
                   </button>
                   <button
                     onClick={changePassword}
-                    className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all"
+                    className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-2 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all"
                   >
                     Change Password
                   </button>

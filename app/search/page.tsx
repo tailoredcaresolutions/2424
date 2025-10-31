@@ -228,7 +228,7 @@ export default function SearchPage() {
               <button
                 type="submit"
                 disabled={!filters.query || loading}
-                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(212,165,116,0.4)] hover:shadow-[0_15px_35px_rgba(212,165,116,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="touch-target liquid-glass-gold text-[var(--tcs-blue-deep)] rounded-glass-lg px-6 py-3 font-semibold shadow-[0_10px_25px_rgba(201,160,99,0.4)] hover:shadow-[0_15px_35px_rgba(201,160,99,0.5)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? '🔄 Searching...' : '🔍 Search'}
               </button>
