@@ -39,7 +39,7 @@ export default function SimpleChatWrapper() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-tcs-blue-primary via-tcs-blue-mid to-tcs-blue-light flex items-center justify-center p-4 md:p-6 lg:p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--tcs-blue-dark)] flex items-center justify-center p-4 md:p-6 lg:p-8 relative overflow-hidden">
       {/* Enhanced animated background gradient orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 
@@ -90,17 +90,17 @@ export default function SimpleChatWrapper() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[var(--tcs-gold)] drop-shadow-[0_4px_12px_rgba(0,0,0,0.6),0_0_20px_rgba(212,165,116,0.4)]">
             Welcome to Tailored Care Solutions
           </h1>
-          <p className="text-xl md:text-2xl text-white/80">
+          <p className="text-xl md:text-2xl text-[var(--tcs-gold)]/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">
             PSW Voice Documentation Platform
           </p>
         </motion.div>
 
         {/* Avatar with Enhanced Styling */}
         <motion.div 
-          className="flex justify-center"
+          className="flex justify-center relative z-20"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ duration: 0.8, type: "spring", bounce: 0.4 }}
@@ -131,12 +131,12 @@ export default function SimpleChatWrapper() {
 
         {/* Enhanced Speech Bubble */}
         <motion.div 
-          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20"
+          className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <p className="text-white text-xl md:text-2xl font-semibold leading-relaxed">
+          <p className="text-[var(--tcs-gold)] text-xl md:text-2xl font-semibold leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">
             Hello! I'm here to help you document your PSW shift notes today. How are you feeling?
           </p>
         </motion.div>
@@ -174,7 +174,7 @@ export default function SimpleChatWrapper() {
                 />
               )}
             </div>
-            <span className="text-2xl md:text-3xl font-black leading-tight">
+            <span className="text-2xl md:text-3xl font-black leading-tight text-[var(--tcs-gold)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">
               {isListening ? 'Listening...' : 'Tap the microphone to talk'}
             </span>
             {isListening && (
@@ -206,7 +206,7 @@ export default function SimpleChatWrapper() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
         >
-          <h3 className="text-white text-2xl font-bold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]">Quick Actions</h3>
+          <h3 className="text-[var(--tcs-gold)] text-2xl font-bold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">Quick Actions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* Start Voice Session - Primary */}
             <motion.button
@@ -233,7 +233,7 @@ export default function SimpleChatWrapper() {
                 <MessageCircle className="w-12 h-12 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-[var(--tcs-gold)] text-xl md:text-2xl font-bold text-center">Review Reports</span>
-              <p className="text-sm text-white/70 text-center">View and approve documentation</p>
+              <p className="text-sm text-[var(--tcs-gold)]/80 text-center drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">View and approve documentation</p>
             </motion.button>
 
             {/* View Analytics - Tertiary */}
@@ -246,8 +246,8 @@ export default function SimpleChatWrapper() {
               <div className="w-20 h-20 bg-gradient-to-br from-white/30 to-white/10 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(255,255,255,0.2)]">
                 <Camera className="w-12 h-12 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-white text-xl md:text-2xl font-bold text-center">View Analytics</span>
-              <p className="text-sm text-white/70 text-center">Insights and trends</p>
+              <span className="text-[var(--tcs-gold)] text-xl md:text-2xl font-bold text-center drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(212,165,116,0.3)]">View Analytics</span>
+              <p className="text-sm text-[var(--tcs-gold)]/80 text-center drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">Insights and trends</p>
             </motion.button>
           </div>
         </motion.div>
