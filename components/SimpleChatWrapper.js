@@ -101,7 +101,7 @@ export default function SimpleChatWrapper() {
           transition={{ delay: 0.4, duration: 0.5 }}
         >
           <p className="text-[var(--tcs-gold)] text-xl md:text-2xl font-semibold leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(201,160,99,0.3)]">
-            Hello! I'm here to help you document your PSW shift notes today. How are you feeling?
+            Hello! I&apos;m here to help you document your PSW shift notes today. How are you feeling?
           </p>
         </motion.div>
 
