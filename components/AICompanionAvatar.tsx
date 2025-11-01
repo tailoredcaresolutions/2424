@@ -1400,11 +1400,17 @@ export default function AICompanionAvatar({
                     animate={{
                       x: [
                         Math.cos((angle * Math.PI) / 180) * orbitRadius,
-                        Math.cos(((angle + 360) * Math.PI) / 180) * orbitRadius,
+                        Math.cos(((angle + 90) * Math.PI) / 180) * orbitRadius,
+                        Math.cos(((angle + 180) * Math.PI) / 180) * orbitRadius,
+                        Math.cos(((angle + 270) * Math.PI) / 180) * orbitRadius,
+                        Math.cos((angle * Math.PI) / 180) * orbitRadius,
                       ],
                       y: [
                         Math.sin((angle * Math.PI) / 180) * orbitRadius,
-                        Math.sin(((angle + 360) * Math.PI) / 180) * orbitRadius,
+                        Math.sin(((angle + 90) * Math.PI) / 180) * orbitRadius,
+                        Math.sin(((angle + 180) * Math.PI) / 180) * orbitRadius,
+                        Math.sin(((angle + 270) * Math.PI) / 180) * orbitRadius,
+                        Math.sin((angle * Math.PI) / 180) * orbitRadius,
                       ],
                     }}
                     transition={{
