@@ -336,9 +336,10 @@ export async function POST(request) {
     
     const sys = SYSTEM_PROMPT_DAR + conversationContext + shiftContext;
 
-    // Proxy to backend server (works on Vercel + local)
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
-    const ollamaResponse = await fetch(`${backendUrl}/api/ollama/chat`, {
+    // Proxy to orchestrator server (works on Vercel + local)
+    // Uses ORCH_PUBLIC_CHAT_URL on Vercel (tunnel) or 127.0.0.1 locally
+    const orchUrl = process.env.ORCH_PUBLIC_CHAT_URL || 'http://127.0.0.1:4000';
+    const ollamaResponse = await fetch(`${orchUrl}/api/ollama/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

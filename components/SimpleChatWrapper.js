@@ -164,7 +164,7 @@ export default function SimpleChatWrapper() {
             {/* Start Voice Session - Primary */}
             <motion.button
               onClick={handleMicClick}
-              className="liquid-glass-gold rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-white/20 hover:border-white/30 transition-all touch-target"
+              className="liquid-glass-card rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-white/20 hover:border-white/30 transition-all touch-target"
               whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -192,7 +192,7 @@ export default function SimpleChatWrapper() {
             {/* View Analytics - Tertiary */}
             <motion.button
               onClick={handleChatsClick}
-              className="liquid-glass-light rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-white/15 hover:border-white/25 transition-all shadow-[0_15px_40px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_50px_rgba(0,0,0,0.3)] touch-target"
+              className="liquid-glass-card rounded-glass-lg p-6 md:p-8 min-h-[200px] flex flex-col items-center justify-center gap-4 border border-white/20 hover:border-white/30 transition-all touch-target"
               whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
             >
