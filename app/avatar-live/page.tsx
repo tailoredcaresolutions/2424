@@ -5,6 +5,9 @@ import { AudioPlayer } from "@/lib/audio/AudioPlayer";
 import { createVisemeDriver } from "@/lib/avatar/VisemeDriver";
 import { useAvatarSpeech } from "@/lib/avatar/useAvatarSpeech";
 
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 export default function AvatarLive() {
   const [svg,setSvg] = useState<string>("");
   const [toast,setToast] = useState<string>("");
