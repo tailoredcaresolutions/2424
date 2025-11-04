@@ -337,8 +337,8 @@ export async function POST(request) {
     const sys = SYSTEM_PROMPT_DAR + conversationContext + shiftContext;
 
     // Proxy to orchestrator server (works on Vercel + local)
-    // Uses ORCH_PUBLIC_CHAT_URL on Vercel (tunnel) or 127.0.0.1 locally
-    const orchUrl = process.env.ORCH_PUBLIC_CHAT_URL || 'http://127.0.0.1:4000';
+    // Uses ORCH_PUBLIC_CHAT_URL on Vercel (tunnel) or 127.0.0.1:8787 locally
+    const orchUrl = process.env.ORCH_PUBLIC_CHAT_URL || 'http://127.0.0.1:8787';
     const ollamaResponse = await fetch(`${orchUrl}/api/ollama/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
