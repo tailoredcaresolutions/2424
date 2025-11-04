@@ -9,20 +9,18 @@ import { promises as fs } from 'fs';
 
 // Mock child_process
 vi.mock('child_process', async () => {
-  const actual = await vi.importActual('child_process');
+  const { vi } = await import('vitest');
   return {
-    default: actual,
-    ...actual,
+    default: {},
     spawn: vi.fn()
   };
 });
 
 // Mock fs
 vi.mock('fs', async () => {
-  const actual = await vi.importActual('fs');
+  const { vi } = await import('vitest');
   return {
-    default: actual,
-    ...actual,
+    default: {},
     promises: {
       writeFile: vi.fn(),
       unlink: vi.fn(),
