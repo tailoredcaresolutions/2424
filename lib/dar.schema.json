@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DAR Report Schema",
+  "description": "Data-Assessment-Response (DAR) format for PSW shift documentation",
+  "type": "object",
+  "required": ["date_time"],
+  "properties": {
+    "date_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of the shift"
+    },
+    "psw_id": {
+      "type": "string",
+      "description": "Personal Support Worker identifier"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client full name"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "Client identifier"
+    },
+    "data": {
+      "type": "object",
+      "description": "Objective observations and facts",
+      "properties": {
+        "vitals": {
+          "type": "object"
+        },
+        "observations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "description": "Clinical assessment and interpretation",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "concerns": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "response": {
+      "type": "object",
+      "description": "Interventions and actions taken",
+      "properties": {
+        "interventions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "outcome": {
+          "type": "string"
+        }
+      }
+    },
+    "errors_or_gaps": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Validation errors or missing information"
+    }
+  },
+  "additionalProperties": true
+}
