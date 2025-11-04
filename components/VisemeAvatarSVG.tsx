@@ -49,7 +49,7 @@ export default function VisemeAvatarSVG({
 
   const wsRef = useRef<WebSocket | null>(null);
   const controls = useAnimationControls();
-  const visemeTimeoutRef = useRef<NodeJS.Timeout>();
+  const visemeTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const sizeClasses = {
     sm: "w-32 h-32",
