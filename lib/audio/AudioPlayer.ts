@@ -1,7 +1,7 @@
 "use client";
 
 export class AudioPlayer {
-  private ctx: AudioContext;
+  private ctx: AudioContext | null = null;
   private unlocked = false;
   private queue: AudioBuffer[] = [];
   private playing = false;
@@ -9,19 +9,27 @@ export class AudioPlayer {
   private onDrop?: (n:number)=>void;
 
   constructor(onDrop?: (n:number)=>void) {
-    this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     this.onDrop = onDrop;
+  }
+
+  private getCtx(): AudioContext {
+    if (!this.ctx && typeof window !== 'undefined') {
+      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return this.ctx!;
   }
   async resumeOnUserGesture() {
     if (this.unlocked) return;
-    try { await this.ctx.resume(); } catch {}
-    this.unlocked = this.ctx.state === "running";
+    const ctx = this.getCtx();
+    try { await ctx.resume(); } catch {}
+    this.unlocked = ctx.state === "running";
   }
   async enqueueBase64(b64: string) {
+    const ctx = this.getCtx();
     const raw = atob(b64);
     const arr = new Uint8Array(raw.length);
     for (let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
-    const buf = await this.ctx.decodeAudioData(arr.buffer.slice(0));
+    const buf = await ctx.decodeAudioData(arr.buffer.slice(0));
     if (this.queue.length >= this.maxQueue) {
       this.queue.shift();
       this.onDrop?.(1);
@@ -32,15 +40,16 @@ export class AudioPlayer {
   private async drain() {
     if (this.playing) return;
     this.playing = true;
+    const ctx = this.getCtx();
     while (this.queue.length) {
       const buf = this.queue.shift()!;
-      const src = this.ctx.createBufferSource();
-      src.buffer = buf; src.connect(this.ctx.destination);
+      const src = ctx.createBufferSource();
+      src.buffer = buf; src.connect(ctx.destination);
       const done = new Promise<void>((res)=> src.onended = ()=> res());
       src.start(0);
       await done;
     }
     this.playing = false;
   }
-  stop() { this.queue = []; try{ this.ctx.suspend(); }catch{} }
+  stop() { this.queue = []; if (this.ctx) { try{ this.ctx.suspend(); }catch{} } }
 }
