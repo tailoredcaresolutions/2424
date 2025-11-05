@@ -45,7 +45,7 @@ export function useAvatarSpeech() {
       } catch { /* ignore */ }
     };
     return ()=> { ws.close(); };
-  }, [url, base, tok]);
+  }, [base, tok]);
 
   return {
     connected, error,
