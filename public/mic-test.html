@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Microphone Test - Diagnostic</title>
+  <style>
+    body { font-family: monospace; padding: 20px; }
+    button { padding: 10px 20px; font-size: 16px; margin: 10px 0; }
+    #log { background: #000; color: #0f0; padding: 10px; height: 400px; overflow-y: auto; }
+    .error { color: #f00; }
+    .success { color: #0f0; }
+    .info { color: #00f; }
+  </style>
+</head>
+<body>
+  <h1>Microphone Diagnostic Test</h1>
+  <button id="startBtn">Start Recording</button>
+  <button id="stopBtn" disabled>Stop Recording</button>
+  <div id="status"></div>
+  <pre id="log"></pre>
+
+  <script>
+    const log = document.getElementById('log');
+    const status = document.getElementById('status');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+
+    let mediaRecorder = null;
+    let chunks = [];
+
+    function addLog(msg, type = 'info') {
+      const timestamp = new Date().toISOString().split('T')[1].slice(0, -1);
+      const className = type;
+      log.innerHTML += `<div class="${className}">[${timestamp}] ${msg}</div>`;
+      log.scrollTop = log.scrollHeight;
+      console.log(msg);
+    }
+
+    startBtn.onclick = async () => {
+      try {
+        addLog('Requesting microphone access...', 'info');
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            sampleRate: 16000,
+            echoCancellation: true,
+            autoGainControl: true,
+            noiseSuppression: true
+          }
+        });
+
+        addLog('✓ Microphone access granted', 'success');
+
+        // Check supported MIME types
+        const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+        const supportedType = types.find(t => MediaRecorder.isTypeSupported(t));
+        addLog(`Supported audio format: ${supportedType || 'default'}`, 'info');
+
+        chunks = [];
+        mediaRecorder = new MediaRecorder(stream, supportedType ? { mimeType: supportedType } : {});
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunks.push(e.data);
+            addLog(`Audio chunk received: ${e.data.size} bytes`, 'info');
+          }
+        };
+
+        mediaRecorder.onstop = async () => {
+          addLog('Recording stopped', 'info');
+
+          const audioBlob = new Blob(chunks, { type: mediaRecorder.mimeType });
+          addLog(`✓ Audio blob created: ${audioBlob.size} bytes`, 'success');
+
+          if (audioBlob.size === 0) {
+            addLog('ERROR: Audio blob is empty!', 'error');
+            stream.getTracks().forEach(t => t.stop());
+            return;
+          }
+
+          // Convert to base64
+          const reader = new FileReader();
+          reader.onerror = () => addLog('ERROR: FileReader failed', 'error');
+          reader.onloadend = async () => {
+            const base64 = reader.result.split(',')[1];
+            addLog(`✓ Converted to base64: ${base64.length} characters`, 'success');
+
+            // Test API call
+            try {
+              addLog('Sending to /api/transcribe...', 'info');
+              const response = await fetch('/api/transcribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ audioData: base64 })
+              });
+
+              addLog(`API Response: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+
+              const data = await response.json();
+              addLog(`Response data: ${JSON.stringify(data)}`, data.success ? 'success' : 'error');
+
+            } catch (err) {
+              addLog(`ERROR calling API: ${err.message}`, 'error');
+            }
+          };
+          reader.readAsDataURL(audioBlob);
+
+          // Cleanup
+          stream.getTracks().forEach(track => {
+            addLog(`Stopping track: ${track.kind}`, 'info');
+            track.stop();
+          });
+        };
+
+        mediaRecorder.start();
+        addLog('✓ Recording started', 'success');
+        status.textContent = 'Recording...';
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+
+      } catch (err) {
+        addLog(`ERROR: ${err.name} - ${err.message}`, 'error');
+        status.textContent = 'Error';
+      }
+    };
+
+    stopBtn.onclick = () => {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        addLog('Stopping recording...', 'info');
+        mediaRecorder.stop();
+        status.textContent = 'Stopped';
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+      }
+    };
+
+    addLog('Diagnostic page loaded. Click "Start Recording" to begin.', 'info');
+  </script>
+</body>
+</html>
