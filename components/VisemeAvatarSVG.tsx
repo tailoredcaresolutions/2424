@@ -58,8 +58,8 @@ interface AVSyncConfig {
 }
 
 export default function VisemeAvatarSVG({
-  wsUrl = "wss://voice.tailoredcaresolutions.com/ws/speak",
-  wsToken,
+  wsUrl = process.env.NEXT_PUBLIC_VOICE_WS_URL || "wss://voice.tailoredcaresolutions.com/ws/speak",
+  wsToken = process.env.NEXT_PUBLIC_VOICE_WS_TOKEN,
   size = "lg",
   autoConnect = false,
 }: VisemeAvatarSVGProps) {

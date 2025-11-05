@@ -4,8 +4,10 @@ import VisemeAvatarSVG from "@/components/VisemeAvatarSVG";
 import { useState } from "react";
 
 export default function AvatarTestPage() {
-  const [wsUrl, setWsUrl] = useState("wss://voice.tailoredcaresolutions.com/ws/speak");
-  const [wsToken, setWsToken] = useState("");
+  const [wsUrl, setWsUrl] = useState(
+    process.env.NEXT_PUBLIC_VOICE_WS_URL || "wss://voice.tailoredcaresolutions.com/ws/speak"
+  );
+  const [wsToken, setWsToken] = useState(process.env.NEXT_PUBLIC_VOICE_WS_TOKEN || "");
   const [autoConnect, setAutoConnect] = useState(false);
 
   return (
