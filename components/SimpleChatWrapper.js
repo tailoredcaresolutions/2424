@@ -26,7 +26,10 @@ export default function SimpleChatWrapper() {
   // Wire up audio playback from WebSocket
   useEffect(() => {
     if (audioPlayerRef.current) {
-      onAudio((_mime, b64) => audioPlayerRef.current.enqueueBase64(b64));
+      onAudio((_mime, b64) => {
+        console.log('[DEBUG] Received audio chunk, length:', b64?.length || 0);
+        audioPlayerRef.current.enqueueBase64(b64);
+      });
     }
   }, [onAudio]);
 
@@ -105,8 +108,10 @@ export default function SimpleChatWrapper() {
               if (data.success && data.text) {
                 console.log('[DEBUG] Transcribed text:', data.text);
                 console.log('[DEBUG] Sending to WebSocket via speak()...');
+                console.log('[DEBUG] WebSocket connected:', connected);
                 // Send transcribed text to orchestrator via WebSocket
-                speak(data.text);
+                const result = speak(data.text);
+                console.log('[DEBUG] speak() returned:', result);
               } else {
                 console.error('[ERROR] Transcription failed:', data.error);
               }
