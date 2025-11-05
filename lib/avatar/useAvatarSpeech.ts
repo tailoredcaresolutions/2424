@@ -49,7 +49,11 @@ export function useAvatarSpeech() {
 
   return {
     connected, error,
-    speak: (text:string)=> wsRef.current?.send(JSON.stringify({type:"speak", text})),
+    speak: (text:string)=> {
+      console.log('[WebSocket] Sending speak message:', text);
+      console.log('[WebSocket] WebSocket state:', wsRef.current?.readyState);
+      wsRef.current?.send(JSON.stringify({type:"speak", text}));
+    },
     onViseme:(f:(t:number,v:string)=>void)=> { L.current.onV=f; },
     onEmotion:(f:(s:number,e:number,v:string)=>void)=> { L.current.onE=f; },
     onAudio:(f:(m:string,b64:string)=>void)=> { L.current.onA=f; },

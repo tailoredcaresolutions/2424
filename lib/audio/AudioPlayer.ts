@@ -19,23 +19,32 @@ export class AudioPlayer {
     return this.ctx!;
   }
   async resumeOnUserGesture() {
+    console.log('[AudioPlayer] resumeOnUserGesture called, unlocked:', this.unlocked);
     if (this.unlocked) return;
     const ctx = this.getCtx();
     try { await ctx.resume(); } catch {}
     this.unlocked = ctx.state === "running";
+    console.log('[AudioPlayer] After resume, state:', ctx.state, 'unlocked:', this.unlocked);
   }
   async enqueueBase64(b64: string) {
+    console.log('[AudioPlayer] Enqueuing audio, base64 length:', b64.length, 'ctx state:', this.ctx?.state);
     const ctx = this.getCtx();
     const raw = atob(b64);
     const arr = new Uint8Array(raw.length);
     for (let i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
-    const buf = await ctx.decodeAudioData(arr.buffer.slice(0));
-    if (this.queue.length >= this.maxQueue) {
-      this.queue.shift();
-      this.onDrop?.(1);
+    try {
+      const buf = await ctx.decodeAudioData(arr.buffer.slice(0));
+      console.log('[AudioPlayer] Decoded audio, duration:', buf.duration, 's');
+      if (this.queue.length >= this.maxQueue) {
+        this.queue.shift();
+        this.onDrop?.(1);
+      }
+      this.queue.push(buf);
+      console.log('[AudioPlayer] Queue size:', this.queue.length, 'playing:', this.playing);
+      if (!this.playing) this.drain();
+    } catch (err) {
+      console.error('[AudioPlayer] Failed to decode audio:', err);
     }
-    this.queue.push(buf);
-    if (!this.playing) this.drain();
   }
   private async drain() {
     if (this.playing) return;
