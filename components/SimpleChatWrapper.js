@@ -16,6 +16,9 @@ export default function SimpleChatWrapper() {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
   const audioPlayerRef = useRef(null);
+  const mediaStreamRef = useRef(null);  // Store stream reference
+  const audioContextRef = useRef(null);  // Reuse AudioContext
+  const vadCheckRef = useRef(null);  // Store VAD animation frame ID
   const {connected,error,speak,onViseme,onAudio} = useAvatarSpeech();
 
   // Initialize audio player
@@ -44,27 +47,67 @@ export default function SimpleChatWrapper() {
     });
   }, [onViseme]);
 
+  // Cleanup function - properly release all resources
+  const cleanupRecording = () => {
+    // Cancel VAD animation frame
+    if (vadCheckRef.current) {
+      cancelAnimationFrame(vadCheckRef.current);
+      vadCheckRef.current = null;
+    }
+
+    // Close AudioContext
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+
+    // Stop all MediaStream tracks (CRITICAL for releasing microphone)
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach(track => {
+        track.stop();
+        console.log('[DEBUG] Stopped track:', track.kind, track.label);
+      });
+      mediaStreamRef.current = null;
+    }
+
+    setIsListening(false);
+    setVoiceLevel(0);
+  };
+
   // Real voice recording handler with auto-stop on silence
   const handleMicClick = async () => {
     if (isListening) {
-      // Stop listening and process
+      // Manual stop
       if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
       }
-      setIsListening(false);
-      setVoiceLevel(0);
+      cleanupRecording();
     } else {
       // Start listening - real audio capture with voice activity detection
       try {
-        // Enable audio on user gesture
+        // Resume AudioContext if suspended (autoplay policy)
         if (audioPlayerRef.current) {
           await audioPlayerRef.current.resumeOnUserGesture();
         }
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // Request microphone with optimal constraints for ASR
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            sampleRate: 16000,  // Optimal for Whisper
+            echoCancellation: true,
+            autoGainControl: true,
+            noiseSuppression: true
+          }
+        });
+        mediaStreamRef.current = stream;
 
-        // Set up audio context for voice activity detection
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        // Reuse or create AudioContext for VAD
+        if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+          audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const audioContext = audioContextRef.current;
+
         const source = audioContext.createMediaStreamSource(stream);
         const analyser = audioContext.createAnalyser();
         analyser.fftSize = 2048;
@@ -72,10 +115,24 @@ export default function SimpleChatWrapper() {
 
         const dataArray = new Uint8Array(analyser.frequencyBinCount);
         let silenceStart = null;
-        const SILENCE_THRESHOLD = 30; // Adjust sensitivity
-        const SILENCE_DURATION = 1500; // 1.5 seconds of silence triggers auto-stop
+        const SILENCE_THRESHOLD = 30;
+        const SILENCE_DURATION = 1500;
 
-        const recorder = new MediaRecorder(stream);
+        // Check format support and use best available
+        const getSupportedMimeType = () => {
+          const types = [
+            'audio/webm;codecs=opus',
+            'audio/webm',
+            'audio/ogg;codecs=opus',
+            'audio/mp4'
+          ];
+          return types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+        };
+
+        const mimeType = getSupportedMimeType();
+        console.log('[DEBUG] Using audio format:', mimeType);
+
+        const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
         const chunks = [];
 
         recorder.ondataavailable = (e) => {
@@ -86,7 +143,7 @@ export default function SimpleChatWrapper() {
 
         // Voice activity detection loop
         const checkAudio = () => {
-          if (recorder.state !== 'recording') return;
+          if (!recorder || recorder.state !== 'recording') return;
 
           analyser.getByteFrequencyData(dataArray);
           const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
@@ -99,7 +156,6 @@ export default function SimpleChatWrapper() {
             if (!silenceStart) {
               silenceStart = Date.now();
             } else if (Date.now() - silenceStart > SILENCE_DURATION) {
-              // Auto-stop after silence
               console.log('[DEBUG] Auto-stopping due to silence');
               recorder.stop();
               return;
@@ -108,18 +164,15 @@ export default function SimpleChatWrapper() {
             silenceStart = null;
           }
 
-          requestAnimationFrame(checkAudio);
+          vadCheckRef.current = requestAnimationFrame(checkAudio);
         };
 
         recorder.onstop = async () => {
-          // Clean up
-          audioContext.close();
+          // Cleanup resources
+          cleanupRecording();
 
-          const audioBlob = new Blob(chunks, { type: 'audio/webm' });
-          console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes');
-
-          // Stop all tracks
-          stream.getTracks().forEach(track => track.stop());
+          const audioBlob = new Blob(chunks, { type: mimeType || 'audio/webm' });
+          console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes, type:', audioBlob.type);
 
           // Convert to base64
           const reader = new FileReader();
@@ -137,6 +190,11 @@ export default function SimpleChatWrapper() {
                 body: JSON.stringify({ audioData: base64Audio })
               });
 
+              if (!response.ok) {
+                console.error('[ERROR] Transcribe API returned:', response.status, response.statusText);
+                return;
+              }
+
               const data = await response.json();
               console.log('[DEBUG] Transcription response:', data);
 
@@ -144,15 +202,18 @@ export default function SimpleChatWrapper() {
                 console.log('[DEBUG] Transcribed text:', data.text);
                 console.log('[DEBUG] Sending to WebSocket via speak()...');
                 console.log('[DEBUG] WebSocket connected:', connected);
+
                 // Send transcribed text to orchestrator via WebSocket
                 // AI will start streaming response immediately, sentence by sentence
                 const result = speak(data.text);
                 console.log('[DEBUG] speak() returned:', result);
               } else {
                 console.error('[ERROR] Transcription failed:', data.error);
+                alert('Transcription failed: ' + (data.error || 'Unknown error'));
               }
             } catch (err) {
               console.error('[ERROR] Error sending audio:', err);
+              alert('Network error: ' + err.message);
             }
           };
         };
@@ -166,8 +227,17 @@ export default function SimpleChatWrapper() {
         checkAudio();
 
       } catch (err) {
-        console.error('Microphone access denied:', err);
-        alert('Microphone access is required for voice input.');
+        console.error('[ERROR] Microphone access error:', err);
+        cleanupRecording();
+
+        // Show helpful error message based on error type
+        if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+          alert('Microphone permission denied. Please enable microphone access in your browser settings.');
+        } else if (err.name === 'NotFoundError') {
+          alert('No microphone found. Please connect a microphone and try again.');
+        } else {
+          alert('Microphone error: ' + err.message);
+        }
       }
     }
   };
