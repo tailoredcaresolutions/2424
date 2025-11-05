@@ -1,39 +1,127 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mic, MessageCircle, Camera } from 'lucide-react';
 import AICompanionAvatar from './AICompanionAvatar';
+import { useAvatarSpeech } from '../lib/avatar/useAvatarSpeech';
+import { AudioPlayer } from '../lib/audio/AudioPlayer';
 
 export default function SimpleChatWrapper() {
   const router = useRouter();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceLevel, setVoiceLevel] = useState(0);
-  const voiceIntervalRef = useRef(null);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const audioPlayerRef = useRef(null);
+  const {connected,error,speak,onViseme,onAudio} = useAvatarSpeech();
 
-  // ChatGPT-style toggle: Press once to start, press again to stop
-  const handleMicClick = () => {
+  // Initialize audio player
+  if (!audioPlayerRef.current && typeof window !== 'undefined') {
+    audioPlayerRef.current = new AudioPlayer((n) => console.warn(`Audio buffer full — dropped ${n} frames`));
+  }
+
+  // Wire up audio playback from WebSocket
+  useEffect(() => {
+    if (audioPlayerRef.current) {
+      onAudio((_mime, b64) => audioPlayerRef.current.enqueueBase64(b64));
+    }
+  }, [onAudio]);
+
+  // Handle speaking state based on WebSocket events
+  useEffect(() => {
+    onViseme((t, v) => {
+      if (v !== 'rest') {
+        setIsSpeaking(true);
+      } else {
+        setTimeout(() => setIsSpeaking(false), 500);
+      }
+    });
+  }, [onViseme]);
+
+  // Real voice recording handler
+  const handleMicClick = async () => {
     if (isListening) {
-      // Stop listening
+      // Stop listening and process
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
       setIsListening(false);
       setVoiceLevel(0);
-      if (voiceIntervalRef.current) {
-        clearInterval(voiceIntervalRef.current);
-        voiceIntervalRef.current = null;
-      }
-      // Brief speaking state to show response
-      setIsSpeaking(true);
-      setTimeout(() => setIsSpeaking(false), 2000);
     } else {
-      // Start listening (continuous until pressed again)
-      setIsListening(true);
-      setIsSpeaking(false);
-      // Simulate voice level feedback while listening
-      voiceIntervalRef.current = setInterval(() => {
-        setVoiceLevel(Math.random());
-      }, 100);
+      // Start listening - real audio capture
+      try {
+        // Enable audio on user gesture
+        if (audioPlayerRef.current) {
+          await audioPlayerRef.current.resumeOnUserGesture();
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        const chunks = [];
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunks.push(e.data);
+          }
+        };
+
+        recorder.onstop = async () => {
+          const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+
+          // Convert to base64
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = async () => {
+            const base64Audio = reader.result.split(',')[1];
+
+            // Send to orchestrator for ASR
+            try {
+              const response = await fetch('/api/transcribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ audioData: base64Audio })
+              });
+
+              const data = await response.json();
+
+              if (data.success && data.text) {
+                // Send transcribed text to orchestrator via WebSocket
+                speak(data.text);
+              } else {
+                console.error('Transcription failed:', data.error);
+              }
+            } catch (err) {
+              console.error('Error sending audio:', err);
+            }
+          };
+
+          // Stop all tracks
+          stream.getTracks().forEach(track => track.stop());
+        };
+
+        recorder.start();
+        setMediaRecorder(recorder);
+        setIsListening(true);
+        setIsSpeaking(false);
+
+        // Simulate voice level feedback while listening
+        const interval = setInterval(() => {
+          setVoiceLevel(Math.random());
+        }, 100);
+
+        // Clean up interval when recording stops
+        recorder.onstop = () => {
+          clearInterval(interval);
+          recorder.onstop();
+        };
+
+      } catch (err) {
+        console.error('Microphone access denied:', err);
+        alert('Microphone access is required for voice input.');
+      }
     }
   };
 
@@ -93,15 +181,24 @@ export default function SimpleChatWrapper() {
           </div>
         </motion.div>
 
-        {/* Enhanced Speech Bubble */}
-        <motion.div 
+        {/* Enhanced Speech Bubble with WebSocket Status */}
+        <motion.div
           className="liquid-glass-card rounded-glass-lg p-6 md:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] border border-white/20 relative z-10 mb-12 md:mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
+          {/* Connection Status Indicator */}
+          <div className="flex items-center gap-2 mb-4">
+            <div className={`w-3 h-3 rounded-full ${connected ? 'bg-green-400 animate-pulse' : error ? 'bg-red-400' : 'bg-yellow-400 animate-pulse'}`} />
+            <span className="text-sm text-white/80">
+              {connected ? 'Voice AI Connected' : error ? `Connection Error: ${error}` : 'Connecting to Voice AI...'}
+            </span>
+          </div>
           <p className="text-[var(--tcs-gold)] text-xl md:text-2xl font-semibold leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(201,160,99,0.3)]">
-            Hello! I'm here to help you document your PSW shift notes today. How are you feeling?
+            {connected
+              ? "Hello! I'm here to help you document your PSW shift notes today. Tap the microphone to start!"
+              : "Connecting to voice assistant... Please wait."}
           </p>
         </motion.div>
 
@@ -115,13 +212,14 @@ export default function SimpleChatWrapper() {
           <div className="flex flex-col items-center gap-4">
             <motion.button
               onClick={handleMicClick}
+              disabled={!connected}
               className={`touch-target rounded-full h-32 w-32 md:h-40 md:w-40 liquid-glass-gold flex items-center justify-center transition-all focus:outline-none focus:ring-4 focus:ring-[var(--tcs-gold)]/50 ${
-                isListening 
-                  ? 'shadow-[0_20px_50px_rgba(201,160,99,0.5)]' 
+                isListening
+                  ? 'shadow-[0_20px_50px_rgba(201,160,99,0.5)]'
                   : ''
-              }`}
-              whileHover={{ scale: isListening ? 1 : 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              } ${!connected ? 'opacity-50 cursor-not-allowed' : ''}`}
+              whileHover={{ scale: isListening || !connected ? 1 : 1.05 }}
+              whileTap={{ scale: connected ? 0.95 : 1 }}
               aria-label={isListening ? 'Stop listening' : 'Start listening'}
             >
               <div className="relative flex items-center justify-center">
@@ -147,7 +245,7 @@ export default function SimpleChatWrapper() {
               </div>
             </motion.button>
             <p className="text-white text-lg md:text-xl font-semibold text-center">
-              {isListening ? 'Listening... Tap to stop' : 'Tap to start conversation'}
+              {!connected ? 'Waiting for connection...' : isListening ? 'Listening... Tap to stop' : isSpeaking ? 'AI is speaking...' : 'Tap to start conversation'}
             </p>
           </div>
         </motion.div>
