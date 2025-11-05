@@ -74,6 +74,96 @@ export default function SimpleChatWrapper() {
     setVoiceLevel(0);
   };
 
+  // Convert audio blob to WAV format (PCM 16kHz mono) for Whisper ASR
+  const convertToWav = async (audioBlob) => {
+    // Decode audio blob to AudioBuffer
+    const arrayBuffer = await audioBlob.arrayBuffer();
+    const audioContext = audioContextRef.current || new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+    // Resample to 16kHz mono
+    const sampleRate = 16000;
+    const numberOfChannels = 1;
+
+    // Create offline context for resampling
+    const offlineContext = new OfflineAudioContext(numberOfChannels, audioBuffer.duration * sampleRate, sampleRate);
+    const source = offlineContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(offlineContext.destination);
+    source.start(0);
+
+    const resampledBuffer = await offlineContext.startRendering();
+
+    // Convert AudioBuffer to WAV format
+    const wavData = audioBufferToWav(resampledBuffer);
+    return new Blob([wavData], { type: 'audio/wav' });
+  };
+
+  // Convert AudioBuffer to WAV PCM format
+  const audioBufferToWav = (buffer) => {
+    const length = buffer.length * buffer.numberOfChannels * 2 + 44;
+    const arrayBuffer = new ArrayBuffer(length);
+    const view = new DataView(arrayBuffer);
+    const channels = [];
+    let offset = 0;
+    let pos = 0;
+
+    // Write WAV header
+    const setUint16 = (data) => {
+      view.setUint16(pos, data, true);
+      pos += 2;
+    };
+    const setUint32 = (data) => {
+      view.setUint32(pos, data, true);
+      pos += 4;
+    };
+
+    // RIFF identifier
+    setUint32(0x46464952); // "RIFF"
+    // File length minus RIFF identifier length and file description length
+    setUint32(length - 8);
+    // RIFF type
+    setUint32(0x45564157); // "WAVE"
+    // Format chunk identifier
+    setUint32(0x20746d66); // "fmt "
+    // Format chunk length
+    setUint32(16);
+    // Sample format (PCM)
+    setUint16(1);
+    // Channel count
+    setUint16(buffer.numberOfChannels);
+    // Sample rate
+    setUint32(buffer.sampleRate);
+    // Byte rate (sample rate * block align)
+    setUint32(buffer.sampleRate * buffer.numberOfChannels * 2);
+    // Block align (channel count * bytes per sample)
+    setUint16(buffer.numberOfChannels * 2);
+    // Bits per sample
+    setUint16(16);
+    // Data chunk identifier
+    setUint32(0x61746164); // "data"
+    // Data chunk length
+    setUint32(length - pos - 4);
+
+    // Write interleaved PCM samples
+    for (let i = 0; i < buffer.numberOfChannels; i++) {
+      channels.push(buffer.getChannelData(i));
+    }
+
+    while (pos < length) {
+      for (let i = 0; i < buffer.numberOfChannels; i++) {
+        let sample = channels[i][offset];
+        sample = Math.max(-1, Math.min(1, sample));
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+        view.setInt16(pos, sample, true);
+        pos += 2;
+      }
+      offset++;
+    }
+
+    return arrayBuffer;
+  };
+
   // Real voice recording handler with auto-stop on silence
   const handleMicClick = async () => {
     if (isListening) {
@@ -185,48 +275,58 @@ export default function SimpleChatWrapper() {
             return;
           }
 
-          // Convert to base64
-          const reader = new FileReader();
-          reader.readAsDataURL(audioBlob);
-          reader.onloadend = async () => {
-            const base64Audio = reader.result.split(',')[1];
-            console.log('[DEBUG] Audio converted to base64, length:', base64Audio.length);
+          try {
+            // Convert WebM to WAV PCM 16kHz mono for Whisper
+            console.log('[DEBUG] Converting audio to WAV format...');
+            const wavBlob = await convertToWav(audioBlob);
+            console.log('[DEBUG] WAV conversion complete, size:', wavBlob.size, 'bytes');
 
-            // Send to orchestrator for ASR
-            try {
-              console.log('[DEBUG] Sending audio to /api/transcribe...');
-              const response = await fetch('/api/transcribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ audioData: base64Audio })
-              });
+            // Convert to base64
+            const reader = new FileReader();
+            reader.readAsDataURL(wavBlob);
+            reader.onloadend = async () => {
+              const base64Audio = reader.result.split(',')[1];
+              console.log('[DEBUG] Audio converted to base64, length:', base64Audio.length);
 
-              if (!response.ok) {
-                console.error('[ERROR] Transcribe API returned:', response.status, response.statusText);
-                return;
+              // Send to orchestrator for ASR
+              try {
+                console.log('[DEBUG] Sending audio to /api/transcribe...');
+                const response = await fetch('/api/transcribe', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ audioData: base64Audio })
+                });
+
+                if (!response.ok) {
+                  console.error('[ERROR] Transcribe API returned:', response.status, response.statusText);
+                  return;
+                }
+
+                const data = await response.json();
+                console.log('[DEBUG] Transcription response:', data);
+
+                if (data.success && data.text) {
+                  console.log('[DEBUG] Transcribed text:', data.text);
+                  console.log('[DEBUG] Sending to WebSocket via speak()...');
+                  console.log('[DEBUG] WebSocket connected:', connected);
+
+                  // Send transcribed text to orchestrator via WebSocket
+                  // AI will start streaming response immediately, sentence by sentence
+                  const result = speak(data.text);
+                  console.log('[DEBUG] speak() returned:', result);
+                } else {
+                  console.error('[ERROR] Transcription failed:', data.error);
+                  alert('Transcription failed: ' + (data.error || 'Unknown error'));
+                }
+              } catch (err) {
+                console.error('[ERROR] Error sending audio:', err);
+                alert('Network error: ' + err.message);
               }
-
-              const data = await response.json();
-              console.log('[DEBUG] Transcription response:', data);
-
-              if (data.success && data.text) {
-                console.log('[DEBUG] Transcribed text:', data.text);
-                console.log('[DEBUG] Sending to WebSocket via speak()...');
-                console.log('[DEBUG] WebSocket connected:', connected);
-
-                // Send transcribed text to orchestrator via WebSocket
-                // AI will start streaming response immediately, sentence by sentence
-                const result = speak(data.text);
-                console.log('[DEBUG] speak() returned:', result);
-              } else {
-                console.error('[ERROR] Transcription failed:', data.error);
-                alert('Transcription failed: ' + (data.error || 'Unknown error'));
-              }
-            } catch (err) {
-              console.error('[ERROR] Error sending audio:', err);
-              alert('Network error: ' + err.message);
-            }
-          };
+            };
+          } catch (err) {
+            console.error('[ERROR] Audio conversion failed:', err);
+            alert('Audio conversion error: ' + err.message);
+          }
         };
 
         recorder.start();
