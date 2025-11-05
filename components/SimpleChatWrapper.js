@@ -68,9 +68,20 @@ export default function SimpleChatWrapper() {
           }
         };
 
+        // Simulate voice level feedback while listening
+        const interval = setInterval(() => {
+          setVoiceLevel(Math.random());
+        }, 100);
+
         recorder.onstop = async () => {
+          // Clean up interval
+          clearInterval(interval);
+
           const audioBlob = new Blob(chunks, { type: 'audio/webm' });
           console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes');
+
+          // Stop all tracks
+          stream.getTracks().forEach(track => track.stop());
 
           // Convert to base64
           const reader = new FileReader();
@@ -103,26 +114,12 @@ export default function SimpleChatWrapper() {
               console.error('[ERROR] Error sending audio:', err);
             }
           };
-
-          // Stop all tracks
-          stream.getTracks().forEach(track => track.stop());
         };
 
         recorder.start();
         setMediaRecorder(recorder);
         setIsListening(true);
         setIsSpeaking(false);
-
-        // Simulate voice level feedback while listening
-        const interval = setInterval(() => {
-          setVoiceLevel(Math.random());
-        }, 100);
-
-        // Clean up interval when recording stops
-        recorder.onstop = () => {
-          clearInterval(interval);
-          recorder.onstop();
-        };
 
       } catch (err) {
         console.error('Microphone access denied:', err);
