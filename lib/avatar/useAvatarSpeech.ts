@@ -32,9 +32,19 @@ export function useAvatarSpeech() {
 
     const ws = new WebSocket(url);
     wsRef.current = ws;
-    ws.onopen  = ()=> setConnected(true);
-    ws.onclose = ()=> setConnected(false);
-    ws.onerror = ()=> setError("ws_error");
+    ws.onopen  = ()=> {
+      console.log('[WebSocket] Connected successfully');
+      setConnected(true);
+    };
+    ws.onclose = (e)=> {
+      console.log('[WebSocket] Connection closed:', e.code, e.reason);
+      setConnected(false);
+    };
+    ws.onerror = (e)=> {
+      console.error('[WebSocket] Error occurred:', e);
+      console.error('[WebSocket] Attempted URL:', base);
+      setError("ws_error");
+    };
     ws.onmessage = (e)=> {
       try {
         const m = JSON.parse(e.data) as Msg;
