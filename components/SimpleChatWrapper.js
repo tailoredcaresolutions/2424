@@ -44,7 +44,7 @@ export default function SimpleChatWrapper() {
     });
   }, [onViseme]);
 
-  // Real voice recording handler
+  // Real voice recording handler with auto-stop on silence
   const handleMicClick = async () => {
     if (isListening) {
       // Stop listening and process
@@ -54,7 +54,7 @@ export default function SimpleChatWrapper() {
       setIsListening(false);
       setVoiceLevel(0);
     } else {
-      // Start listening - real audio capture
+      // Start listening - real audio capture with voice activity detection
       try {
         // Enable audio on user gesture
         if (audioPlayerRef.current) {
@@ -62,6 +62,19 @@ export default function SimpleChatWrapper() {
         }
 
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Set up audio context for voice activity detection
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioContext.createMediaStreamSource(stream);
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+        let silenceStart = null;
+        const SILENCE_THRESHOLD = 30; // Adjust sensitivity
+        const SILENCE_DURATION = 1500; // 1.5 seconds of silence triggers auto-stop
+
         const recorder = new MediaRecorder(stream);
         const chunks = [];
 
@@ -71,14 +84,36 @@ export default function SimpleChatWrapper() {
           }
         };
 
-        // Simulate voice level feedback while listening
-        const interval = setInterval(() => {
-          setVoiceLevel(Math.random());
-        }, 100);
+        // Voice activity detection loop
+        const checkAudio = () => {
+          if (recorder.state !== 'recording') return;
+
+          analyser.getByteFrequencyData(dataArray);
+          const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+
+          // Update visual feedback
+          setVoiceLevel(Math.min(average / 50, 1));
+
+          // Detect silence
+          if (average < SILENCE_THRESHOLD) {
+            if (!silenceStart) {
+              silenceStart = Date.now();
+            } else if (Date.now() - silenceStart > SILENCE_DURATION) {
+              // Auto-stop after silence
+              console.log('[DEBUG] Auto-stopping due to silence');
+              recorder.stop();
+              return;
+            }
+          } else {
+            silenceStart = null;
+          }
+
+          requestAnimationFrame(checkAudio);
+        };
 
         recorder.onstop = async () => {
-          // Clean up interval
-          clearInterval(interval);
+          // Clean up
+          audioContext.close();
 
           const audioBlob = new Blob(chunks, { type: 'audio/webm' });
           console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes');
@@ -110,6 +145,7 @@ export default function SimpleChatWrapper() {
                 console.log('[DEBUG] Sending to WebSocket via speak()...');
                 console.log('[DEBUG] WebSocket connected:', connected);
                 // Send transcribed text to orchestrator via WebSocket
+                // AI will start streaming response immediately, sentence by sentence
                 const result = speak(data.text);
                 console.log('[DEBUG] speak() returned:', result);
               } else {
@@ -125,6 +161,9 @@ export default function SimpleChatWrapper() {
         setMediaRecorder(recorder);
         setIsListening(true);
         setIsSpeaking(false);
+
+        // Start voice activity detection
+        checkAudio();
 
       } catch (err) {
         console.error('Microphone access denied:', err);
@@ -205,7 +244,7 @@ export default function SimpleChatWrapper() {
           </div>
           <p className="text-[var(--tcs-gold)] text-xl md:text-2xl font-semibold leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.5),0_0_15px_rgba(201,160,99,0.3)]">
             {connected
-              ? "Hello! I'm here to help you document your PSW shift notes today. Tap the microphone to start!"
+              ? "Hello! I'm here to help you document your PSW shift notes. Tap to speak - I'll respond as you talk, like a natural conversation!"
               : "Connecting to voice assistant... Please wait."}
           </p>
         </motion.div>
@@ -253,7 +292,13 @@ export default function SimpleChatWrapper() {
               </div>
             </motion.button>
             <p className="text-white text-lg md:text-xl font-semibold text-center">
-              {!connected ? 'Waiting for connection...' : isListening ? 'Listening... Tap to stop' : isSpeaking ? 'AI is speaking...' : 'Tap to start conversation'}
+              {!connected
+                ? 'Waiting for connection...'
+                : isListening
+                  ? 'Speak now... (auto-stops after 1.5s silence)'
+                  : isSpeaking
+                    ? 'AI responding - streaming live!'
+                    : 'Ready for streaming conversation'}
             </p>
           </div>
         </motion.div>
