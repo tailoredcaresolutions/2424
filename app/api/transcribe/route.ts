@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Send audio to orchestrator which proxies to Whisper ASR
-    const response = await fetch(`${ORCHESTRATOR_URL}/transcribe`, {
+    // Use /chat/transcribe path for Cloudflare tunnel compatibility
+    const response = await fetch(`${ORCHESTRATOR_URL}/chat/transcribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
