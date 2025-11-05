@@ -70,15 +70,18 @@ export default function SimpleChatWrapper() {
 
         recorder.onstop = async () => {
           const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+          console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes');
 
           // Convert to base64
           const reader = new FileReader();
           reader.readAsDataURL(audioBlob);
           reader.onloadend = async () => {
             const base64Audio = reader.result.split(',')[1];
+            console.log('[DEBUG] Audio converted to base64, length:', base64Audio.length);
 
             // Send to orchestrator for ASR
             try {
+              console.log('[DEBUG] Sending audio to /api/transcribe...');
               const response = await fetch('/api/transcribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -86,15 +89,18 @@ export default function SimpleChatWrapper() {
               });
 
               const data = await response.json();
+              console.log('[DEBUG] Transcription response:', data);
 
               if (data.success && data.text) {
+                console.log('[DEBUG] Transcribed text:', data.text);
+                console.log('[DEBUG] Sending to WebSocket via speak()...');
                 // Send transcribed text to orchestrator via WebSocket
                 speak(data.text);
               } else {
-                console.error('Transcription failed:', data.error);
+                console.error('[ERROR] Transcription failed:', data.error);
               }
             } catch (err) {
-              console.error('Error sending audio:', err);
+              console.error('[ERROR] Error sending audio:', err);
             }
           };
 
