@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const WHISPER_ASR_URL = process.env.WHISPER_ASR_URL || 'http://127.0.0.1:18886';
+// Use orchestrator's public URL which proxies to local Whisper
+const ORCHESTRATOR_URL = process.env.NEXT_PUBLIC_SPEECH_WS_URL?.replace('wss://', 'https://').replace('/ws/speak', '') || 'https://voice.tailoredcaresolutions.com';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,8 +14,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send audio to Whisper ASR service
-    const response = await fetch(`${WHISPER_ASR_URL}/transcribe`, {
+    // Send audio to orchestrator which proxies to Whisper ASR
+    const response = await fetch(`${ORCHESTRATOR_URL}/transcribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
