@@ -136,8 +136,10 @@ export default function SimpleChatWrapper() {
         const chunks = [];
 
         recorder.ondataavailable = (e) => {
+          console.log('[DEBUG] ondataavailable fired, data size:', e.data.size);
           if (e.data.size > 0) {
             chunks.push(e.data);
+            console.log('[DEBUG] Chunk added, total chunks:', chunks.length);
           }
         };
 
@@ -156,7 +158,8 @@ export default function SimpleChatWrapper() {
             if (!silenceStart) {
               silenceStart = Date.now();
             } else if (Date.now() - silenceStart > SILENCE_DURATION) {
-              console.log('[DEBUG] Auto-stopping due to silence');
+              console.log('[DEBUG] Auto-stopping due to silence, recorder state:', recorder.state);
+              console.log('[DEBUG] Chunks collected so far:', chunks.length);
               recorder.stop();
               return;
             }
@@ -168,11 +171,19 @@ export default function SimpleChatWrapper() {
         };
 
         recorder.onstop = async () => {
+          console.log('[DEBUG] *** ONSTOP FIRED *** chunks.length:', chunks.length);
+
           // Cleanup resources
           cleanupRecording();
 
           const audioBlob = new Blob(chunks, { type: mimeType || 'audio/webm' });
           console.log('[DEBUG] Audio recorded, size:', audioBlob.size, 'bytes, type:', audioBlob.type);
+
+          if (audioBlob.size === 0) {
+            console.error('[ERROR] Audio blob is EMPTY! No data recorded.');
+            alert('Recording failed: No audio data captured');
+            return;
+          }
 
           // Convert to base64
           const reader = new FileReader();
