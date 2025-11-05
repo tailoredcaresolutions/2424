@@ -5,9 +5,8 @@ import { useEffect, useRef, useState } from "react";
 type Msg = { type:"start"|"viseme"|"emotion"|"audio"|"done"|"error"; [k:string]:any; };
 
 export function useAvatarSpeech() {
-  const base = process.env.NEXT_PUBLIC_SPEECH_WS_URL!;
-  const tok  = process.env.NEXT_PUBLIC_SPEECH_WS_TOKEN!;
-  const url  = `${base}?token=${encodeURIComponent(tok)}`;
+  const base = process.env.NEXT_PUBLIC_SPEECH_WS_URL || 'wss://voice.tailoredcaresolutions.com/ws/speak';
+  const tok  = process.env.NEXT_PUBLIC_SPEECH_WS_TOKEN || '';
 
   const [connected,setConnected]=useState(false);
   const [error,setError]=useState<string|null>(null);
@@ -15,7 +14,22 @@ export function useAvatarSpeech() {
   const L = useRef({ onV:(t:number,v:string)=>{}, onE:(s:number,e:number,val:string)=>{}, onA:(m:string,b64:string)=>{} });
 
   useEffect(()=> {
-    if (!base || !tok) { setError("ws_env_missing"); return; }
+    if (!base || !tok) {
+      console.error('WebSocket environment variables missing:', { base, tok: tok ? 'present' : 'missing' });
+      setError("ws_env_missing");
+      return;
+    }
+
+    // Validate that base starts with wss:// for security
+    if (!base.startsWith('wss://') && !base.startsWith('ws://localhost')) {
+      console.error('WebSocket URL must use wss:// protocol for security:', base);
+      setError("ws_insecure");
+      return;
+    }
+
+    const url = `${base}?token=${encodeURIComponent(tok)}`;
+    console.log('Connecting to WebSocket:', base.replace(/\?token=.*/, '?token=***'));
+
     const ws = new WebSocket(url);
     wsRef.current = ws;
     ws.onopen  = ()=> setConnected(true);

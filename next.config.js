@@ -94,7 +94,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://cdn.builder.io https://v0.dev https://api.figma.com",
+              "connect-src 'self' https://cdn.builder.io https://v0.dev https://api.figma.com wss://voice.tailoredcaresolutions.com https://voice.tailoredcaresolutions.com",
               "frame-src 'self' https://builder.io https://www.figma.com",
             ].join('; '),
           },
@@ -108,7 +108,7 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            value: 'camera=(self), microphone=(self), geolocation=()',
           },
         ],
       },
