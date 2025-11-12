@@ -8,16 +8,26 @@ import { spawn } from 'child_process';
 import { promises as fs } from 'fs';
 
 // Mock child_process
-vi.mock('child_process');
+vi.mock('child_process', async () => {
+  const { vi } = await import('vitest');
+  return {
+    default: {},
+    spawn: vi.fn()
+  };
+});
 
 // Mock fs
-vi.mock('fs', () => ({
-  promises: {
-    writeFile: vi.fn(),
-    unlink: vi.fn(),
-    readFile: vi.fn()
-  }
-}));
+vi.mock('fs', async () => {
+  const { vi } = await import('vitest');
+  return {
+    default: {},
+    promises: {
+      writeFile: vi.fn(),
+      unlink: vi.fn(),
+      readFile: vi.fn()
+    }
+  };
+});
 
 describe('XTTSClient', () => {
   let client;
@@ -34,6 +44,11 @@ describe('XTTSClient', () => {
     
     // Clear all mocks
     vi.clearAllMocks();
+    
+    // Setup default mock implementations
+    fs.writeFile.mockResolvedValue();
+    fs.unlink.mockResolvedValue();
+    fs.readFile.mockResolvedValue(Buffer.from('fake audio'));
   });
   
   afterEach(() => {

@@ -87,7 +87,8 @@ describe('OllamaClient', () => {
         response: 'This is a test response.',
         done: true,
         total_duration: 1500000000, // 1.5 seconds in nanoseconds
-        eval_count: 50
+        eval_count: 50,
+        eval_duration: 1500000000 // 1.5 seconds for token generation
       };
 
       fetch.mockResolvedValue({
@@ -290,7 +291,7 @@ describe('OllamaClient', () => {
         model: 'qwen2.5:14b-instruct-q4_K_M',
         message: {
           role: 'assistant',
-          content: 'PSWs observe vital signs but do not diagnose. Notify supervisor for concerning readings.'
+          content: 'PSWs observe vital signs and document readings. Notify supervisor for concerning readings.'
         },
         done: true,
         total_duration: 1500000000,
@@ -386,7 +387,8 @@ describe('OllamaClient', () => {
         response: 'Test response',
         done: true,
         total_duration: 1000000000, // 1 second
-        eval_count: 120 // 120 tokens
+        eval_count: 120, // 120 tokens
+        eval_duration: 1000000000 // 1 second for token generation
       };
 
       fetch.mockResolvedValue({
@@ -405,7 +407,8 @@ describe('OllamaClient', () => {
         response: 'Response',
         done: true,
         total_duration: 2500000000, // 2.5 seconds
-        eval_count: 75
+        eval_count: 75,
+        eval_duration: 2500000000 // 2.5 seconds for token generation (30 tok/s)
       };
 
       fetch.mockResolvedValue({
